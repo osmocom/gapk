@@ -20,6 +20,7 @@ AC_CONFIG_FILES([
 AC_PROG_CC
 
 # Checks for libraries.
+PKG_CHECK_MODULES(LIBOSMOCODEC, libosmocodec >= 0.1.25)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h unistd.h])
