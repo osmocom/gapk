@@ -13,6 +13,7 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	include/Makefile
+	include/gapk/Makefile
 ])
 
 # Checks for programs.
