@@ -1,1 +1,2 @@
-noinst_HEADERS =	utils.h
+noinst_HEADERS =	codecs.h	\
+			utils.h
