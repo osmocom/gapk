@@ -4,5 +4,5 @@ AM_LDFLAGS=$(LIBOSMOCODEC_LIBS)
 
 bin_PROGRAMS = gapk
 gapk_SOURCES =	main.c	\
-		formats.c \
+		formats.c fmt_gsm.c \
 		codecs.c codec_pcm.c codec_hr.c codec_fr.c codec_efr.c

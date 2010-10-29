@@ -1,4 +1,4 @@
-/* Formats handling */
+/* Classic .gsm files for FR */
 
 /*
  * This file is part of gapk (GSM Audio Pocket Knife).
@@ -17,23 +17,43 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>	/* for NULL */
-
+#include <gapk/codecs.h>
 #include <gapk/formats.h>
 
-/* Extern format descriptors */
-extern const struct format_desc fmt_gsm;
 
-static const struct format_desc *supported_formats[_FMT_MAX] = {
-	[FMT_INVALID]		= NULL,
-	[FMT_GSM]		= &fmt_gsm,
-};
+#define GSM_MAGIC 0xd
 
-
-const struct format_desc *
-fmt_get_from_type(enum format_type type)
+static int
+gsm_from_canon(uint8_t *dst, const uint8_t *src)
 {
-	if (type <= FMT_INVALID || type >= _FMT_MAX)
-		return NULL;
-	return supported_formats[type];
+	int i;
+
+	dst[0] = (GSM_MAGIC << 4) | (src[0] >> 4);
+	for (i=1; i<33; i++)
+		dst[i] = (src[i-1] << 4) | (src[i] >> 4);
+
+	return 0;
 }
+
+static int
+gsm_to_canon(uint8_t *dst, const uint8_t *src)
+{
+	int i;
+
+	for (i=0; i<32; i++)
+		dst[i] = (src[i] << 4) | (src[i+1] >> 4);
+	dst[32] = src[32] << 4;
+
+	return 0;
+}
+
+const struct format_desc fmt_gsm = {
+	.type			= FMT_GSM,
+	.codec_type		= CODEC_FR,
+	.name			= "gsm",
+	.description		= "Classic .gsm file format",
+
+	.frame_len		= 33,
+	.conv_from_canon	= gsm_from_canon,
+	.conv_to_canon		= gsm_to_canon,
+};

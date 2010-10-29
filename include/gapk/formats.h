@@ -25,6 +25,9 @@
 enum format_type {
 	FMT_INVALID = 0,
 
+	/* Classic .gsm file for FR */
+	FMT_GSM,
+
 	_FMT_MAX,
 };
 
