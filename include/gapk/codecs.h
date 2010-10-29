@@ -20,6 +20,8 @@
 #ifndef __GAPK_CODECS_H__
 #define __GAPK_CODECS_H__
 
+#include <stdint.h>
+
 enum codec_type {
 	CODEC_INVALID = 0,
 	CODEC_PCM,	/* 16 bits PCM samples */
@@ -29,11 +31,22 @@ enum codec_type {
 	_CODEC_MAX,
 };
 
+#include <gapk/formats.h>	/* need to import here because or enum interdep */
+
+typedef int (*codec_conv_cb_t)(void *state, uint8_t *dst, const uint8_t *src);
+
 struct codec_desc {
 	enum codec_type		type;
 	const char *		name;
 	const char *		description;
 	unsigned int		canon_frame_len;
+
+	enum format_type	codec_enc_format_type;	/* what the encoder provides */
+	enum format_type	codec_dec_format_type;	/* what to give the decoder */
+	void *			(*codec_init)(void);
+	void			(*codec_exit)(void *state);
+	codec_conv_cb_t		codec_encode;
+	codec_conv_cb_t		codec_decode;
 };
 
 const struct codec_desc *codec_get_from_type(enum codec_type type);
