@@ -25,12 +25,18 @@
 extern const struct format_desc fmt_gsm;
 extern const struct format_desc fmt_hr_ref_dec;
 extern const struct format_desc fmt_hr_ref_enc;
+extern const struct format_desc fmt_racal_hr;
+extern const struct format_desc fmt_racal_fr;
+extern const struct format_desc fmt_racal_efr;
 
 static const struct format_desc *supported_formats[_FMT_MAX] = {
 	[FMT_INVALID]		= NULL,
 	[FMT_GSM]		= &fmt_gsm,
 	[FMT_HR_REF_DEC]	= &fmt_hr_ref_dec,
 	[FMT_HR_REF_ENC]	= &fmt_hr_ref_enc,
+	[FMT_RACAL_HR]		= &fmt_racal_hr,
+	[FMT_RACAL_FR]		= &fmt_racal_fr,
+	[FMT_RACAL_EFR]		= &fmt_racal_efr,
 };
 
 

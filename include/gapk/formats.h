@@ -32,6 +32,11 @@ enum format_type {
 	FMT_HR_REF_DEC,
 	FMT_HR_REF_ENC,
 
+	/* Racal 6103E TCH recordings */
+	FMT_RACAL_HR,
+	FMT_RACAL_FR,
+	FMT_RACAL_EFR,
+
 	_FMT_MAX,
 };
 
