@@ -25,6 +25,9 @@
 enum format_type {
 	FMT_INVALID = 0,
 
+	/* Classic .amr container */
+	FMT_AMR_EFR,
+
 	/* Classic .gsm file for FR */
 	FMT_GSM,
 
