@@ -28,6 +28,10 @@ enum format_type {
 	/* Classic .gsm file for FR */
 	FMT_GSM,
 
+	/* 3GPP Reference HR vocodec files */
+	FMT_HR_REF_DEC,
+	FMT_HR_REF_ENC,
+
 	_FMT_MAX,
 };
 

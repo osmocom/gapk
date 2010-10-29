@@ -23,10 +23,14 @@
 
 /* Extern format descriptors */
 extern const struct format_desc fmt_gsm;
+extern const struct format_desc fmt_hr_ref_dec;
+extern const struct format_desc fmt_hr_ref_enc;
 
 static const struct format_desc *supported_formats[_FMT_MAX] = {
 	[FMT_INVALID]		= NULL,
 	[FMT_GSM]		= &fmt_gsm,
+	[FMT_HR_REF_DEC]	= &fmt_hr_ref_dec,
+	[FMT_HR_REF_ENC]	= &fmt_hr_ref_enc,
 };
 
 
