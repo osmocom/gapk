@@ -62,5 +62,6 @@ struct format_desc {
 };
 
 const struct format_desc *fmt_get_from_type(enum format_type type);
+const struct format_desc *fmt_get_from_name(const char *name);
 
 #endif /* __GAPK_FORMATS_H__ */

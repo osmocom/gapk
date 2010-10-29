@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>	/* for NULL */
+#include <string.h>
 
 #include <gapk/formats.h>
 
@@ -48,4 +49,18 @@ fmt_get_from_type(enum format_type type)
 	if (type <= FMT_INVALID || type >= _FMT_MAX)
 		return NULL;
 	return supported_formats[type];
+}
+
+const struct format_desc *
+fmt_get_from_name(const char *name)
+{
+	int i;
+	for (i=FMT_INVALID+1; i<_FMT_MAX; i++) {
+		const struct format_desc *fmt = supported_formats[i];
+		if (!fmt)
+			continue;
+		if (!strcmp(fmt->name, name))
+			return fmt;
+	}
+	return NULL;
 }
