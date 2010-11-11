@@ -20,7 +20,18 @@ AC_CONFIG_FILES([
 AC_PROG_CC
 
 # Checks for libraries.
+ # libosmocore (codec module)
 PKG_CHECK_MODULES(LIBOSMOCODEC, libosmocodec >= 0.1.25)
+
+ # libgsm for FR decoding
+found_libgsm=yes
+AC_CHECK_HEADERS(gsm/gsm.h, ,
+	[AC_CHECK_HEADERS(gsm.h, ,found_libgsm=no)])
+	AC_CHECK_LIB(gsm, gsm_create, LIBGSM_LIBS="-lgsm", found_libgsm=no)
+if test "$found_libgsm" = yes; then
+	AC_DEFINE(HAVE_LIBGSM, 1, [Define to 1 if libgsm is available])
+fi
+AC_SUBST(LIBGSM_LIBS)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h unistd.h])

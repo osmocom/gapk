@@ -19,9 +19,68 @@
 
 #include <gapk/codecs.h>
 
+#include "config.h"
+
+
+#ifdef HAVE_LIBGSM
+
+/* Find header */
+#ifdef HAVE_GSM_H
+# include <gsm.h>
+#elif HAVE_GSM_GSM_H
+# include <gsm/gsm.h>
+#else
+# error "Can't find gsm.h header anywhere ..."
+#endif
+
+#include <string.h>
+
+
+static void *
+codec_fr_init(void)
+{
+	return (void *)gsm_create();
+}
+
+static void
+codec_fr_exit(void *state)
+{
+	gsm_destroy( (gsm)state );
+}
+
+static int
+codec_fr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
+{
+	gsm gh = (gsm)state;
+	uint8_t pcm_b[2*160];	/* local copy as libgsm src isn't const ! */
+	memcpy(pcm_b, pcm, 2*160);
+	gsm_encode(gh, (gsm_signal*)pcm, (gsm_byte*)cod);
+	return 0;
+}
+
+static int
+codec_fr_decode(void *state, uint8_t *pcm, const uint8_t *cod)
+{
+	gsm gh = (gsm)state;
+	uint8_t cod_b[33];	/* local copy as libgsm src isn't const ! */
+	memcpy(cod_b, cod, 33);
+	return gsm_decode(gh, (gsm_byte*)cod_b, (gsm_signal*)pcm);
+}
+
+#endif /* HAVE_LIBGSM */
+
+
 const struct codec_desc codec_fr_desc = {
 	.type = CODEC_FR,
 	.name = "fr",
 	.description = "GSM 06.10 Full Rate codec (classic gsm codec)",
 	.canon_frame_len = 33,
+#ifdef HAVE_LIBGSM
+	.codec_enc_format_type = FMT_GSM,
+	.codec_dec_format_type = FMT_GSM,
+	.codec_init = codec_fr_init,
+	.codec_exit = codec_fr_exit,
+	.codec_encode = codec_fr_encode,
+	.codec_decode = codec_fr_decode,
+#endif
 };
