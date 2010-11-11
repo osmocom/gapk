@@ -40,4 +40,8 @@ struct pq_item *	pq_add_item(struct pq *pq);
 int			pq_prepare(struct pq *pq);
 int			pq_execute(struct pq *pq);
 
+/* File */
+int pq_queue_file_input(struct pq *pq, FILE *src, unsigned int block_len);
+int pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int block_len);
+
 #endif /* __GAPK_PROCQUEUE_H__ */
