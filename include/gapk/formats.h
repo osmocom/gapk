@@ -40,6 +40,9 @@ enum format_type {
 	FMT_RACAL_FR,
 	FMT_RACAL_EFR,
 
+	/* Raw PCM */
+	FMT_RAWPCM_S16LE,
+
 	_FMT_MAX,
 };
 
