@@ -23,6 +23,13 @@ AC_PROG_CC
  # libosmocore (codec module)
 PKG_CHECK_MODULES(LIBOSMOCODEC, libosmocodec >= 0.1.25)
 
+ # opencore-amrnb for AMR and EFR decoding
+found_opencore_amrnb=yes
+PKG_CHECK_MODULES(OPENCORE_AMRNB, opencore-amrnb >= 0.1.0, , found_libgsm=no)
+if test "$found_opencore_amrnb" = yes; then
+	AC_DEFINE(HAVE_OPENCORE_AMRNB, 1, [Define to 1 if OpenCore AMR-NB library is available])
+fi
+
  # libgsm for FR decoding
 found_libgsm=yes
 AC_CHECK_HEADERS(gsm/gsm.h, ,
