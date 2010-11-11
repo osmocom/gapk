@@ -1,0 +1,61 @@
+/* Process Queue: Format handling tasks */
+
+/*
+ * This file is part of gapk (GSM Audio Pocket Knife).
+ *
+ * gapk is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * gapk is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <errno.h>
+#include <stdint.h>
+
+#include <gapk/codecs.h>
+#include <gapk/formats.h>
+#include <gapk/procqueue.h>
+
+
+static int
+pq_cb_fmt_convert(void *_state, uint8_t *out, const uint8_t *in)
+{
+	fmt_conv_cb_t f = _state;
+	return f(out, in);
+}
+
+int
+pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n)
+{
+	struct pq_item *item;
+	const struct codec_desc *codec = codec_get_from_type(fmt->codec_type);
+
+	if (!codec)
+		return -EINVAL;
+
+	item = pq_add_item(pq);
+	if (!item)
+		return -ENOMEM;
+
+	if (to_from_n) {
+		item->len_in  = codec->canon_frame_len;
+		item->len_out = fmt->frame_len;
+		item->state   = fmt->conv_from_canon;
+	} else {
+		item->len_in  = fmt->frame_len;
+		item->len_out = codec->canon_frame_len;
+		item->state   = fmt->conv_to_canon;
+	}
+
+	item->proc = pq_cb_fmt_convert;
+
+	return 0;
+}
