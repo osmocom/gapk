@@ -53,6 +53,9 @@ struct format_desc {
 	unsigned int		frame_len;
 	fmt_conv_cb_t		conv_from_canon;
 	fmt_conv_cb_t		conv_to_canon;
+
+	unsigned int		header_len;
+	const uint8_t *		header;
 };
 
 const struct format_desc *fmt_get_from_type(enum format_type type);
