@@ -4,5 +4,6 @@ AM_LDFLAGS=$(LIBOSMOCODEC_LIBS) ${OPENCORE_AMRNB_LIBS} ${LIBGSM_LIBS}
 
 bin_PROGRAMS = gapk
 gapk_SOURCES =	main.c	\
+		procqueue.c \
 		formats.c fmt_amr.c fmt_gsm.c fmt_hr_ref.c fmt_racal.c \
 		codecs.c codec_pcm.c codec_hr.c codec_fr.c codec_efr.c
