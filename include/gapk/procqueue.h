@@ -48,4 +48,8 @@ int pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int block_len);
 struct format_desc;
 int pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n);
 
+/* Codec */
+struct codec_desc;
+int pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int encode);
+
 #endif /* __GAPK_PROCQUEUE_H__ */
