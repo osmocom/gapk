@@ -8,3 +8,7 @@ gapk_SOURCES =	main.c	\
 		formats.c fmt_amr.c fmt_gsm.c fmt_hr_ref.c fmt_racal.c \
 			fmt_rawpcm.c \
 		codecs.c codec_pcm.c codec_hr.c codec_fr.c codec_efr.c
+
+if ENABLE_GSMHR
+gapk_LDADD = $(top_builddir)/libgsmhr/libgsmhr.la
+endif

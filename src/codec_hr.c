@@ -19,9 +19,54 @@
 
 #include <gapk/codecs.h>
 
+#include "config.h"
+
+
+#ifdef HAVE_LIBGSMHR
+
+#include <gsmhr/gsmhr.h>
+
+static void *
+codec_hr_init(void)
+{
+	return (void *)gsmhr_init();
+}
+
+static void
+codec_hr_exit(void *_state)
+{
+	struct gsmhr *state = _state;
+	gsmhr_exit(state);
+}
+
+static int
+codec_hr_encode(void *_state, uint8_t *cod, const uint8_t *pcm)
+{
+	struct gsmhr *state = _state;
+	return gsmhr_encode(state, (int16_t *)cod, (const int16_t *)pcm);
+}
+
+static int
+codec_hr_decode(void *_state, uint8_t *pcm, const uint8_t *cod)
+{
+	struct gsmhr *state = _state;
+	return gsmhr_decode(state, (int16_t *)pcm, (const int16_t *)cod);
+}
+
+#endif /* HAVE_LIBGSMHR */
+
+
 const struct codec_desc codec_hr_desc = {
 	.type = CODEC_HR,
 	.name = "hr",
 	.description = "GSM 06.20 Half Rate codec",
 	.canon_frame_len = 14,
+#ifdef HAVE_LIBGSMHR
+	.codec_enc_format_type = FMT_HR_REF_ENC,
+	.codec_dec_format_type = FMT_HR_REF_DEC,
+	.codec_init = codec_hr_init,
+	.codec_exit = codec_hr_exit,
+	.codec_encode = codec_hr_encode,
+	.codec_decode = codec_hr_decode,
+#endif
 };
