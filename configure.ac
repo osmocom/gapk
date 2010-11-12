@@ -27,6 +27,7 @@ AC_ARG_ENABLE(gsmhr,
 	[enable_gsmhr=0], [enable_gsmhr=1])
 AM_CONDITIONAL(ENABLE_GSMHR, test "x$enable_gsmhr" = "x1")
 if test "x$enable_gsmhr" = "x1"; then
+	AM_PATH_PYTHON([2.4])
 	AC_DEFINE(HAVE_LIBGSMHR, 1, [Define to 1 if libgsmhr is available])
 fi
 
