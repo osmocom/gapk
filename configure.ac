@@ -12,12 +12,39 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
+	libgsmhr/Makefile
 	include/Makefile
 	include/gapk/Makefile
+	include/gsmhr/Makefile
 ])
+
+# Options
+AC_ARG_ENABLE(gsmhr,
+	[AS_HELP_STRING(
+		[--disable-gsmhr],
+		[Disable support for GSM HR codec using reference code]
+	)],
+	[enable_gsmhr=0], [enable_gsmhr=1])
+AM_CONDITIONAL(ENABLE_GSMHR, test "x$enable_gsmhr" = "x1")
+if test "x$enable_gsmhr" = "x1"; then
+	AC_DEFINE(HAVE_LIBGSMHR, 1, [Define to 1 if libgsmhr is available])
+fi
+
+# Check for -fvisibility support
+#  (The following test is taken from WebKit's webkit.m4)
+saved_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS -fvisibility=hidden "
+AC_MSG_CHECKING([if ${CC} supports -fvisibility=hidden])
+AC_COMPILE_IFELSE([char foo;],
+	[ AC_MSG_RESULT([yes])
+	  SYMBOL_VISIBILITY="-fvisibility=hidden"],
+	AC_MSG_RESULT([no]))
+CFLAGS="$saved_CFLAGS"
+AC_SUBST(SYMBOL_VISIBILITY)
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_LIBTOOL
 
 # Checks for libraries.
  # libosmocore (codec module)

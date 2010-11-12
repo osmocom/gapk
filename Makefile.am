@@ -3,4 +3,10 @@ ACLOCAL_AMFLAGS = -I m4
 
 INCLUDES = $(all_includes) -I$(top_srcdir)/include
 
-SUBDIRS = src include
+SUBDIRS = include
+
+if ENABLE_GSMHR
+SUBDIRS += libgsmhr
+endif
+
+SUBDIRS += src
