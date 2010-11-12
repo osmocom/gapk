@@ -76,7 +76,7 @@ codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
 		1
 	);
 
-	return rv;
+	return rv != 32;
 }
 
 static int
