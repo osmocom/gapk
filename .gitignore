@@ -14,6 +14,7 @@ configure
 depcomp
 install-sh
 ltmain.sh
+m4/
 missing
 
 # configure by-products
@@ -31,6 +32,8 @@ stamp-h1
 *.o
 *.la
 *.lo
+
+libgsmhr/refsrc
 
 # final executables
 src/gapk
