@@ -44,6 +44,7 @@ enum format_type {
 	FMT_RAWPCM_S16LE,
 
 	/* Texas Instrument calypso/locosto buffer format */
+	FMT_TI_HR,
 	FMT_TI_FR,
 
 	_FMT_MAX,

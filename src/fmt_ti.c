@@ -35,6 +35,62 @@
 
 
 static int
+ti_hr_from_canon(uint8_t *dst, const uint8_t *src)
+{
+	int i, voiced;
+	const uint16_t *bit_mapping;
+
+	memset(dst, 0x00, 33); /* Not even half the bits are written, so we pre-clear */
+
+	voiced = (msb_get_bit(src, 34) << 1) | msb_get_bit(src, 35);
+
+	bit_mapping = voiced ?
+		&gsm620_voiced_bitorder[0] :
+		&gsm620_unvoiced_bitorder[0] ;
+
+	for (i=0; i<112; i++) {
+		int si = bit_mapping[i];
+		int di = i >= 95 ? i+4 : i;
+		lsb_put_bit(dst, di, msb_get_bit(src, si));
+	}
+
+	return 0;
+}
+
+static int
+ti_hr_to_canon(uint8_t *dst, const uint8_t *src)
+{
+	int i, voiced;
+	const uint16_t *bit_mapping;
+
+	voiced = (msb_get_bit(src, 94) << 1) | msb_get_bit(src, 93);
+
+	bit_mapping = voiced ?
+		&gsm620_voiced_bitorder[0] :
+		&gsm620_unvoiced_bitorder[0] ;
+
+	for (i=0; i<112; i++) {
+		int si = i >= 95 ? i+4 : i;
+		int di = bit_mapping[i];
+		msb_put_bit(dst, di, msb_get_bit(src, si));
+	}
+
+	return 0;
+}
+
+const struct format_desc fmt_ti_hr = {
+	.type			= FMT_TI_HR,
+	.codec_type		= CODEC_HR,
+	.name			= "ti-hr",
+	.description		= "Texas Instrument HR TCH/H buffer format",
+
+	.frame_len		= 33,
+	.conv_from_canon	= ti_hr_from_canon,
+	.conv_to_canon		= ti_hr_to_canon,
+};
+
+
+static int
 ti_fr_from_canon(uint8_t *dst, const uint8_t *src)
 {
 	int i;
