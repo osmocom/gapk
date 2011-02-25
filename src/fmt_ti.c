@@ -132,3 +132,91 @@ const struct format_desc fmt_ti_fr = {
 	.conv_from_canon	= ti_fr_from_canon,
 	.conv_to_canon		= ti_fr_to_canon,
 };
+
+
+static int
+ti_efr_from_canon(uint8_t *dst, const uint8_t *src)
+{
+	int i;
+
+	memset(dst, 0x00, 33); /* pre-clear */
+
+	for (i=0; i<244; i++) {
+		int si, tsi = gsm660_bitorder[i];
+		int di = i >= 182 ? i+4 : i;
+
+		if (tsi < 71)
+			si = tsi;
+		else if (tsi < 73)
+			continue; /* repeated bits */
+		else if (tsi < 123)
+			si = tsi - 2;
+		else if (tsi < 125)
+			continue; /* repeated bits */
+		else if (tsi < 178)
+			si = tsi - 4;
+		else if (tsi < 180)
+			continue; /* repeated bits */
+		else if (tsi < 230)
+			si = tsi - 6;
+		else if (tsi < 232)
+			continue; /* repeated bits */
+		else if (tsi < 252)
+			si = tsi - 8;
+		else
+			continue; /* CRC poly */
+
+		msb_put_bit(dst, di, msb_get_bit(src, si));
+	}
+
+	return 0;
+}
+
+static int
+ti_efr_to_canon(uint8_t *dst, const uint8_t *src)
+{
+	int i;
+
+	dst[30] = 0x00; /* last nibble won't written, pre-clear it */
+
+	for (i=0; i<244; i++) {
+		int si = i >= 182 ? i+4 : i;
+		int di, tdi = gsm660_bitorder[i];
+
+		if (tdi < 71)
+			di = tdi;
+		else if (tdi < 73)
+			continue; /* repeated bits */
+		else if (tdi < 123)
+			di = tdi - 2;
+		else if (tdi < 125)
+			continue; /* repeated bits */
+		else if (tdi < 178)
+			di = tdi - 4;
+		else if (tdi < 180)
+			continue; /* repeated bits */
+		else if (tdi < 230)
+			di = tdi - 6;
+		else if (tdi < 232)
+			continue; /* repeated bits */
+		else if (tdi < 252)
+			di = tdi - 8;
+		else
+			continue; /* CRC poly */
+
+		msb_put_bit(dst, di, msb_get_bit(src, si));
+	}
+
+	return 0;
+}
+
+const struct format_desc fmt_ti_efr = {
+	.type			= FMT_TI_EFR,
+	.codec_type		= CODEC_EFR,
+	.name			= "ti-efr",
+	.description		= "Texas Instrument EFR TCH/F buffer format",
+
+	.frame_len		= 33,
+	.conv_from_canon	= ti_efr_from_canon,
+	.conv_to_canon		= ti_efr_to_canon,
+};

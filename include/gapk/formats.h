@@ -46,6 +46,7 @@ enum format_type {
 	/* Texas Instrument calypso/locosto buffer format */
 	FMT_TI_HR,
 	FMT_TI_FR,
+	FMT_TI_EFR,
 
 	_FMT_MAX,
 };
