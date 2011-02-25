@@ -6,7 +6,7 @@ bin_PROGRAMS = gapk
 gapk_SOURCES =	main.c	\
 		procqueue.c pq_file.c pq_format.c pq_codec.c \
 		formats.c fmt_amr.c fmt_gsm.c fmt_hr_ref.c fmt_racal.c \
-			fmt_rawpcm.c \
+			fmt_rawpcm.c fmt_ti.c \
 		codecs.c codec_pcm.c codec_hr.c codec_fr.c codec_efr.c
 
 if ENABLE_GSMHR

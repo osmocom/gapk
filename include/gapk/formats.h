@@ -43,6 +43,9 @@ enum format_type {
 	/* Raw PCM */
 	FMT_RAWPCM_S16LE,
 
+	/* Texas Instrument calypso/locosto buffer format */
+	FMT_TI_FR,
+
 	_FMT_MAX,
 };
 
