@@ -26,8 +26,8 @@
 
 #include <stdlib.h>
 
-#include <interf_dec.h>
-#include <interf_enc.h>
+#include <opencore-amrnb/interf_dec.h>
+#include <opencore-amrnb/interf_enc.h>
 
 
 struct codec_efr_state {
