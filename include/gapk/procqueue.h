@@ -44,6 +44,11 @@ int			pq_execute(struct pq *pq);
 int pq_queue_file_input(struct pq *pq, FILE *src, unsigned int block_len);
 int pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int block_len);
 
+/* RTP */
+int pq_queue_rtp_input(struct pq *pq, int rtp_fd, unsigned int block_len);
+int pq_queue_rtp_output(struct pq *pq, int rtp_fd, unsigned int block_len);
+
+
 /* Format */
 struct format_desc;
 int pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n);

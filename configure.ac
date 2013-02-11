@@ -49,6 +49,7 @@ AC_PROG_LIBTOOL
 
 # Checks for libraries.
  # libosmocore (codec module)
+PKG_CHECK_MODULES(LIBOSMOCORE, libosmocore >= 0.3.2)
 PKG_CHECK_MODULES(LIBOSMOCODEC, libosmocodec >= 0.1.25)
 
  # opencore-amrnb for AMR and EFR decoding

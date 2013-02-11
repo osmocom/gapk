@@ -25,6 +25,11 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+#include <osmocom/core/socket.h>
+
 #include <gapk/codecs.h>
 #include <gapk/formats.h>
 #include <gapk/procqueue.h>
@@ -33,9 +38,17 @@
 struct gapk_options
 {
 	const char *fname_in;
+	struct {
+		const char *hostname;
+		uint16_t port;
+	} rtp_in;
 	const struct format_desc *fmt_in;
 
 	const char *fname_out;
+	struct {
+		const char *hostname;
+		uint16_t port;
+	} rtp_out;
 	const struct format_desc *fmt_out;
 };
 
@@ -45,7 +58,7 @@ struct gapk_state
 
 	struct pq *pq;
 
-	union {
+	struct {
 		struct {
 			FILE *fh;
 		} file;
@@ -54,7 +67,7 @@ struct gapk_state
 		} rtp;
 	} in;
 
-	union {
+	struct {
 		struct {
 			FILE *fh;
 		} file;
@@ -75,7 +88,9 @@ print_help(char *progname)
 	fprintf(stdout, "\n");
 	fprintf(stdout, "Options:\n");
 	fprintf(stdout, "  -i, --input-file=FILE\t\tInput file\n");
+	fprintf(stdout, "  -I, --input-rtp=HOST/PORT\t\tInput RTP stream\n");
 	fprintf(stdout, "  -o, --output-file=FILE\tOutput file\n");
+	fprintf(stdout, "  -O, --output-rtp=HOST/PORT\tOutput RTP stream\n");
 	fprintf(stdout, "  -f, --input-format=FMT\tInput format (see below)\n");
 	fprintf(stdout, "  -g, --output-format=FMT\tOutput format (see below)\n");
 	fprintf(stdout, "\n");
@@ -114,16 +129,39 @@ print_help(char *progname)
 }
 
 static int
+parse_host_port(const char *host_port, const char **host)
+{
+	char *dup = strdup(host_port);
+	char *tok;
+
+	if (!dup)
+		return -ENOMEM;
+
+	tok = strtok(dup, "/");
+	if (!tok)
+		return -EINVAL;
+	*host = tok;
+
+	tok = strtok(NULL, "/");
+	if (!tok)
+		return -EINVAL;
+
+	return atoi(tok);
+}
+
+static int
 parse_options(struct gapk_state *state, int argc, char *argv[])
 {
 	const struct option long_options[] = {
 		{"input-file", 1, 0, 'i'},
 		{"output-file", 1, 0, 'o'},
+		{"input-rtp", 1, 0, 'I'},
+		{"output-rtp", 1, 0, 'O'},
 		{"input-format", 1, 0, 'f'},
 		{"output-format", 1, 0, 'g'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:f:g:h";
+	const char *short_options = "i:o:I:O:f:g:h";
 
 	struct gapk_options *opt = &state->opts;
 
@@ -132,7 +170,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 	/* Parse */
 	while (1) {
-		int c;
+		int c, rv;
 		int opt_idx;
 
 		c = getopt_long(
@@ -147,6 +185,24 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 		case 'o':
 			opt->fname_out = optarg;
+			break;
+
+		case 'I':
+			rv = parse_host_port(optarg, &opt->rtp_in.hostname);
+			if (rv < 0 || rv > 0xffff) {
+				fprintf(stderr, "[!] Invalid port: %d\n", rv);
+				return -EINVAL;
+			}
+			opt->rtp_in.port = rv;
+			break;
+
+		case 'O':
+			rv = parse_host_port(optarg, &opt->rtp_out.hostname);
+			if (rv < 0 || rv > 0xffff) {
+				fprintf(stderr, "[!] Invalid port: %d\n", rv);
+				return -EINVAL;
+			}
+			opt->rtp_out.port = rv;
 			break;
 
 		case 'f':
@@ -214,6 +270,18 @@ check_options(struct gapk_state *gs)
 		}
 	}
 
+	/* Input combinations */
+	if (gs->opts.fname_in && gs->opts.rtp_in.port) {
+		fprintf(stderr, "[!] You have to decide on either file or RTP input\n");
+		return -EINVAL;
+	}
+
+	/* Output combinations */
+	if (gs->opts.fname_out && gs->opts.rtp_out.port) {
+		fprintf(stderr, "[!] You have to decide on either file or RTP output\n");
+		return -EINVAL;
+	}
+
 	return 0;
 }
 
@@ -227,6 +295,16 @@ files_open(struct gapk_state *gs)
 			perror("fopen");
 			return -errno;
 		}
+	} else if (gs->opts.rtp_in.port) {
+		gs->in.rtp.fd = osmo_sock_init(AF_UNSPEC, SOCK_DGRAM,
+						IPPROTO_UDP,
+						gs->opts.rtp_in.hostname,
+						gs->opts.rtp_in.port,
+						OSMO_SOCK_F_BIND);
+		if (gs->in.rtp.fd < 0) {
+			fprintf(stderr, "[!] Error while opening input socket\n");
+			return gs->in.rtp.fd;
+		}
 	} else
 		gs->in.file.fh = stdin;
 
@@ -236,6 +314,16 @@ files_open(struct gapk_state *gs)
 			fprintf(stderr, "[!] Error while opening output file for writing\n");
 			perror("fopen");
 			return -errno;
+		}
+	} else if (gs->opts.rtp_out.port) {
+		gs->out.rtp.fd = osmo_sock_init(AF_UNSPEC, SOCK_DGRAM,
+						IPPROTO_UDP,
+						gs->opts.rtp_out.hostname,
+						gs->opts.rtp_out.port,
+						OSMO_SOCK_F_CONNECT);
+		if (gs->out.rtp.fd < 0) {
+			fprintf(stderr, "[!] Error while opening output socket\n");
+			return gs->out.rtp.fd;
 		}
 	} else
 		gs->out.file.fh = stdout;
@@ -248,8 +336,12 @@ files_close(struct gapk_state *gs)
 {
 	if (gs->in.file.fh && gs->in.file.fh != stdin)
 		fclose(gs->in.file.fh);
+	if (gs->in.rtp.fd >= 0)
+		close(gs->in.rtp.fd);
 	if (gs->out.file.fh && gs->out.file.fh != stdout)
 		fclose(gs->out.file.fh);
+	if (gs->out.rtp.fd >= 0)
+		close(gs->out.rtp.fd);
 }
 
 static int
@@ -260,7 +352,7 @@ handle_headers(struct gapk_state *gs)
 
 	/* Input file header (remove & check it) */
 	len = gs->opts.fmt_in->header_len;
-	if (len) {
+	if (len && gs->in.file.fh) {
 		uint8_t *buf;
 		
 		buf = malloc(len);
@@ -281,7 +373,7 @@ handle_headers(struct gapk_state *gs)
 
 	/* Output file header (write it) */
 	len = gs->opts.fmt_out->header_len;
-	if (len) {
+	if (len && gs->out.file.fh) {
 		rv = fwrite(gs->opts.fmt_out->header, len, 1, gs->out.file.fh);
 		if (rv != 1)
 			return -ENOSPC;
@@ -310,7 +402,10 @@ make_processing_chain(struct gapk_state *gs)
 	           (fmt_out->codec_type != fmt_in->codec_type);
 
 	/* File read */
-	pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
+	if (gs->in.file.fh)
+		pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
+	else
+		pq_queue_rtp_input(gs->pq, gs->in.rtp.fd, fmt_in->frame_len);
 
 	/* Decoding to PCM ? */
 	if (need_dec)
@@ -363,7 +458,10 @@ make_processing_chain(struct gapk_state *gs)
 	}
 
 	/* File write */
-	pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
+	if (gs->out.file.fh)
+		pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
+	else
+		pq_queue_rtp_output(gs->pq, gs->out.rtp.fd, fmt_out->frame_len);
 
 	return 0;
 }
@@ -391,6 +489,8 @@ int main(int argc, char *argv[])
 
 	/* Clear state */
 	memset(gs, 0x00, sizeof(struct gapk_state));
+	gs->in.rtp.fd = -1;
+	gs->out.rtp.fd = -1;
 
 	/* Parse / check options */
 	rv = parse_options(gs, argc, argv);
