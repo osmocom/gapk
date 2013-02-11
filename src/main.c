@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include <sys/signal.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -482,9 +483,26 @@ run(struct gapk_state *gs)
 	return frames > 0 ? 0 : rv;
 }
 
+
+static struct gapk_state _gs, *gs = &_gs;
+
+static void signal_handler(int signal)
+{
+	switch (signal) {
+	case SIGINT:
+		fprintf(stderr, "catching sigint, closing files\n");
+		files_close(gs);
+		pq_destroy(gs->pq);
+		exit(0);
+		break;
+	default:
+		break;
+	}
+}
+
+
 int main(int argc, char *argv[])
 {
-	struct gapk_state _gs, *gs = &_gs;
 	int rv;
 
 	/* Clear state */
@@ -527,6 +545,8 @@ int main(int argc, char *argv[])
 	rv = make_processing_chain(gs);
 	if (rv)
 		goto error;
+
+	signal(SIGINT, &signal_handler);
 
 	/* Run the processing queue */
 	rv = run(gs);
