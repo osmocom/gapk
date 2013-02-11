@@ -45,8 +45,23 @@ struct gapk_state
 
 	struct pq *pq;
 
-	FILE *fh_in;
-	FILE *fh_out;
+	union {
+		struct {
+			FILE *fh;
+		} file;
+		struct {
+			int fd;
+		} rtp;
+	} in;
+
+	union {
+		struct {
+			FILE *fh;
+		} file;
+		struct {
+			int fd;
+		} rtp;
+	} out;
 };
 
 
@@ -206,24 +221,24 @@ static int
 files_open(struct gapk_state *gs)
 {
 	if (gs->opts.fname_in) {
-		gs->fh_in = fopen(gs->opts.fname_in, "rb");
-		if (!gs->fh_in) {
+		gs->in.file.fh = fopen(gs->opts.fname_in, "rb");
+		if (!gs->in.file.fh) {
 			fprintf(stderr, "[!] Error while opening input file for reading\n");
 			perror("fopen");
 			return -errno;
 		}
 	} else
-		gs->fh_in = stdin;
+		gs->in.file.fh = stdin;
 
 	if (gs->opts.fname_out) {
-		gs->fh_out = fopen(gs->opts.fname_out, "wb");
-		if (!gs->fh_out) {
+		gs->out.file.fh = fopen(gs->opts.fname_out, "wb");
+		if (!gs->out.file.fh) {
 			fprintf(stderr, "[!] Error while opening output file for writing\n");
 			perror("fopen");
 			return -errno;
 		}
 	} else
-		gs->fh_out = stdout;
+		gs->out.file.fh = stdout;
 
 	return 0;
 }
@@ -231,10 +246,10 @@ files_open(struct gapk_state *gs)
 static void
 files_close(struct gapk_state *gs)
 {
-	if (gs->fh_in && gs->fh_in != stdin)
-		fclose(gs->fh_in);
-	if (gs->fh_out && gs->fh_out != stdout)
-		fclose(gs->fh_out);
+	if (gs->in.file.fh && gs->in.file.fh != stdin)
+		fclose(gs->in.file.fh);
+	if (gs->out.file.fh && gs->out.file.fh != stdout)
+		fclose(gs->out.file.fh);
 }
 
 static int
@@ -252,7 +267,7 @@ handle_headers(struct gapk_state *gs)
 		if (!buf)
 			return -ENOMEM;
 
-		rv = fread(buf, len, 1, gs->fh_in);
+		rv = fread(buf, len, 1, gs->in.file.fh);
 		if ((rv != 1) ||
 		    memcmp(buf, gs->opts.fmt_in->header, len))
 		{
@@ -267,7 +282,7 @@ handle_headers(struct gapk_state *gs)
 	/* Output file header (write it) */
 	len = gs->opts.fmt_out->header_len;
 	if (len) {
-		rv = fwrite(gs->opts.fmt_out->header, len, 1, gs->fh_out);
+		rv = fwrite(gs->opts.fmt_out->header, len, 1, gs->out.file.fh);
 		if (rv != 1)
 			return -ENOSPC;
 	}
@@ -295,7 +310,7 @@ make_processing_chain(struct gapk_state *gs)
 	           (fmt_out->codec_type != fmt_in->codec_type);
 
 	/* File read */
-	pq_queue_file_input(gs->pq, gs->fh_in, fmt_in->frame_len);
+	pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
 
 	/* Decoding to PCM ? */
 	if (need_dec)
@@ -348,7 +363,7 @@ make_processing_chain(struct gapk_state *gs)
 	}
 
 	/* File write */
-	pq_queue_file_output(gs->pq, gs->fh_out, fmt_out->frame_len);
+	pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
 
 	return 0;
 }
