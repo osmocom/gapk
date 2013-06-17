@@ -1,4 +1,4 @@
-INCLUDES = $(all_includes) -I$(top_srcdir)/include -I$(top_builddir)
+AM_CPPFLAGS = $(all_includes) -I$(top_srcdir)/include -I$(top_builddir)
 AM_CFLAGS=-Wall $(LIBOSMOCODEC_CFLAGS) $(LIBOSMOCORE_CFLAGS) \
 	  ${OPENCORE_AMRNB_CFLAGS}
 AM_LDFLAGS=$(LIBOSMOCODEC_LIBS) $(LIBOSMOCORE_LIBS) \
