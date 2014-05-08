@@ -18,6 +18,7 @@
  */
 
 #include <gapk/codecs.h>
+#include <gapk/benchmark.h>
 
 #include "config.h"
 
@@ -43,14 +44,22 @@ static int
 codec_hr_encode(void *_state, uint8_t *cod, const uint8_t *pcm)
 {
 	struct gsmhr *state = _state;
-	return gsmhr_encode(state, (int16_t *)cod, (const int16_t *)pcm);
+	int rc;
+	BENCHMARK_START;
+	rc = gsmhr_encode(state, (int16_t *)cod, (const int16_t *)pcm);
+	BENCHMARK_STOP(CODEC_HR, 1);
+	return rc;
 }
 
 static int
 codec_hr_decode(void *_state, uint8_t *pcm, const uint8_t *cod)
 {
 	struct gsmhr *state = _state;
-	return gsmhr_decode(state, (int16_t *)pcm, (const int16_t *)cod);
+	int rc;
+	BENCHMARK_START;
+	rc = gsmhr_decode(state, (int16_t *)pcm, (const int16_t *)cod);
+	BENCHMARK_STOP(CODEC_HR, 0);
+	return rc;
 }
 
 #endif /* HAVE_LIBGSMHR */

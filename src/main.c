@@ -34,6 +34,7 @@
 #include <gapk/codecs.h>
 #include <gapk/formats.h>
 #include <gapk/procqueue.h>
+#include <gapk/benchmark.h>
 
 
 struct gapk_options
@@ -557,6 +558,8 @@ error:
 
 	/* Release processing queue */
 	pq_destroy(gs->pq);
+
+	benchmark_dump();
 	
 	return rv;
 }

@@ -18,6 +18,7 @@
  */
 
 #include <gapk/codecs.h>
+#include <gapk/benchmark.h>
 
 #include "config.h"
 
@@ -68,6 +69,7 @@ codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
 	struct codec_efr_state *st = state;
 	int rv;
 
+	BENCHMARK_START;
 	rv = Encoder_Interface_Encode(
 		st->encoder,
 		MR122,
@@ -75,6 +77,7 @@ codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
 		(unsigned char*) cod,
 		1
 	);
+	BENCHMARK_STOP(CODEC_EFR, 1);
 
 	return rv != 32;
 }
@@ -84,12 +87,14 @@ codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod)
 {
 	struct codec_efr_state *st = state;
 
+	BENCHMARK_START;
 	Decoder_Interface_Decode(
 		st->decoder,
 		(const unsigned char*) cod,
 		(short *) pcm,
 		0
 	);
+	BENCHMARK_STOP(CODEC_EFR, 0);
 
 	return 0;
 }
