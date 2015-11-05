@@ -1,5 +1,6 @@
 AC_PREREQ([2.65])
-AC_INIT([gapk], [0.1], [main@lists.airprobe.org])
+AC_INIT([gapk],
+	m4_esyscmd([./git-version-gen .tarball-version]), [main@lists.airprobe.org])
 
 AM_INIT_AUTOMAKE([dist-bzip2])
 
