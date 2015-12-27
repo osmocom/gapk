@@ -45,6 +45,7 @@ AC_SUBST(SYMBOL_VISIBILITY)
 
 # Checks for programs.
 AC_PROG_CC
+AM_PROG_AS
 AC_PROG_LIBTOOL
 
 # Checks for libraries.
