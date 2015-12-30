@@ -3,6 +3,7 @@ AC_INIT([gapk],
 	m4_esyscmd([./git-version-gen .tarball-version]), [main@lists.airprobe.org])
 
 AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
+LT_INIT([disable-static])
 
 # kernel style compile messages
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -46,7 +47,6 @@ AC_SUBST(SYMBOL_VISIBILITY)
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_LIBTOOL
 
 # Checks for libraries.
  # libosmocore (codec module)
