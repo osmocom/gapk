@@ -1,0 +1,30 @@
+From 5d753b887411694bebc876bdd9383e9670c9cd72 Mon Sep 17 00:00:00 2001
+From: Sylvain Munaut <tnt@246tNt.com>
+Date: Wed, 30 Dec 2015 09:47:20 +0100
+Subject: [PATCH 2/6] Use 'int' for 'longword' so they are 32 bits even on x64
+
+Signed-off-by: Sylvain Munaut <tnt@246tNt.com>
+---
+ typedefs.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git refsrc/typedefs.h refsrc/typedefs.h
+index d9134d6..15200cc 100644
+--- refsrc/typedefs.h
++++ refsrc/typedefs.h
+@@ -13,3 +13,3 @@
+-#define LW_SIGN (long)0x80000000       /* sign bit */
+-#define LW_MIN (long)0x80000000
+-#define LW_MAX (long)0x7fffffff
++#define LW_SIGN (int)0x80000000       /* sign bit */
++#define LW_MIN (int)0x80000000
++#define LW_MAX (int)0x7fffffff
+@@ -24 +24 @@
+-typedef long int Longword;             /* 32 bit "accumulator" (L_*) */
++typedef int Longword;             /* 32 bit "accumulator" (L_*) */
+@@ -27 +27 @@
+-typedef long int LongwordRom;          /* 32 bit ROM data    (L_r*)  */
++typedef int LongwordRom;          /* 32 bit ROM data    (L_r*)  */
+-- 
+2.4.10
+

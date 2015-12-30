@@ -10,10 +10,9 @@ REFSRC_SRC=refsrc/dtx.c refsrc/globdefs.c refsrc/host.c refsrc/mathhalf.c refsrc
 
 ${REFSRC_PATH}/.downloaded:
 	$(srcdir)/fetch_sources.py "${REFSRC_PATH}"
-	for f in "${REFSRC_PATH}"/*.{c,h}; do	\
-		sed -i -e"s/round/round_l2s/" "$$f";	\
+	for p in "$(srcdir)/patches"/*.patch; do	\
+		cat "$$p" | patch -p0 ;			\
 	done
-	sed -i -e"s/long int/int/" -e"s/long/int/" "${REFSRC_PATH}/typedefs.h"
 	touch $@
 
 $(REFSRC_SRC) libgsmhr.c: ${REFSRC_PATH}/.downloaded

@@ -1,0 +1,520 @@
+From ecc4b7c1aa8b75c82ef718ad6d70f92e8a18f9f3 Mon Sep 17 00:00:00 2001
+From: Sylvain Munaut <tnt@246tNt.com>
+Date: Wed, 30 Dec 2015 09:45:52 +0100
+Subject: [PATCH 1/6] Fix 'round' function name conflict
+
+Signed-off-by: Sylvain Munaut <tnt@246tNt.com>
+---
+ dtx.c      |   2 +-
+ err_conc.c |   2 +-
+ mathhalf.c |  56 ++++++++++++++---------------
+ mathhalf.h |   2 +-
+ sp_dec.c   | 116 ++++++++++++++++++++++++++++++-------------------------------
+ sp_frm.c   |  40 ++++++++++-----------
+ sp_sfrm.c  | 104 +++++++++++++++++++++++++++---------------------------
+ 7 files changed, 161 insertions(+), 161 deletions(-)
+
+diff --git refsrc/dtx.c refsrc/dtx.c
+index e8415e2..4ec8edb 100644
+--- refsrc/dtx.c
++++ refsrc/dtx.c
+@@ -1339 +1339 @@
+-  return (round(L_add(L_New, L_Old)));
++  return (round_l2s(L_add(L_New, L_Old)));
+diff --git refsrc/err_conc.c refsrc/err_conc.c
+index 73e8e78..2a2b98e 100644
+--- refsrc/err_conc.c
++++ refsrc/err_conc.c
+@@ -272 +272 @@
+-        swLag = sub(pswLastGood[3 * i + 9], 0x8);       /* biased around 0 */
++        swLag = sub(pswLastGood[3 * i + 9], 0x8);       /* biased around_l2s 0 */
+diff --git refsrc/mathhalf.c refsrc/mathhalf.c
+index 3f44443..40a2152 100644
+--- refsrc/mathhalf.c
++++ refsrc/mathhalf.c
+@@ -39 +39 @@
+- *       round()
++ *       round_l2s()
+@@ -781,2 +781,2 @@
+- *     Shift and round.  Perform a shift right. After shifting, use
+- *     the last bit shifted out of the LSB to round the result up
++ *     Shift and round_l2s.  Perform a shift right. After shifting, use
++ *     the last bit shifted out of the LSB to round_l2s the result up
+@@ -809,2 +809,2 @@
+- *     Shift and round.  Perform a shift right. After shifting, use
+- *     the last bit shifted out of the LSB to round the result up
++ *     Shift and round_l2s.  Perform a shift right. After shifting, use
++ *     the last bit shifted out of the LSB to round_l2s the result up
+@@ -1133 +1133 @@
+- *     Multiply accumulate and round.  Fractionally multiply two 16
++ *     Multiply accumulate and round_l2s.  Fractionally multiply two 16
+@@ -1135 +1135 @@
+- *     the 32 bit input with saturation.  Finally round the result
++ *     the 32 bit input with saturation.  Finally round_l2s the result
+@@ -1172 +1172 @@
+- *     is saturated.  The 32 bit rounded number is then shifted
++ *     is saturated.  The 32 bit round_l2sed number is then shifted
+@@ -1187 +1187 @@
+-  return (round(L_add(L_var3, L_mult(var1, var2))));
++  return (round_l2s(L_add(L_var3, L_mult(var1, var2))));
+@@ -1196 +1196 @@
+- *     Multiply subtract and round.  Fractionally multiply two 16
++ *     Multiply subtract and round_l2s.  Fractionally multiply two 16
+@@ -1198 +1198 @@
+- *     the 32 bit input with saturation.  Finally round the result
++ *     the 32 bit input with saturation.  Finally round_l2s the result
+@@ -1235 +1235 @@
+- *     is saturated.  The 32 bit rounded number is then shifted
++ *     is saturated.  The 32 bit round_l2sed number is then shifted
+@@ -1250 +1250 @@
+-  return (round(L_sub(L_var3, L_mult(var1, var2))));
++  return (round_l2s(L_sub(L_var3, L_mult(var1, var2))));
+@@ -1309 +1309 @@
+- *     Perform a fractional multipy and round of the two 16 bit
++ *     Perform a fractional multipy and round_l2s of the two 16 bit
+@@ -1335 +1335 @@
+- *     operation and the round operation.
++ *     operation and the round_l2s operation.
+@@ -1340 +1340 @@
+- *     so, the result is saturated.  The 32 bit rounded number is
++ *     so, the result is saturated.  The 32 bit round_l2sed number is
+@@ -1344 +1344 @@
+- *   KEYWORDS: multiply and round, round, mult_r, mpyr
++ *   KEYWORDS: multiply and round_l2s, round, mult_r, mpyr
+@@ -1353 +1353 @@
+-  swOut = round(L_mult(var1, var2));
++  swOut = round_l2s(L_mult(var1, var2));
+@@ -1560 +1560 @@
+- *   FUNCTION NAME: round
++ *   FUNCTION NAME: round_l2s
+@@ -1585 +1585 @@
+- *     Perform a two's complement round on the input Longword with
++ *     Perform a two's complement round_l2s on the input Longword with
+@@ -1590 +1590 @@
+- *     saturated.  The 32 bit rounded number is then shifted down
++ *     saturated.  The 32 bit round_l2sed number is then shifted down
+@@ -1594 +1594 @@
+- *   KEYWORDS: round
++ *   KEYWORDS: round_l2s
+@@ -1598 +1598 @@
+-Shortword round(Longword L_var1)
++Shortword round_l2s(Longword L_var1)
+@@ -1602 +1602 @@
+-  L_Prod = L_add(L_var1, 0x00008000L); /* round MSP */
++  L_Prod = L_add(L_var1, 0x00008000L); /* round_l2s MSP */
+@@ -1612,2 +1612,2 @@
+- *     Shift and round.  Perform a shift right. After shifting, use
+- *     the last bit shifted out of the LSB to round the result up
++ *     Shift and round_l2s.  Perform a shift right. After shifting, use
++ *     the last bit shifted out of the LSB to round_l2s the result up
+@@ -1639,2 +1639,2 @@
+- *     Shift and round.  Perform a shift right. After shifting, use
+- *     the last bit shifted out of the LSB to round the result up
++ *     Shift and round_l2s.  Perform a shift right. After shifting, use
++ *     the last bit shifted out of the LSB to round_l2s the result up
+diff --git refsrc/mathhalf.h refsrc/mathhalf.h
+index 975570d..247cfde 100644
+--- refsrc/mathhalf.h
++++ refsrc/mathhalf.h
+@@ -75 +75 @@
+-Shortword round(Longword L_var1);      /* 1 ops */
++Shortword round_l2s(Longword L_var1);      /* 1 ops */
+diff --git refsrc/sp_dec.c refsrc/sp_dec.c
+index 56b5d71..07398a7 100644
+--- refsrc/sp_dec.c
++++ refsrc/sp_dec.c
+@@ -323,2 +323,2 @@
+-  swTemp1 = round(pL_R[1]);
+-  swTemp2 = round(pL_R[0]);
++  swTemp1 = round_l2s(pL_R[1]);
++  swTemp2 = round_l2s(pL_R[0]);
+@@ -421,2 +421,2 @@
+-    swTemp1 = round(L_shl(pL_vjOld[0], swTemp));        /* normalize num.  */
+-    swTemp2 = round(L_shl(pL_pjOld[0], swTemp));        /* normalize den.  */
++    swTemp1 = round_l2s(L_shl(pL_vjOld[0], swTemp));        /* normalize num.  */
++    swTemp2 = round_l2s(L_shl(pL_pjOld[0], swTemp));        /* normalize den.  */
+@@ -639 +639 @@
+-      pswTmp[j] = round(L_temp);
++      pswTmp[j] = round_l2s(L_temp);
+@@ -872 +872 @@
+-    snsOutEnergy.man = round(L_OutEnergy);
++    snsOutEnergy.man = round_l2s(L_OutEnergy);
+@@ -1129 +1129 @@
+-        /* first tap with rounding offset */
++        /* first tap with round_l2sing offset */
+@@ -1643 +1643 @@
+- *     This subroutine calculates IP, the single-resolution lag rounded
++ *     This subroutine calculates IP, the single-resolution lag round_l2sed
+@@ -1656 +1656 @@
+- *                     fractional lag rounded down to nearest integer, IP
++ *                     fractional lag round_l2sed down to nearest integer, IP
+@@ -1668,2 +1668,2 @@
+- *     jj = integer_round[((lag/OS_FCTR)-ip)*(OS_FCTR)]
+- *          if the rounding caused an 'overflow'
++ *     jj = integer_round_l2s[((lag/OS_FCTR)-ip)*(OS_FCTR)]
++ *          if the round_l2sing caused an 'overflow'
+@@ -1724 +1724 @@
+-  swTemp = round(L_Temp);              /* round and pick-off jj */
++  swTemp = round_l2s(L_Temp);              /* round and pick-off jj */
+@@ -1980 +1980 @@
+-    /* get lag biased around 0 */
++    /* get lag biased around_l2s 0 */
+@@ -2193 +2193 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -2222 +2222 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -2262 +2262 @@
+-  /* 0th coef, with rounding */
++  /* 0th coef, with round_l2sing */
+@@ -2289 +2289 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -2359 +2359 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -2388 +2388 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -2428 +2428 @@
+-  /* 0th coef, with rounding */
++  /* 0th coef, with round_l2sing */
+@@ -2455 +2455 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -2520 +2520 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -2540 +2540 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -2584 +2584 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -2632 +2632 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -2659 +2659 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -2697 +2697 @@
+-  /* 0th coef, with rounding */
++  /* 0th coef, with round_l2sing */
+@@ -2723 +2723 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -2785 +2785 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -2805 +2805 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -2851 +2851 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -2906 +2906 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -2928 +2928 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -2974 +2974 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -3029 +3029 @@
+- *                     rounding constant
++ *                     round_l2sing constant
+@@ -3049 +3049 @@
+- *        out[i] = rounded(state[i]*coef[0])
++ *        out[i] = round_l2sed(state[i]*coef[0])
+@@ -3089 +3089 @@
+-    /* 0th coef, with rounding */
++    /* 0th coef, with round_l2sing */
+@@ -3193 +3193 @@
+- *     The ex_p(n-L) sample is interpolated from the surrounding samples,
++ *     The ex_p(n-L) sample is interpolated from the surround_l2sing samples,
+@@ -3314 +3314 @@
+-      snsOrigEnergy.man = round(L_OrigEnergy);
++      snsOrigEnergy.man = round_l2s(L_OrigEnergy);
+@@ -3336 +3336 @@
+-      snsOrigEnergy.man = round(L_shl(L_OrigEnergy, snsOrigEnergy.sh));
++      snsOrigEnergy.man = round_l2s(L_shl(L_OrigEnergy, snsOrigEnergy.sh));
+@@ -3392 +3392 @@
+-      pswExciteOut[i] = round(L_1);
++      pswExciteOut[i] = round_l2s(L_1);
+@@ -3622 +3622 @@
+-    pswA[i] = round(pL_tmp[i]);
++    pswA[i] = round_l2s(pL_tmp[i]);
+@@ -3869 +3869 @@
+-    /* Normalize partial product, round */
++    /* Normalize partial product, round_l2s */
+@@ -3873 +3873 @@
+-    swPartialProduct = round(L_shl(L_Product, swShift));
++    swPartialProduct = round_l2s(L_shl(L_Product, swShift));
+@@ -3905 +3905 @@
+-  swSqrtResEng = round(L_shl(L_SqrtResEng, swShift));
++  swSqrtResEng = round_l2s(L_shl(L_SqrtResEng, swShift));
+@@ -4036 +4036 @@
+-  swTemp2 = divide_s(swTemp, round(L_Temp));
++  swTemp2 = divide_s(swTemp, round_l2s(L_Temp));
+@@ -4153 +4153 @@
+-  swTemp2 = divide_s(swTemp, round(L_Temp));
++  swTemp2 = divide_s(swTemp, round_l2s(L_Temp));
+@@ -4197 +4197 @@
+- *              gain's shift was > 0 or the rounded vector gain otherwise.
++ *              gain's shift was > 0 or the round_l2sed vector gain otherwise.
+@@ -4203 +4203 @@
+- *         partially scale vector element THEN shift and round save
++ *         partially scale vector element THEN shift and round_l2s save
+@@ -4206 +4206 @@
+- *         scale vector element and round save
++ *         scale vector element and round_l2s save
+@@ -4256 +4256 @@
+-    swGainUs = round(L_GainUs);
++    swGainUs = round_l2s(L_GainUs);
+@@ -4284 +4284 @@
+-    /* the rounded actual vector gain */
++    /* the round_l2sed actual vector gain */
+@@ -4286 +4286 @@
+-    swGain = round(L_GainUs);
++    swGain = round_l2s(L_GainUs);
+@@ -4288 +4288 @@
+-    /* now scale the vector (with rounding) */
++    /* now scale the vector (with round_l2sing) */
+@@ -4416 +4416 @@
+-  snsOrigEnergy.man = round(L_OrigEnergy);
++  snsOrigEnergy.man = round_l2s(L_OrigEnergy);
+@@ -5255 +5255 @@
+- *      The algorithm is based around a six term Taylor expansion :
++ *      The algorithm is based around_l2s a six term Taylor expansion :
+@@ -5347 +5347 @@
+-  swTemp4 = round(L_Temp0);            /* swTemp4 = (x/2)^4 */
++  swTemp4 = round_l2s(L_Temp0);            /* swTemp4 = (x/2)^4 */
+@@ -5353 +5353 @@
+-  swTemp2 = round(L_Temp0);            /* swTemp2 = (x/2)^5 */
++  swTemp2 = round_l2s(L_Temp0);            /* swTemp2 = (x/2)^5 */
+diff --git refsrc/sp_frm.c refsrc/sp_frm.c
+index 40b83e0..c4854ad 100644
+--- refsrc/sp_frm.c
++++ refsrc/sp_frm.c
+@@ -110 +110 @@
+-                                        * rounding  */
++                                        * round_l2sing  */
+@@ -783,2 +783,2 @@
+-    pswPBar[i] = round(pL_PBar[i]);
+-    pswVBar[i] = round(pL_VBar[i]);
++    pswPBar[i] = round_l2s(pL_PBar[i]);
++    pswVBar[i] = round_l2s(pL_VBar[i]);
+@@ -788 +788 @@
+-    pswVBar[i] = round(pL_VBar[i]);
++    pswVBar[i] = round_l2s(pL_VBar[i]);
+@@ -1686 +1686 @@
+- *                     rounded into the Shortword output correlation arrays
++ *                     round_l2sed into the Shortword output correlation arrays
+@@ -2263 +2263 @@
+- *     the search for a peak is done on the surrounding
++ *     the search for a peak is done on the surround_l2sing
+@@ -2590,2 +2590,2 @@
+-    swNum = round(L_Num);
+-    swDen = round(L_sum);
++    swNum = round_l2s(L_Num);
++    swDen = round_l2s(L_sum);
+@@ -3287 +3287 @@
+-  return (round(L_Input));
++  return (round_l2s(L_Input));
+@@ -4011 +4011 @@
+-    pswIn[loop_cnt] = round(L_shl(L_sumA, swFinalUpShift));
++    pswIn[loop_cnt] = round_l2s(L_shl(L_sumA, swFinalUpShift));
+@@ -4040 +4040 @@
+-    pswIn[loop_cnt + 1] = round(L_shl(L_sumA, swFinalUpShift));
++    pswIn[loop_cnt + 1] = round_l2s(L_shl(L_sumA, swFinalUpShift));
+@@ -4230 +4230 @@
+-    pswPBar[i] = round(pL_PBarFull[i]);
++    pswPBar[i] = round_l2s(pL_PBarFull[i]);
+@@ -4240 +4240 @@
+-  pswVBar[bound] = round(pL_PBarFull[bound + 1]);
++  pswVBar[bound] = round_l2s(pL_PBarFull[bound + 1]);
+@@ -4565 +4565 @@
+-  psnsWSfrmEng[0].man = round(L_WSfrmEng);
++  psnsWSfrmEng[0].man = round_l2s(L_WSfrmEng);
+@@ -4570 +4570 @@
+-  psnsWSfrmEng[1].man = round(L_WSfrmEng);
++  psnsWSfrmEng[1].man = round_l2s(L_WSfrmEng);
+@@ -4575 +4575 @@
+-  psnsWSfrmEng[2].man = round(L_WSfrmEng);
++  psnsWSfrmEng[2].man = round_l2s(L_WSfrmEng);
+@@ -4580 +4580 @@
+-  psnsWSfrmEng[3].man = round(L_WSfrmEng);
++  psnsWSfrmEng[3].man = round_l2s(L_WSfrmEng);
+@@ -5386 +5386 @@
+-  /* lags around which to search for peak.  Note that these lags are   */
++  /* lags around_l2s which to search for peak.  Note that these lags are   */
+@@ -5491 +5491 @@
+-  sw2 = round(L_shr(L_1, 1));
++  sw2 = round_l2s(L_shr(L_1, 1));
+@@ -5668 +5668 @@
+-  swUnqntzdR0 = round(L_UnqntzdR0);
++  swUnqntzdR0 = round_l2s(L_UnqntzdR0);
+diff --git refsrc/sp_sfrm.c refsrc/sp_sfrm.c
+index 5953233..d4f0cd6 100644
+--- refsrc/sp_sfrm.c
++++ refsrc/sp_sfrm.c
+@@ -206 +206 @@
+-  swLTPEnergy = round(L_Energy);
++  swLTPEnergy = round_l2s(L_Energy);
+@@ -268,2 +268,2 @@
+-    pswCCBuf[i] = round(L_shl(pL_CCBuf[i], swCCShiftCnt));
+-    pswCGBuf[i] = round(L_shl(pL_CGBuf[i], swCGShiftCnt));
++    pswCCBuf[i] = round_l2s(L_shl(pL_CCBuf[i], swCCShiftCnt));
++    pswCGBuf[i] = round_l2s(L_shl(pL_CGBuf[i], swCGShiftCnt));
+@@ -365 +365 @@
+-    swTemp = divide_s(round(L_Temp1), swNorm_energy);
++    swTemp = divide_s(round_l2s(L_Temp1), swNorm_energy);
+@@ -579 +579 @@
+-    ErrorTerm[0].man = round(L_Temp);
++    ErrorTerm[0].man = round_l2s(L_Temp);
+@@ -585 +585 @@
+-    ErrorTerm[1].man = round(L_Temp);
++    ErrorTerm[1].man = round_l2s(L_Temp);
+@@ -592 +592 @@
+-    ErrorTerm[2].man = round(L_Temp);
++    ErrorTerm[2].man = round_l2s(L_Temp);
+@@ -598 +598 @@
+-    ErrorTerm[3].man = round(L_Temp);
++    ErrorTerm[3].man = round_l2s(L_Temp);
+@@ -604 +604 @@
+-    ErrorTerm[4].man = round(L_Temp);
++    ErrorTerm[4].man = round_l2s(L_Temp);
+@@ -610 +610 @@
+-    ErrorTerm[5].man = round(L_Temp);
++    ErrorTerm[5].man = round_l2s(L_Temp);
+@@ -622 +622 @@
+-    ErrorTerm[0].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[0].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -632 +632 @@
+-    ErrorTerm[1].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[1].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -643 +643 @@
+-    ErrorTerm[2].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[2].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -647 +647 @@
+-    ErrorTerm[2].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[2].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -660 +660 @@
+-    ErrorTerm[3].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[3].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -664 +664 @@
+-    ErrorTerm[3].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[3].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -678 +678 @@
+-    ErrorTerm[4].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[4].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -682 +682 @@
+-    ErrorTerm[4].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[4].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -703 +703 @@
+-    ErrorTerm[0].man = round(L_Temp);
++    ErrorTerm[0].man = round_l2s(L_Temp);
+@@ -710 +710 @@
+-    ErrorTerm[1].man = round(L_Temp);
++    ErrorTerm[1].man = round_l2s(L_Temp);
+@@ -717 +717 @@
+-    ErrorTerm[2].man = round(L_Temp);
++    ErrorTerm[2].man = round_l2s(L_Temp);
+@@ -723 +723 @@
+-    ErrorTerm[3].man = round(L_Temp);
++    ErrorTerm[3].man = round_l2s(L_Temp);
+@@ -729 +729 @@
+-    ErrorTerm[4].man = round(L_Temp);
++    ErrorTerm[4].man = round_l2s(L_Temp);
+@@ -735 +735 @@
+-    ErrorTerm[5].man = round(L_Temp);
++    ErrorTerm[5].man = round_l2s(L_Temp);
+@@ -748 +748 @@
+-    ErrorTerm[0].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[0].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -758 +758 @@
+-    ErrorTerm[1].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[1].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -769 +769 @@
+-    ErrorTerm[2].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[2].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -773 +773 @@
+-    ErrorTerm[2].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[2].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -786 +786 @@
+-    ErrorTerm[3].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[3].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -790 +790 @@
+-    ErrorTerm[3].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[3].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -803 +803 @@
+-    ErrorTerm[4].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[4].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -807 +807 @@
+-    ErrorTerm[4].man = round(L_shl(L_Temp, swShift));
++    ErrorTerm[4].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -827 +827 @@
+-    ErrorTerm[i].man = round(L_Temp);
++    ErrorTerm[i].man = round_l2s(L_Temp);
+@@ -925 +925 @@
+-  terms[0].man = round(L_shl(L_Temp, swShift));
++  terms[0].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -929 +929 @@
+-  terms[0].man = round(L_shl(L_Temp, swShift));
++  terms[0].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -941 +941 @@
+-  terms[1].man = round(L_shl(L_Temp, swShift));
++  terms[1].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -945 +945 @@
+-  terms[1].man = round(L_shl(L_Temp, swShift));
++  terms[1].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -957 +957 @@
+-  terms[2].man = round(L_shl(L_Temp, swShift));
++  terms[2].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -961 +961 @@
+-  terms[2].man = round(L_shl(L_Temp, swShift));
++  terms[2].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -973 +973 @@
+-  terms[3].man = round(L_shl(L_Temp, swShift));
++  terms[3].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -977 +977 @@
+-  terms[3].man = round(L_shl(L_Temp, swShift));
++  terms[3].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -990 +990 @@
+-  terms[4].man = round(L_shl(L_Temp, swShift));
++  terms[4].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -994 +994 @@
+-  terms[4].man = round(L_shl(L_Temp, swShift));
++  terms[4].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -1011 +1011 @@
+-    terms[i].man = round(L_Temp);
++    terms[i].man = round_l2s(L_Temp);
+@@ -1083 +1083 @@
+-  swGainTweak = round(L_shl(L_Temp, swShift));
++  swGainTweak = round_l2s(L_shl(L_Temp, swShift));
+@@ -1113 +1113 @@
+-  psErrorTerm[0].man = round(L_shl(L_Temp, swShift));
++  psErrorTerm[0].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -1119 +1119 @@
+-  psErrorTerm[1].man = round(L_shl(L_Temp, swShift));
++  psErrorTerm[1].man = round_l2s(L_shl(L_Temp, swShift));
+@@ -1221 +1221 @@
+-      /* get input with rounding */
++      /* get input with round_l2sing */
+@@ -1238 +1238 @@
+-      /* get input with rounding */
++      /* get input with round_l2sing */
+@@ -1504 +1504 @@
+-    swPnEnergy = round(L_PnEnergy);
++    swPnEnergy = round_l2s(L_PnEnergy);
+@@ -2233 +2233 @@
+-      ppswD[siI][siJ] = round(L_D);
++      ppswD[siI][siJ] = round_l2s(L_D);
+@@ -2244 +2244 @@
+-    pswCGUpdates[siI * (siEBits + 1)] = round(pL_R[siI]);
++    pswCGUpdates[siI * (siEBits + 1)] = round_l2s(pL_R[siI]);
+-- 
+2.4.10
+
