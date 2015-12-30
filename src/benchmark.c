@@ -37,7 +37,8 @@ void benchmark_dump(void)
 			for (j = 0; j < bc->enc_used; j++)
 				total += bc->enc[j];
 
-			printf("Codec %u (ENC): %llu cycles for %u frames => "
+			fprintf(stderr,
+			        "Codec %u (ENC): %llu cycles for %u frames => "
 				"%llu cycles/frame\n", i, total, bc->enc_used,
 				total / bc->enc_used);
 		}
@@ -47,7 +48,8 @@ void benchmark_dump(void)
 			for (j = 0; j < bc->dec_used; j++)
 				total += bc->dec[j];
 
-			printf("Codec %u (DEC): %llu cycles for %u frames => "
+			fprintf(stderr,
+				"Codec %u (DEC): %llu cycles for %u frames => "
 				"%llu cycles/frame\n", i, total, bc->dec_used,
 				total / bc->dec_used);
 		}
