@@ -24,7 +24,7 @@ def get_subfile_data(data, filename):
 
 
 def process_file(z, e):
-	fh = open(e.filename.lower(), 'w')
+	fh = open(os.path.basename(e.filename.lower()), 'w')
 	d = z.read(e).replace('\r','')
 	fh.write(d)
 	fh.close()
