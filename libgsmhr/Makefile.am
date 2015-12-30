@@ -19,6 +19,7 @@ $(REFSRC_SRC) libgsmhr.c: ${REFSRC_PATH}/.downloaded
 
 lib_LTLIBRARIES = libgsmhr.la
 libgsmhr_la_SOURCES = $(REFSRC_SRC) libgsmhr.c
+libgsmhr_la_LIBADD = -ldl
 
 clean-local:
 	-rm -rf ${REFSRC_PATH}/*.{c,h} ${REFSRC_PATH}/.downloaded

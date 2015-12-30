@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dlfcn.h>
 
 #include <gsmhr/gsmhr.h>
 
@@ -35,18 +36,42 @@
 
 struct gsmhr {
 	int dec_reset_flg;
+
+	void *bss_base;
+	void *bss_save;
+	unsigned bss_len;
 };
 
 EXPORT struct gsmhr *
 gsmhr_init(void)
 {
 	struct gsmhr *state;
+	void *lib;
+
+	lib = dlopen("libgsmhr.so.0", RTLD_NOW | RTLD_NOLOAD);
+	if (!lib)
+		return NULL;
 
 	state = calloc(1, sizeof(struct gsmhr));
 	if (!state)
 		return NULL;
 
 	state->dec_reset_flg = 1;
+
+	state->bss_base = dlsym(lib, "__bss_start");
+	state->bss_len  = dlsym(lib, "_end") - state->bss_base;
+	state->bss_save = malloc(state->bss_len);
+
+	if (!state->bss_save)
+	{
+		free(state);
+		return NULL;
+	}
+
+	resetDec();
+	resetEnc();
+
+	memcpy(state->bss_save, state->bss_base, state->bss_len);
 
 	return state;
 }
@@ -63,6 +88,8 @@ gsmhr_encode(struct gsmhr *state, int16_t *hr_params, const int16_t *pcm)
 	int enc_reset_flg;
 	Shortword pcm_b[F_LEN];
 
+	memcpy(state->bss_base, state->bss_save, state->bss_len);
+
 	memcpy(pcm_b, pcm, F_LEN*sizeof(int16_t));
 
 	enc_reset_flg = encoderHomingFrameTest(pcm_b);
@@ -71,6 +98,8 @@ gsmhr_encode(struct gsmhr *state, int16_t *hr_params, const int16_t *pcm)
 
 	if (enc_reset_flg)
 		resetEnc();
+
+	memcpy(state->bss_save, state->bss_base, state->bss_len);
 
 	return 0;
 }
@@ -83,6 +112,8 @@ gsmhr_decode(struct gsmhr *state, int16_t *pcm, const int16_t *hr_params)
 
 	int dec_reset_flg;
 	Shortword hr_params_b[22];
+
+	memcpy(state->bss_base, state->bss_save, state->bss_len);
 
 	memcpy(hr_params_b, hr_params, 22*sizeof(int16_t));
 
@@ -106,6 +137,8 @@ gsmhr_decode(struct gsmhr *state, int16_t *pcm, const int16_t *hr_params)
 		resetDec();
 
 	state->dec_reset_flg = dec_reset_flg;
+
+	memcpy(state->bss_save, state->bss_base, state->bss_len);
 
 	return 0;
 }
