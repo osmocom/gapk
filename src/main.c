@@ -90,7 +90,7 @@ print_help(char *progname)
 	fprintf(stdout, "\n");
 	fprintf(stdout, "Options:\n");
 	fprintf(stdout, "  -i, --input-file=FILE\t\tInput file\n");
-	fprintf(stdout, "  -I, --input-rtp=HOST/PORT\t\tInput RTP stream\n");
+	fprintf(stdout, "  -I, --input-rtp=HOST/PORT\tInput RTP stream\n");
 	fprintf(stdout, "  -o, --output-file=FILE\tOutput file\n");
 	fprintf(stdout, "  -O, --output-rtp=HOST/PORT\tOutput RTP stream\n");
 	fprintf(stdout, "  -f, --input-format=FMT\tInput format (see below)\n");
