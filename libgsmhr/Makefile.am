@@ -16,7 +16,7 @@ ${REFSRC_PATH}/.downloaded:
 	sed -i -e"s/long int/int/" -e"s/long/int/" "${REFSRC_PATH}/typedefs.h"
 	touch $@
 
-${REFSRC_PATH}/dtx.c: ${REFSRC_PATH}/.downloaded
+${REFSRC_PATH}/*.c: ${REFSRC_PATH}/.downloaded
 
 lib_LTLIBRARIES = libgsmhr.la
 libgsmhr_la_SOURCES = $(REFSRC_SRC) libgsmhr.c
