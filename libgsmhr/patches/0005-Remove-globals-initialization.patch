@@ -1,0 +1,48 @@
+From f91b68f12fe184640122db53f624cdad18c7e5be Mon Sep 17 00:00:00 2001
+From: Sylvain Munaut <tnt@246tNt.com>
+Date: Wed, 30 Dec 2015 09:58:23 +0100
+Subject: [PATCH 5/6] Remove globals initialization
+
+Theses will also be reset by calling resetDec / resetEnc, so we don't
+need them initialized here.
+
+This will move them from .data to .bss
+
+Signed-off-by: Sylvain Munaut <tnt@246tNt.com>
+---
+ dtx.c    | 2 +-
+ sp_dec.c | 8 ++++----
+ sp_enc.c | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git refsrc/dtx.c refsrc/dtx.c
+index 918dc88..254aff3 100644
+--- refsrc/dtx.c
++++ refsrc/dtx.c
+@@ -72 +72 @@
+-Shortword swNElapsed = 50;
++Shortword swNElapsed;
+diff --git refsrc/sp_dec.c refsrc/sp_dec.c
+index 6022f5a..b6f065d 100644
+--- refsrc/sp_dec.c
++++ refsrc/sp_dec.c
+@@ -168 +168 @@
+-  Shortword swRxDTXState = CNINTPER - 1;        /* DTX State at the rx.
++  Shortword swRxDTXState;                       /* DTX State at the rx.
+@@ -173,3 +173,3 @@
+-  Shortword swDecoMode = SPEECH;
+-  Shortword swDtxMuting = 0;
+-  Shortword swDtxBfiCnt = 0;
++  Shortword swDecoMode;
++  Shortword swDtxMuting;
++  Shortword swDtxBfiCnt;
+diff --git refsrc/sp_enc.c refsrc/sp_enc.c
+index 5f7eeef..c71473c 100644
+--- refsrc/sp_enc.c
++++ refsrc/sp_enc.c
+@@ -72 +72 @@
+-Shortword swPtch = 1;
++Shortword swPtch;
+-- 
+2.4.10
+

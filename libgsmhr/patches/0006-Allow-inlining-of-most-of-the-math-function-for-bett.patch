@@ -1,0 +1,142 @@
+From 6449c83295a4307a6cc7e7fb3a8b53c944116d27 Mon Sep 17 00:00:00 2001
+From: Sylvain Munaut <tnt@246tNt.com>
+Date: Wed, 30 Dec 2015 10:16:50 +0100
+Subject: [PATCH 6/6] Allow inlining of most of the math function for better
+ speed
+
+Signed-off-by: Sylvain Munaut <tnt@246tNt.com>
+---
+ mathhalf.c | 29 +++++++++++++++++++++++++++++
+ mathhalf.h | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+
+diff --git refsrc/mathhalf.c refsrc/mathhalf.c
+index 40a2152..fe5d192 100644
+--- refsrc/mathhalf.c
++++ refsrc/mathhalf.c
+@@ -139,0 +140 @@
++static __attribute__((unused))
+@@ -201,0 +203 @@
++static __attribute__((unused))
+@@ -251,0 +254 @@
++static __attribute__((unused))
+@@ -304,0 +308 @@
++static __attribute__((unused))
+@@ -345,0 +350 @@
++static __attribute__((unused))
+@@ -385,0 +391 @@
++static __attribute__((unused))
+@@ -448,0 +455 @@
++static __attribute__((unused))
+@@ -514,0 +522 @@
++static __attribute__((unused))
+@@ -552,0 +561 @@
++static __attribute__((unused))
+@@ -613,0 +623 @@
++static __attribute__((unused))
+@@ -671,0 +682 @@
++static __attribute__((unused))
+@@ -717,0 +729 @@
++static __attribute__((unused))
+@@ -763,0 +776 @@
++static __attribute__((unused))
+@@ -831,0 +845 @@
++static __attribute__((unused))
+@@ -899,0 +914 @@
++static __attribute__((unused))
+@@ -1008,0 +1024 @@
++static __attribute__((unused))
+@@ -1104,0 +1121 @@
++static __attribute__((unused))
+@@ -1184,0 +1202 @@
++static __attribute__((unused))
+@@ -1247,0 +1266 @@
++static __attribute__((unused))
+@@ -1292,0 +1312 @@
++static __attribute__((unused))
+@@ -1348,0 +1369 @@
++static __attribute__((unused))
+@@ -1385,0 +1407 @@
++static __attribute__((unused))
+@@ -1454,0 +1477 @@
++static __attribute__((unused))
+@@ -1546,0 +1570 @@
++static __attribute__((unused))
+@@ -1597,0 +1622 @@
++static __attribute__((unused))
+@@ -1660,0 +1686 @@
++static __attribute__((unused))
+@@ -1740,0 +1767 @@
++static __attribute__((unused))
+@@ -1843,0 +1871 @@
++static __attribute__((unused))
+@@ -1943,0 +1972 @@
++static __attribute__((unused))
+diff --git refsrc/mathhalf.h refsrc/mathhalf.h
+index 247cfde..81c4004 100644
+--- refsrc/mathhalf.h
++++ refsrc/mathhalf.h
+@@ -14,0 +15 @@
++static
+@@ -15,0 +17 @@
++static
+@@ -16,0 +19 @@
++static
+@@ -17,0 +21 @@
++static
+@@ -22,0 +27 @@
++static
+@@ -23,0 +29 @@
++static
+@@ -24,0 +31 @@
++static
+@@ -30,0 +38 @@
++static
+@@ -31,0 +40 @@
++static
+@@ -32,0 +42 @@
++static
+@@ -33,0 +44 @@
++static
+@@ -34,0 +46 @@
++static
+@@ -35,0 +48 @@
++static
+@@ -40,0 +54 @@
++static
+@@ -41,0 +56 @@
++static
+@@ -47,0 +63 @@
++static
+@@ -49,0 +66 @@
++static
+@@ -51,0 +69 @@
++static
+@@ -53,0 +72 @@
++static
+@@ -59,0 +79 @@
++static
+@@ -60,0 +81 @@
++static
+@@ -66,0 +88 @@
++static
+@@ -67,0 +90 @@
++static
+@@ -68,0 +92 @@
++static
+@@ -69,0 +94 @@
++static
+@@ -74,0 +100 @@
++static
+@@ -79,0 +106 @@
++static
+@@ -80,0 +108 @@
++static
+@@ -84,0 +113 @@
++static
+@@ -96,0 +126,2 @@
++#include "mathhalf.c"
++
+-- 
+2.4.10
+

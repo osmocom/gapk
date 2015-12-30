@@ -1,0 +1,175 @@
+From 8344eeb802a60a52bde844e4cf0ee81cffc9c329 Mon Sep 17 00:00:00 2001
+From: Sylvain Munaut <tnt@246tNt.com>
+Date: Wed, 30 Dec 2015 09:56:12 +0100
+Subject: [PATCH 4/6] Make sure all constants are marked as such
+
+This removes 'static' and moves stuff from .data to .rodata
+
+Signed-off-by: Sylvain Munaut <tnt@246tNt.com>
+---
+ dtx.c      |  4 ++--
+ homing.c   |  4 ++--
+ sp_dec.c   | 22 ++++++++++++----------
+ sp_dec.h   |  8 ++++----
+ sp_enc.c   |  8 ++++----
+ sp_frm.c   | 10 +++++-----
+ sp_frm.h   |  4 ++--
+ sp_rom.c   |  2 +-
+ sp_rom.h   |  2 +-
+ sp_sfrm.c  |  7 +++----
+ typedefs.h |  4 ++--
+ 11 files changed, 38 insertions(+), 37 deletions(-)
+
+diff --git refsrc/dtx.c refsrc/dtx.c
+index 27dcb0d..918dc88 100644
+--- refsrc/dtx.c
++++ refsrc/dtx.c
+@@ -103 +103 @@
+-Shortword psrCNNewFactor[12] = {0x0aaa, 0x1554, 0x1ffe, 0x2aa8, 0x3552,
++const Shortword psrCNNewFactor[12] = {0x0aaa, 0x1554, 0x1ffe, 0x2aa8, 0x3552,
+@@ -110 +110 @@
+-LongwordRom ppLr_gsTable[4][32] =
++const LongwordRom ppLr_gsTable[4][32] =
+diff --git refsrc/homing.c refsrc/homing.c
+index b45ea03..9901ac8 100644
+--- refsrc/homing.c
++++ refsrc/homing.c
+@@ -120 +120 @@
+-  static int n[] = {5, 11, 9, 8, 1, 2, 7, 7, 5, 7, 7, 5, 7, 7, 5, 7, 7, 5};
++  const int n[] = {5, 11, 9, 8, 1, 2, 7, 7, 5, 7, 7, 5, 7, 7, 5, 7, 7, 5};
+@@ -122 +122 @@
+-  static Shortword dhf_mask[] =
++  const Shortword dhf_mask[] =
+diff --git refsrc/sp_dec.c refsrc/sp_dec.c
+index 07398a7..6022f5a 100644
+--- refsrc/sp_dec.c
++++ refsrc/sp_dec.c
+@@ -733 +733 @@
+-  static ShortwordRom psrSST[NP + 1] = {0x7FFF,
++  const ShortwordRom psrSST[NP + 1] = {0x7FFF,
+@@ -1477,2 +1477,2 @@
+-                         Shortword *ppswSynthAs[], Shortword *ppswPFNumAs[],
+-                         Shortword *ppswPFDenomAs[])
++                         Shortword * const ppswSynthAs[], Shortword * const ppswPFNumAs[],
++                         Shortword * const ppswPFDenomAs[])
+@@ -4621 +4620,0 @@
+-        *pswLtpStateOut = &pswLtpStateBaseDec[LTP_LEN],
+@@ -4624,2 +4623,5 @@
+-         pswPFDenomAsSpace[NP * N_SUB],
+-        *ppswSynthAs[N_SUB] = {
++         pswPFDenomAsSpace[NP * N_SUB];
++
++  static Shortword
++        * const pswLtpStateOut = &pswLtpStateBaseDec[LTP_LEN],
++        * const ppswSynthAs[N_SUB] = {
+@@ -4632 +4634 @@
+-        *ppswPFNumAs[N_SUB] = {
++        * const ppswPFNumAs[N_SUB] = {
+@@ -4638 +4640 @@
+-        *ppswPFDenomAs[N_SUB] = {
++        * const ppswPFDenomAs[N_SUB] = {
+@@ -4645 +4647 @@
+-  static ShortwordRom
++  const ShortwordRom
+@@ -5429 +5431 @@
+-void   v_con(Shortword pswBVects[], Shortword pswOutVect[],
++void   v_con(const Shortword pswBVects[], Shortword pswOutVect[],
+diff --git refsrc/sp_dec.h refsrc/sp_dec.h
+index b18e3cb..2d3bd71 100644
+--- refsrc/sp_dec.h
++++ refsrc/sp_dec.h
+@@ -38,3 +38,3 @@
+-                           Shortword *ppswSynthAs[],
+-                           Shortword *ppswPFNumAs[],
+-                           Shortword *ppswPFDenomAs[]);
++                           Shortword * const ppswSynthAs[],
++                           Shortword * const ppswPFNumAs[],
++                           Shortword * const ppswPFDenomAs[]);
+@@ -97 +97 @@
+-  void   v_con(Shortword pswBVects[], Shortword pswOutVect[],
++  void   v_con(const Shortword pswBVects[], Shortword pswOutVect[],
+diff --git refsrc/sp_enc.c refsrc/sp_enc.c
+index 6dcb985..5f7eeef 100644
+--- refsrc/sp_enc.c
++++ refsrc/sp_enc.c
+@@ -133 +133 @@
+-  static Shortword *pswLpcStart = &pswSpeech[LPCSTARTINDEX];
++  Shortword * const pswLpcStart = &pswSpeech[LPCSTARTINDEX];
+@@ -136 +136 @@
+-  static Shortword *pswNewSpeech = &pswSpeech[NUMSTARTUPSMP];
++  Shortword * const pswNewSpeech = &pswSpeech[NUMSTARTUPSMP];
+@@ -139 +139 @@
+-  static Shortword *pswWgtSpeech = &pswWgtSpeechSpace[LSMAX];
++  Shortword * const pswWgtSpeech = &pswWgtSpeechSpace[LSMAX];
+@@ -141 +141 @@
+-  static struct NormSw *psnsWSfrmEng = &psnsWSfrmEngSpace[N_SUB];
++  struct NormSw * const psnsWSfrmEng = &psnsWSfrmEngSpace[N_SUB];
+diff --git refsrc/sp_frm.c refsrc/sp_frm.c
+index c4854ad..bb26381 100644
+--- refsrc/sp_frm.c
++++ refsrc/sp_frm.c
+@@ -2142 +2142 @@
+-void   filt4_2nd(Shortword pswCoeff[], Shortword pswIn[],
++void   filt4_2nd(const Shortword pswCoeff[], Shortword pswIn[],
+@@ -3106 +3106 @@
+-  static Shortword pswPCoefE[3] =
++  const Shortword pswPCoefE[3] =
+@@ -3230 +3230 @@
+-  static Shortword
++  const Shortword
+@@ -3938 +3938 @@
+-void   iir_d(Shortword pswCoeff[], Shortword pswIn[], Shortword pswXstate[],
++void   iir_d(const Shortword pswCoeff[], Shortword pswIn[], Shortword pswXstate[],
+@@ -5279 +5279 @@
+-  static ShortwordRom psrSubMultFactor[] = {0x0aab,     /* 1.0/12.0 */
++  const ShortwordRom psrSubMultFactor[] = {0x0aab,     /* 1.0/12.0 */
+diff --git refsrc/sp_frm.h refsrc/sp_frm.h
+index 92317d9..8e2fb14 100644
+--- refsrc/sp_frm.h
++++ refsrc/sp_frm.h
+@@ -24 +24 @@
+-void   iir_d(Shortword pswCoeff[], Shortword pswIn[],
++void   iir_d(const Shortword pswCoeff[], Shortword pswIn[],
+@@ -32 +32 @@
+-  void   filt4_2nd(Shortword pswCoeff[],
++  void   filt4_2nd(const Shortword pswCoeff[],
+diff --git refsrc/sp_rom.c refsrc/sp_rom.c
+index e666774..f9349d1 100644
+--- refsrc/sp_rom.c
++++ refsrc/sp_rom.c
+@@ -6416 +6416 @@
+-struct IsubLHn psvqIndex[QUANT_NUM_OF_TABLES] =
++const struct IsubLHn psvqIndex[QUANT_NUM_OF_TABLES] =
+diff --git refsrc/sp_rom.h refsrc/sp_rom.h
+index 8ac7d91..92a1537 100644
+--- refsrc/sp_rom.h
++++ refsrc/sp_rom.h
+@@ -128 +128 @@
+-extern struct IsubLHn psvqIndex[QUANT_NUM_OF_TABLES];
++extern const struct IsubLHn psvqIndex[QUANT_NUM_OF_TABLES];
+diff --git refsrc/sp_sfrm.c refsrc/sp_sfrm.c
+index d4f0cd6..f20837a 100644
+--- refsrc/sp_sfrm.c
++++ refsrc/sp_sfrm.c
+@@ -1961 +1961 @@
+-  static Shortword
++  const Shortword
+@@ -2054,0 +2055,2 @@
++  const Shortword *pswBIndex, *pswUIndex, *pswModNextBit;
++
+@@ -2062,3 +2063,0 @@
+-        *pswUIndex,
+-        *pswBIndex,
+-        *pswModNextBit,
+diff --git refsrc/typedefs.h refsrc/typedefs.h
+index 15200cc..819f999 100644
+--- refsrc/typedefs.h
++++ refsrc/typedefs.h
+@@ -26,2 +26,2 @@
+-typedef short int ShortwordRom;        /* 16 bit ROM data    (sr*) */
+-typedef int LongwordRom;          /* 32 bit ROM data    (L_r*)  */
++typedef const short int ShortwordRom;        /* 16 bit ROM data    (sr*) */
++typedef const int LongwordRom;          /* 32 bit ROM data    (L_r*)  */
+-- 
+2.4.10
+

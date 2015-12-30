@@ -1,0 +1,22 @@
+From 22bf213844de942c6692c4f11d7561f4ff87a183 Mon Sep 17 00:00:00 2001
+From: Sylvain Munaut <tnt@246tNt.com>
+Date: Wed, 30 Dec 2015 09:50:58 +0100
+Subject: [PATCH 3/6] Remove unused variables
+
+Signed-off-by: Sylvain Munaut <tnt@246tNt.com>
+---
+ dtx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git refsrc/dtx.c refsrc/dtx.c
+index 4ec8edb..27dcb0d 100644
+--- refsrc/dtx.c
++++ refsrc/dtx.c
+@@ -748 +747,0 @@
+-         pswFlatsRc[NP],               /* Unquantized Rc's computed by FLAT */
+@@ -754 +753 @@
+-  int    i,
++  int
+-- 
+2.4.10
+

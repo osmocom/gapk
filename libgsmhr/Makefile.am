@@ -6,7 +6,7 @@ EXTRA_DIST=fetch_sources.py
 LIBVERSION=0:0:0
 
 REFSRC_PATH=refsrc
-REFSRC_SRC=refsrc/dtx.c refsrc/globdefs.c refsrc/host.c refsrc/mathhalf.c refsrc/sp_enc.c refsrc/sp_rom.c refsrc/vad.c refsrc/err_conc.c refsrc/homing.c refsrc/mathdp31.c refsrc/sp_dec.c refsrc/sp_frm.c refsrc/sp_sfrm.c
+REFSRC_SRC=refsrc/dtx.c refsrc/globdefs.c refsrc/host.c refsrc/sp_enc.c refsrc/sp_rom.c refsrc/vad.c refsrc/err_conc.c refsrc/homing.c refsrc/mathdp31.c refsrc/sp_dec.c refsrc/sp_frm.c refsrc/sp_sfrm.c
 
 ${REFSRC_PATH}/.downloaded:
 	$(srcdir)/fetch_sources.py "${REFSRC_PATH}"
