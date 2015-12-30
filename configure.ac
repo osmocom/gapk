@@ -2,7 +2,7 @@ AC_PREREQ([2.65])
 AC_INIT([gapk],
 	m4_esyscmd([./git-version-gen .tarball-version]), [main@lists.airprobe.org])
 
-AM_INIT_AUTOMAKE([dist-bzip2])
+AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
 
 # kernel style compile messages
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])

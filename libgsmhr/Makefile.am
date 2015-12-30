@@ -22,4 +22,4 @@ lib_LTLIBRARIES = libgsmhr.la
 libgsmhr_la_SOURCES = $(REFSRC_SRC) libgsmhr.c
 
 clean-local:
-	-rm -rf ${REFSRC_PATH}
+	-rm -rf ${REFSRC_PATH}/*.{c,h} ${REFSRC_PATH}/.downloaded
