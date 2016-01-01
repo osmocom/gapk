@@ -52,7 +52,7 @@ static inline cycles_t get_cycles()
 	struct timespec ts;
 
 #if defined (__x86_64__) || defined(__i386__)
-	asm volatile ("cpuid"); /* flush pipeline */
+	asm volatile ("cpuid" : : : "eax", "ebx", "ecx", "edx" ); /* flush pipeline */
 #endif
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts);
 	return ts.tv_nsec;
@@ -68,7 +68,7 @@ static inline cycles_t get_cycles()
 {
 	unsigned low, high;
 	unsigned long long val;
-	asm volatile ("cpuid"); /* flush pipeline */
+	asm volatile ("cpuid" : : : "eax", "ebx", "ecx", "edx" ); /* flush pipeline */
 	asm volatile ("rdtsc" : "=a" (low), "=d" (high));
 	val = high;
 	val = (val << 32) | low;
