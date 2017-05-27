@@ -52,6 +52,7 @@ AC_PROG_CC
  # libosmocore (codec module)
 PKG_CHECK_MODULES(LIBOSMOCORE, libosmocore >= 0.3.2)
 PKG_CHECK_MODULES(LIBOSMOCODEC, libosmocodec >= 0.1.25)
+PKG_CHECK_MODULES(LIBALSA, alsa, [AC_DEFINE([HAVE_ALSA], [1], [We have ALSA])])
 
  # opencore-amrnb for AMR and EFR decoding
 found_opencore_amrnb=yes

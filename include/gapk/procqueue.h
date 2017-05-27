@@ -48,6 +48,9 @@ int pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int block_len);
 int pq_queue_rtp_input(struct pq *pq, int rtp_fd, unsigned int block_len);
 int pq_queue_rtp_output(struct pq *pq, int rtp_fd, unsigned int block_len);
 
+/* ALSA */
+int pq_queue_alsa_input(struct pq *pq, const char *hwdev, unsigned int blk_len);
+int pq_queue_alsa_output(struct pq *pq, const char *hwdev, unsigned int blk_len);
 
 /* Format */
 struct format_desc;

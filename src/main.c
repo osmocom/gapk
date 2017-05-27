@@ -17,6 +17,8 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,6 +46,7 @@ struct gapk_options
 		const char *hostname;
 		uint16_t port;
 	} rtp_in;
+	const char *alsa_in;
 	const struct format_desc *fmt_in;
 
 	const char *fname_out;
@@ -51,6 +54,7 @@ struct gapk_options
 		const char *hostname;
 		uint16_t port;
 	} rtp_out;
+	const char *alsa_out;
 	const struct format_desc *fmt_out;
 };
 
@@ -93,6 +97,10 @@ print_help(char *progname)
 	fprintf(stdout, "  -I, --input-rtp=HOST/PORT\tInput RTP stream\n");
 	fprintf(stdout, "  -o, --output-file=FILE\tOutput file\n");
 	fprintf(stdout, "  -O, --output-rtp=HOST/PORT\tOutput RTP stream\n");
+#ifdef HAVE_ALSA
+	fprintf(stdout, "  -a, --input-alsa=dev\t\tInput ALSA stream\n");
+	fprintf(stdout, "  -A, --output-alsa=dev\t\tOutput ALSA stream\n");
+#endif
 	fprintf(stdout, "  -f, --input-format=FMT\tInput format (see below)\n");
 	fprintf(stdout, "  -g, --output-format=FMT\tOutput format (see below)\n");
 	fprintf(stdout, "\n");
@@ -159,11 +167,19 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		{"output-file", 1, 0, 'o'},
 		{"input-rtp", 1, 0, 'I'},
 		{"output-rtp", 1, 0, 'O'},
+#ifdef HAVE_ALSA
+		{"input-alsa", 1, 0, 'a'},
+		{"output-alsa", 1, 0, 'A'},
+#endif
 		{"input-format", 1, 0, 'f'},
 		{"output-format", 1, 0, 'g'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:I:O:f:g:h";
+	const char *short_options = "i:o:I:O:f:g:h"
+#ifdef HAVE_ALSA
+		"a:A:"
+#endif
+		;
 
 	struct gapk_options *opt = &state->opts;
 
@@ -197,7 +213,15 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 			}
 			opt->rtp_in.port = rv;
 			break;
+#ifdef HAVE_ALSA
+		case 'a':
+			opt->alsa_in = optarg;
+			break;
 
+		case 'A':
+			opt->alsa_out = optarg;
+			break;
+#endif
 		case 'O':
 			rv = parse_host_port(optarg, &opt->rtp_out.hostname);
 			if (rv < 0 || rv > 0xffff) {
@@ -307,6 +331,8 @@ files_open(struct gapk_state *gs)
 			fprintf(stderr, "[!] Error while opening input socket\n");
 			return gs->in.rtp.fd;
 		}
+	} else if (gs->opts.alsa_in) {
+		printf("alsa_in, not stdin\n");
 	} else
 		gs->in.file.fh = stdin;
 
@@ -327,6 +353,8 @@ files_open(struct gapk_state *gs)
 			fprintf(stderr, "[!] Error while opening output socket\n");
 			return gs->out.rtp.fd;
 		}
+	} else if (gs->opts.alsa_out) {
+		printf("alsa_out, not stdout\n");
 	} else
 		gs->out.file.fh = stdout;
 
@@ -406,8 +434,14 @@ make_processing_chain(struct gapk_state *gs)
 	/* File read */
 	if (gs->in.file.fh)
 		pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
-	else
+	else if (gs->in.rtp.fd != -1)
 		pq_queue_rtp_input(gs->pq, gs->in.rtp.fd, fmt_in->frame_len);
+#ifdef HAVE_ALSA
+	else if (gs->opts.alsa_in)
+		pq_queue_alsa_input(gs->pq, gs->opts.alsa_in, fmt_in->frame_len);
+#endif
+	else
+		return -1;
 
 	/* Decoding to PCM ? */
 	if (need_dec)
@@ -462,8 +496,14 @@ make_processing_chain(struct gapk_state *gs)
 	/* File write */
 	if (gs->out.file.fh)
 		pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
-	else
+	else if (gs->out.rtp.fd != -1)
 		pq_queue_rtp_output(gs->pq, gs->out.rtp.fd, fmt_out->frame_len);
+#ifdef HAVE_ALSA
+	else if (gs->opts.alsa_out)
+		pq_queue_alsa_output(gs->pq, gs->opts.alsa_out, fmt_out->frame_len);
+#endif
+	else
+		return -1;
 
 	return 0;
 }
