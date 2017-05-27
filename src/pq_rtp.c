@@ -98,36 +98,52 @@ pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in)
 	int rv, x_len, payload_len;
 
 	rv = read(state->fd, buf, sizeof(buf));
-	if (rv <= 0)
+	if (rv <= 0) {
+		perror("RTP read");
 		return -1;
+	}
 
-	if (rv < sizeof(struct rtp_hdr))
+	if (rv < sizeof(struct rtp_hdr)) {
+		fprintf(stderr, "%d smaller than rtp header\n", rv);
 		return -1;
+	}
 
-	if (rtph->version != RTP_VERSION)
+	if (rtph->version != RTP_VERSION) {
+		fprintf(stderr, "unknown RTP version %u\n", rtph->version);
 		return -1;
+	}
 
 	payload = buf + sizeof(struct rtp_hdr) + (rtph->csrc_count << 2);
 	payload_len = rv - sizeof(struct rtp_hdr) - (rtph->csrc_count << 2);
-	if (payload_len < 0)
+	if (payload_len < 0) {
+		fprintf(stderr, "non-existant RTP payload length %d\n", payload_len);
 		return -1;
+	}
 
 	if (rtph->extension) {
-		if (payload_len < sizeof(struct rtp_x_hdr))
+		if (payload_len < sizeof(struct rtp_x_hdr)) {
+			fprintf(stderr, "short extension header: %d\n", payload_len);
 			return -1;
+		}
 		rtpxh = (struct rtp_x_hdr *)payload;
 		x_len = ntohs(rtpxh->length) * 4 + sizeof(struct rtp_x_hdr);
 		payload += x_len;
 		payload_len -= x_len;
-		if (payload_len < 0)
+		if (payload_len < 0) {
+			fprintf(stderr, "short RTP payload length %d\n", payload_len);
 			return -1;
+		}
 	}
 	if (rtph->padding) {
-		if (payload_len < 0)
+		if (payload_len < 0) {
+			fprintf(stderr, "padding but no payload length %d\n", payload_len);
 			return -1;
+		}
 		payload_len -= payload[payload_len -1];
-		if (payload_len < 0)
+		if (payload_len < 0) {
+			fprintf(stderr, "no payload left after padding %d\n", payload_len);
 			return -1;
+		}
 	}
 
 	state->ssrc = ntohl(rtph->ssrc);
