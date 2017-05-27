@@ -86,12 +86,24 @@ pq_queue_file_op(struct pq *pq, FILE *fh, unsigned int blk_len, int in_out_n)
 }
 
 
+/*! Add file input to given processing queue
+ *  This usually only makes sense as first item in the queue
+ *  \param pq Processing Queue to add the input file to
+ *  \param[in] src caller-fopen()ed input file
+ *  \param[in] blk_len block length to be read from file
+ *  \returns 0 on sucess; negative on error */
 int
 pq_queue_file_input(struct pq *pq, FILE *src, unsigned int blk_len)
 {
 	return pq_queue_file_op(pq, src, blk_len, 1);
 }
 
+/*! Add file output to given processing queue
+ *  This usually only makes sense as first item in the queue
+ *  \param pq Processing Queue to add the output file to
+ *  \param[in] dst caller-fopen()ed output file
+ *  \param[in] blk_len block length to be written to file
+ *  \returns 0 on sucess; negative on error */
 int
 pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int blk_len)
 {

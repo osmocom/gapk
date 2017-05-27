@@ -23,6 +23,7 @@
 
 #define GSM_MAGIC 0xd
 
+/* convert canonical -> .gsm */
 static int
 gsm_from_canon(uint8_t *dst, const uint8_t *src)
 {
@@ -35,6 +36,7 @@ gsm_from_canon(uint8_t *dst, const uint8_t *src)
 	return 0;
 }
 
+/* convert .gsm -> canonical */
 static int
 gsm_to_canon(uint8_t *dst, const uint8_t *src)
 {

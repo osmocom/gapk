@@ -32,6 +32,10 @@ pq_cb_fmt_convert(void *_state, uint8_t *out, const uint8_t *in)
 	return f(out, in);
 }
 
+/*! Add format conversion to processing queue
+ *  \param pq Processing Queue to add conversion to
+ *  \param[in] fmt Format description for conversion
+ *  \param[in] to_from_n convert to (0) or from (1) specified format */
 int
 pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n)
 {

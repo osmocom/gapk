@@ -1,4 +1,4 @@
-/* Classic .amr file format */
+/* Classic .amr file format. Be warned, actaully contains EFR ;) */
 
 /*
  * This file is part of gapk (GSM Audio Pocket Knife).
@@ -26,6 +26,7 @@
 #include <gapk/utils.h>
 
 
+/* conversion function: .amr file -> canonical format */
 static int
 amr_efr_from_canon(uint8_t *dst, const uint8_t *src)
 {
@@ -43,6 +44,7 @@ amr_efr_from_canon(uint8_t *dst, const uint8_t *src)
 	return 0;
 }
 
+/* conversion function: canonical format -> .amr file */
 static int
 amr_efr_to_canon(uint8_t *dst, const uint8_t *src)
 {

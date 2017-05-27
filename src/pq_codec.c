@@ -25,6 +25,11 @@
 #include <gapk/procqueue.h>
 
 
+/*! Add a codecl to the processing queue
+ *  \param pq Processing Queue to which the codec is added
+ *  \param[in] codec description
+ *  \param[in] encode (1) or decode (0)
+ *  \returns 0 on success; negative on error */
 int
 pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
 {
@@ -32,10 +37,12 @@ pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
 	const struct format_desc *fmt;
 	struct pq_item *item;
 
+	/* allocate a new item to the processing queue */
 	item = pq_add_item(pq);
 	if (!item)
 		return -ENOMEM;
 
+	/* initialize the codec, if there is an init function */
 	if (codec->codec_init) {
 		item->state = codec->codec_init();
 		if (!item->state)

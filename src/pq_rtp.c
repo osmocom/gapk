@@ -187,6 +187,9 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 	state->fd = udp_fd;
 	state->blk_len = blk_len;
 
+	/* as we're working in GSM, the sample clock is 8000 Hz and we
+	 * operate at 50 Hz (20ms) codec frames; 8000/50 = 160 samples
+	 * per RTP frame */
 	state->duration = 160;
 
 	if (in_out_n == 0) {
@@ -213,12 +216,22 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 }
 
 
+/*! Add RTP input to processing queue.
+ *  This typically only makes sense as first item in the queue
+ *  \param pq Processing Queue to add this RTP input to
+ *  \param[in] udp_fd UDP file descriptor for the RTP input
+ *  \param[in] blk_len Block Length to read from RTP */
 int
 pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
 {
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
 }
 
+/*! Add RTP output to processing queue.
+ *  This typically only makes sense as last item in the queue
+ *  \param pq Processing Queue to add this RTP output to
+ *  \param[in] udp_fd UDP file descriptor for the RTP output
+ *  \param[in] blk_len Block Length to read from RTP */
 int
 pq_queue_rtp_output(struct pq *pq, int udp_fd, unsigned int blk_len)
 {

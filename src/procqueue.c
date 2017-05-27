@@ -33,12 +33,15 @@ struct pq {
 };
 
 
+/* crate a new (empty) processing queue */
 struct pq *
 pq_create(void)
 {
 	return (struct pq *) calloc(1, sizeof(struct pq));
 }
 
+/*! destroy a processing queue, calls exit() callback of each item
+ *  \param[in] pq Processing Queue to be destroyed */
 void
 pq_destroy(struct pq *pq)
 {
@@ -61,6 +64,9 @@ pq_destroy(struct pq *pq)
 	free(pq);
 }
 
+/*! allocate + add an item to a processing queue; return new item
+ *  \param[in] pq Processing Queue to which item is added
+ *  \returns new PQ item; NULL on error */
 struct pq_item *
 pq_add_item(struct pq *pq)
 {
@@ -78,6 +84,9 @@ pq_add_item(struct pq *pq)
 	return item;
 }
 
+/*! prepare a processing queue; allocates buffers; checks lengths
+ *  \param[in] pq Processing Queue to be prepared
+ *  \returns 0 on succcess; negative on error */
 int
 pq_prepare(struct pq *pq)
 {
@@ -107,6 +116,9 @@ pq_prepare(struct pq *pq)
 	return 0;
 }
 
+/*! execute a processing queue; iterate over processing elements
+ *  \param[in] pq Processing Queue to be executed
+ *  \returns 0 on success; negative on error (if any item returns negative) */
 int
 pq_execute(struct pq *pq)
 {
