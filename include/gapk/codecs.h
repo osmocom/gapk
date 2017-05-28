@@ -26,6 +26,8 @@
 #define HR_CANON_LEN	14
 #define EFR_CANON_LEN	31
 #define PCM_CANON_LEN	(160*sizeof(uint16_t))
+#define HR_REF_ENC_LEN  (20 * sizeof(uint16_t))
+#define HR_REF_DEC_LEN  (22 * sizeof(uint16_t))
 
 enum codec_type {
 	CODEC_INVALID = 0,

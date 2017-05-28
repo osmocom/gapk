@@ -26,9 +26,6 @@
 #include <gapk/formats.h>
 #include <gapk/utils.h>
 
-#define HR_REF_DEC_LEN	(22 * sizeof(uint16_t))
-#define HR_REF_ENC_LEN	(20 * sizeof(uint16_t))
-
 static const int params_unvoiced[] = {
 	5,	/* R0 */
 	11,	/* k1Tok3 */

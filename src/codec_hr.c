@@ -53,7 +53,7 @@ codec_hr_encode(void *_state, uint8_t *cod, const uint8_t *pcm, unsigned int pcm
 	BENCHMARK_STOP(CODEC_HR, 1);
 	if (rc < 0)
 		return rc;
-	return HR_CANON_LEN;
+	return HR_REF_ENC_LEN;
 }
 
 static int
@@ -61,7 +61,7 @@ codec_hr_decode(void *_state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 {
 	struct gsmhr *state = _state;
 	int rc;
-	assert(cod_len == HR_CANON_LEN);
+	assert(cod_len == HR_REF_DEC_LEN);
 	BENCHMARK_START;
 	rc = gsmhr_decode(state, (int16_t *)pcm, (const int16_t *)cod);
 	BENCHMARK_STOP(CODEC_HR, 0);
