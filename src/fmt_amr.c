@@ -26,7 +26,7 @@
 #include <gapk/formats.h>
 #include <gapk/utils.h>
 
-#define EFR_LEN		32
+#define EFR_LEN		31
 
 /* conversion function: .amr file -> canonical format */
 static int
