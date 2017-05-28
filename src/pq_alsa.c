@@ -46,8 +46,8 @@ pq_cb_alsa_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_
 	unsigned int num_samples = state->blk_len/2;
 	int rv;
 	rv = snd_pcm_readi(state->pcm_handle, out, num_samples);
-	if (rv < 0)
-		return rv;
+	if (rv <= 0)
+		return -1;
 	return rv * sizeof(uint16_t);
 }
 

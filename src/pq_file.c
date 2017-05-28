@@ -39,8 +39,8 @@ pq_cb_file_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_
 	struct pq_state_file *state = _state;
 	int rv;
 	rv = fread(out, state->blk_len, 1, state->fh);
-	if (rv < 0)
-		return rv;
+	if (rv <= 0)
+		return -1;
 	return rv * state->blk_len;
 }
 
