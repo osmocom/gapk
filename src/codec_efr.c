@@ -84,7 +84,7 @@ codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm, unsigned int pcm
 	if (rv != 32)
 		return -1;
 
-	return EFR_CANON_LEN;
+	return 32;
 }
 
 static int
@@ -92,7 +92,7 @@ codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 {
 	struct codec_efr_state *st = state;
 
-	assert(cod_len == EFR_CANON_LEN);
+	assert(cod_len == 32);
 	BENCHMARK_START;
 	Decoder_Interface_Decode(
 		st->decoder,
