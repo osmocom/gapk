@@ -86,6 +86,7 @@ struct pq_state_rtp {
 	uint32_t ssrc;
 };
 
+#define rtp_err(x, args...)	fprintf(stderr, "[!] %s():" x, __func__, ## args)
 
 static int
 pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
@@ -99,30 +100,30 @@ pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_l
 
 	rv = read(state->fd, buf, sizeof(buf));
 	if (rv <= 0) {
-		perror("RTP read");
+		rtp_err("error during read\n");
 		return -1;
 	}
 
 	if (rv < sizeof(struct rtp_hdr)) {
-		fprintf(stderr, "%d smaller than rtp header\n", rv);
+		rtp_err("%d smaller than rtp header\n", rv);
 		return -1;
 	}
 
 	if (rtph->version != RTP_VERSION) {
-		fprintf(stderr, "unknown RTP version %u\n", rtph->version);
+		rtp_err("unknown RTP version %u\n", rtph->version);
 		return -1;
 	}
 
 	payload = buf + sizeof(struct rtp_hdr) + (rtph->csrc_count << 2);
 	payload_len = rv - sizeof(struct rtp_hdr) - (rtph->csrc_count << 2);
 	if (payload_len < 0) {
-		fprintf(stderr, "non-existant RTP payload length %d\n", payload_len);
+		rtp_err("non-existant RTP payload length %d\n", payload_len);
 		return -1;
 	}
 
 	if (rtph->extension) {
 		if (payload_len < sizeof(struct rtp_x_hdr)) {
-			fprintf(stderr, "short extension header: %d\n", payload_len);
+			rtp_err("short extension header: %d\n", payload_len);
 			return -1;
 		}
 		rtpxh = (struct rtp_x_hdr *)payload;
@@ -130,18 +131,18 @@ pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_l
 		payload += x_len;
 		payload_len -= x_len;
 		if (payload_len < 0) {
-			fprintf(stderr, "short RTP payload length %d\n", payload_len);
+			rtp_err("short RTP payload length %d\n", payload_len);
 			return -1;
 		}
 	}
 	if (rtph->padding) {
 		if (payload_len < 0) {
-			fprintf(stderr, "padding but no payload length %d\n", payload_len);
+			rtp_err("padding but no payload length %d\n", payload_len);
 			return -1;
 		}
 		payload_len -= payload[payload_len -1];
 		if (payload_len < 0) {
-			fprintf(stderr, "no payload left after padding %d\n", payload_len);
+			rtp_err("no payload left after padding %d\n", payload_len);
 			return -1;
 		}
 	}
@@ -240,7 +241,7 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 int
 pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
 {
-	printf("PQ: Adding RTP input (blk_len=%u)\n", blk_len);
+	fprintf(stderr, "[+] PQ: Adding RTP input (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
 }
 
@@ -252,6 +253,6 @@ pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
 int
 pq_queue_rtp_output(struct pq *pq, int udp_fd, unsigned int blk_len)
 {
-	printf("PQ: Adding RTP output (blk_len=%u)\n", blk_len);
+	fprintf(stderr, "[+] PQ: Adding RTP output (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);
 }

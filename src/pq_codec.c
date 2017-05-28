@@ -69,7 +69,7 @@ pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
 
 	item->exit = codec->codec_exit;
 
-	printf("PQ: Adding Codec %s, %s format %s\n", codec->name,
+	fprintf(stderr, "[+] PQ: Adding Codec %s, %s format %s\n", codec->name,
 		enc_dec_n ? "encoding to" : "decoding from", fmt->name);
 
 	if (!item->proc)
