@@ -56,6 +56,8 @@ enum format_type {
 
 	/* HR in RTP according to ETSI TS 101 318 */
 	FMT_RTP_HR_ETSI,
+	/* HR in RTP according to IETF RFC5993 */
+	FMT_RTP_HR_IETF,
 
 	_FMT_MAX,
 };
