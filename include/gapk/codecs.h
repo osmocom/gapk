@@ -22,6 +22,11 @@
 
 #include <stdint.h>
 
+#define FR_CANON_LEN	33
+#define HR_CANON_LEN	14
+#define EFR_CANON_LEN	31
+#define PCM_CANON_LEN	(160*sizeof(uint16_t))
+
 enum codec_type {
 	CODEC_INVALID = 0,
 	CODEC_PCM,	/* 16 bits PCM samples */

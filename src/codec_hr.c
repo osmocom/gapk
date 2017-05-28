@@ -69,7 +69,7 @@ const struct codec_desc codec_hr_desc = {
 	.type = CODEC_HR,
 	.name = "hr",
 	.description = "GSM 06.20 Half Rate codec",
-	.canon_frame_len = 14,
+	.canon_frame_len = HR_CANON_LEN,
 #ifdef HAVE_LIBGSMHR
 	.codec_enc_format_type = FMT_HR_REF_ENC,
 	.codec_dec_format_type = FMT_HR_REF_DEC,

@@ -23,5 +23,5 @@ const struct codec_desc codec_pcm_desc = {
 	.type = CODEC_PCM,
 	.name = "pcm",
 	.description = "Raw PCM signed 16 bits samples",
-	.canon_frame_len = 320,
+	.canon_frame_len = PCM_CANON_LEN,
 };

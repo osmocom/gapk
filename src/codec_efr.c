@@ -106,7 +106,7 @@ const struct codec_desc codec_efr_desc = {
 	.type = CODEC_EFR,
 	.name = "efr",
 	.description = "GSM 06.60 Enhanced Full Rate codec",
-	.canon_frame_len = 31,
+	.canon_frame_len = EFR_CANON_LEN,
 #ifdef HAVE_OPENCORE_AMRNB
 	.codec_enc_format_type = FMT_AMR_EFR,
 	.codec_dec_format_type = FMT_AMR_EFR,

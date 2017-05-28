@@ -54,7 +54,7 @@ const struct format_desc fmt_rawpcm_s16le = {
 	.name			= "rawpcm-s16le",
 	.description		= "Raw PCM samples Signed 16 bits little endian",
 
-	.frame_len		= 320,
+	.frame_len		= PCM_CANON_LEN,
 	.conv_from_canon	= rawpcm_s16le_from_canon,
 	.conv_to_canon		= rawpcm_s16le_to_canon,
 };

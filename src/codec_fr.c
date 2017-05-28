@@ -81,7 +81,7 @@ const struct codec_desc codec_fr_desc = {
 	.type = CODEC_FR,
 	.name = "fr",
 	.description = "GSM 06.10 Full Rate codec (classic gsm codec)",
-	.canon_frame_len = 33,
+	.canon_frame_len = FR_CANON_LEN,
 #ifdef HAVE_LIBGSM
 	.codec_enc_format_type = FMT_GSM,
 	.codec_dec_format_type = FMT_GSM,
