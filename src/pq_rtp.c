@@ -240,6 +240,7 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 int
 pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
 {
+	printf("PQ: Adding RTP input (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
 }
 
@@ -251,5 +252,6 @@ pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
 int
 pq_queue_rtp_output(struct pq *pq, int udp_fd, unsigned int blk_len)
 {
+	printf("PQ: Adding RTP output (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);
 }

@@ -97,6 +97,7 @@ pq_queue_file_op(struct pq *pq, FILE *fh, unsigned int blk_len, int in_out_n)
 int
 pq_queue_file_input(struct pq *pq, FILE *src, unsigned int blk_len)
 {
+	printf("PQ: Adding file input (blk_len=%u)\n", blk_len);
 	return pq_queue_file_op(pq, src, blk_len, 1);
 }
 
@@ -109,5 +110,6 @@ pq_queue_file_input(struct pq *pq, FILE *src, unsigned int blk_len)
 int
 pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int blk_len)
 {
+	printf("PQ: Adding file output (blk_len=%u)\n", blk_len);
 	return pq_queue_file_op(pq, dst, blk_len, 0);
 }

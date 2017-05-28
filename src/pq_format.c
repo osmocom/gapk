@@ -45,16 +45,20 @@ pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n
 	if (!codec) {
 		fprintf(stderr, "Cannot determine codec from format %s\n", fmt->name);
 		return -EINVAL;
+	}
+
 
 	item = pq_add_item(pq);
 	if (!item)
 		return -ENOMEM;
 
 	if (to_from_n) {
+		printf("PQ: Adding conversion from canon to %s (for codec %s)\n", fmt->name, codec->name);
 		item->len_in  = codec->canon_frame_len;
 		item->len_out = fmt->frame_len;
 		item->state   = fmt->conv_from_canon;
 	} else {
+		printf("PQ: Adding conversion from %s to canon (for codec %s)\n", fmt->name, codec->name);
 		item->len_in  = fmt->frame_len;
 		item->len_out = codec->canon_frame_len;
 		item->state   = fmt->conv_to_canon;
