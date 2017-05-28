@@ -26,6 +26,7 @@ extern const struct codec_desc codec_pcm_desc;
 extern const struct codec_desc codec_hr_desc;
 extern const struct codec_desc codec_fr_desc;
 extern const struct codec_desc codec_efr_desc;
+extern const struct codec_desc codec_amr_desc;
 
 
 const struct codec_desc *
@@ -36,6 +37,7 @@ codec_get_from_type(enum codec_type type)
 	case CODEC_HR:	return &codec_hr_desc;
 	case CODEC_FR:	return &codec_fr_desc;
 	case CODEC_EFR:	return &codec_efr_desc;
+	case CODEC_AMR:	return &codec_amr_desc;
 	default:
 		return NULL;
 	}

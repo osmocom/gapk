@@ -6,8 +6,8 @@ AM_LDFLAGS=$(LIBOSMOCODEC_LIBS) $(LIBOSMOCORE_LIBS) \
 
 COM_SOURCES = procqueue.c pq_file.c pq_format.c pq_codec.c pq_rtp.c pq_alsa.c \
 		formats.c fmt_amr.c fmt_gsm.c fmt_hr_ref.c fmt_racal.c \
-			fmt_rawpcm.c fmt_ti.c benchmark.c \
-		codecs.c codec_pcm.c codec_hr.c codec_fr.c codec_efr.c
+		fmt_amr_opencore.c fmt_rtp_amr.c fmt_rawpcm.c fmt_ti.c benchmark.c \
+		codecs.c codec_pcm.c codec_hr.c codec_fr.c codec_efr.c codec_amr.c
 
 bin_PROGRAMS = gapk
 

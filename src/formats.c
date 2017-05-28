@@ -34,6 +34,8 @@ extern const struct format_desc fmt_rawpcm_s16le;
 extern const struct format_desc fmt_ti_hr;
 extern const struct format_desc fmt_ti_fr;
 extern const struct format_desc fmt_ti_efr;
+extern const struct format_desc fmt_amr_opencore;
+extern const struct format_desc fmt_rtp_amr;
 
 static const struct format_desc *supported_formats[_FMT_MAX] = {
 	[FMT_INVALID]		= NULL,
@@ -48,6 +50,8 @@ static const struct format_desc *supported_formats[_FMT_MAX] = {
 	[FMT_TI_HR]		= &fmt_ti_hr,
 	[FMT_TI_FR]		= &fmt_ti_fr,
 	[FMT_TI_EFR]		= &fmt_ti_efr,
+	[FMT_AMR_OPENCORE]	= &fmt_amr_opencore,
+	[FMT_RTP_AMR]		= &fmt_rtp_amr,
 };
 
 

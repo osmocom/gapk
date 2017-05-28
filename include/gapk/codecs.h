@@ -33,6 +33,7 @@ enum codec_type {
 	CODEC_HR,	/* GSM Half Rate codec GSM 06.20 */
 	CODEC_FR,	/* GSM Full Rate codec GSM 06.10 */
 	CODEC_EFR,	/* GSM Enhanced Full Rate codec GSM 06.60 */
+	CODEC_AMR,	/* GSM Adaptive Multi Rate codec GSM 26.071 */
 	_CODEC_MAX,
 };
 

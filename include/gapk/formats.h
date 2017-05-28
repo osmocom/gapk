@@ -48,6 +48,10 @@ enum format_type {
 	FMT_TI_FR,
 	FMT_TI_EFR,
 
+	/* AMR encoded data, variable length */
+	FMT_AMR_OPENCORE,
+	FMT_RTP_AMR,
+
 	_FMT_MAX,
 };
 
