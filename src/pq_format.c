@@ -42,7 +42,8 @@ pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n
 	struct pq_item *item;
 	const struct codec_desc *codec = codec_get_from_type(fmt->codec_type);
 
-	if (!codec)
+	if (!codec) {
+		fprintf(stderr, "Cannot determine codec from format %s\n", fmt->name);
 		return -EINVAL;
 
 	item = pq_add_item(pq);

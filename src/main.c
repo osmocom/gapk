@@ -440,8 +440,10 @@ make_processing_chain(struct gapk_state *gs)
 	else if (gs->opts.alsa_in)
 		pq_queue_alsa_input(gs->pq, gs->opts.alsa_in, fmt_in->frame_len);
 #endif
-	else
+	else {
+		fprintf(stderr, "Unknown/invalid input\n");
 		return -1;
+	}
 
 	/* Decoding to PCM ? */
 	if (need_dec)
@@ -452,8 +454,11 @@ make_processing_chain(struct gapk_state *gs)
 			const struct format_desc *fmt_dec;
 
 			fmt_dec = fmt_get_from_type(codec_in->codec_dec_format_type);
-			if (!fmt_dec)
+			if (!fmt_dec) {
+				fprintf(stderr, "Cannot determine decoder input format for codec %s\n",
+					codec_in->name);
 				return -EINVAL;
+			}
 
 			pq_queue_fmt_convert(gs->pq, fmt_in, 0);
 			pq_queue_fmt_convert(gs->pq, fmt_dec, 1);
@@ -480,8 +485,11 @@ make_processing_chain(struct gapk_state *gs)
 			const struct format_desc *fmt_enc;
 
 			fmt_enc = fmt_get_from_type(codec_out->codec_enc_format_type);
-			if (!fmt_enc)
+			if (!fmt_enc) {
+				fprintf(stderr, "Cannot determine encoder output format for codec %s\n",
+					codec_out->name);
 				return -EINVAL;
+			}
 
 			pq_queue_fmt_convert(gs->pq, fmt_enc, 0);
 			pq_queue_fmt_convert(gs->pq, fmt_out, 1);
@@ -502,8 +510,10 @@ make_processing_chain(struct gapk_state *gs)
 	else if (gs->opts.alsa_out)
 		pq_queue_alsa_output(gs->pq, gs->opts.alsa_out, fmt_out->frame_len);
 #endif
-	else
+	else {
+		fprintf(stderr, "Unknown/invalid output\n");
 		return -1;
+	}
 
 	return 0;
 }
@@ -569,23 +579,30 @@ int main(int argc, char *argv[])
 	gs->pq = pq_create();
 	if (!gs->pq) {
 		rv = -ENOMEM;
+		fprintf(stderr, "Error creating processing queue\n");
 		goto error;
 	}
 
 	/* Open source / destination files */
 	rv = files_open(gs);
-	if (rv)
+	if (rv) {
+		fprintf(stderr, "Error opening file(s)\n");
 		goto error;
+	}
 
 	/* Handle input/output headers */
 	rv = handle_headers(gs);
-	if (rv)
+	if (rv) {
+		fprintf(stderr, "Error handling header(s)\n");
 		goto error;
+	}
 
 	/* Make processing chain */
 	rv = make_processing_chain(gs);
-	if (rv)
+	if (rv) {
+		fprintf(stderr, "Error making processing chain\n");
 		goto error;
+	}
 
 	signal(SIGINT, &signal_handler);
 

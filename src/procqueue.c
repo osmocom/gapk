@@ -72,8 +72,11 @@ pq_add_item(struct pq *pq)
 {
 	struct pq_item *item;
 
-	if (pq->n_items == MAX_PQ_ITEMS)
+	if (pq->n_items == MAX_PQ_ITEMS) {
+		fprintf(stderr, "Processing Queue cannot handle more than %u items\n",
+			MAX_PQ_ITEMS);
 		return NULL;
+	}
 
 	item = calloc(1, sizeof(struct pq_item));
 	if (!item)
@@ -98,8 +101,11 @@ pq_prepare(struct pq *pq)
 	for (i=0; i<pq->n_items; i++) {
 		struct pq_item *item = pq->items[i];
 
-		if (item->len_in && item->len_in != len_prev)
+		if (item->len_in && item->len_in != len_prev) {
+			fprintf(stderr, "PQ item requires input size %u, but previous output is %u\n",
+				item->len_in, len_prev);
 			return -EINVAL;
+		}
 
 		if (i < (pq->n_items-1)) {
 			unsigned int buf_size = item->len_out;
