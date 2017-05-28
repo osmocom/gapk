@@ -38,17 +38,26 @@ enum codec_type {
 
 #include <gapk/formats.h>	/* need to import here because or enum interdep */
 
+/*! call-back for actual codec conversion function
+ *  \param[in] state opaque state pointer (returned by codec->init)
+ *  \param[out] dst caller-allocated buffer for output data
+ *  \param[in] src input data
+ *  \param[in] src_len length of input data \a src
+ *  \returns number of output bytes written to \a dst; negative on error */
 typedef int (*codec_conv_cb_t)(void *state, uint8_t *dst, const uint8_t *src, unsigned int src_len);
 
 struct codec_desc {
 	enum codec_type		type;
 	const char *		name;
 	const char *		description;
+	/*! canonical frame size (in bytes); 0 in case of variable length */
 	unsigned int		canon_frame_len;
 
 	enum format_type	codec_enc_format_type;	/* what the encoder provides */
 	enum format_type	codec_dec_format_type;	/* what to give the decoder */
+	/*! codec initialization function pointer, returns opaque state */
 	void *			(*codec_init)(void);
+	/*! codec exit function pointer, gets passed opaque state */
 	void			(*codec_exit)(void *state);
 	codec_conv_cb_t		codec_encode;
 	codec_conv_cb_t		codec_decode;

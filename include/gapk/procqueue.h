@@ -26,9 +26,18 @@
 struct pq;
 
 struct pq_item {
+	/*! input frame size (in bytes). '0' in case of variable frames */
 	int len_in;
+	/*! output frame size (in bytes). '0' in case of variable frames */
 	int len_out;
+	/*! opaque state */
 	void *state;
+	/*! call-back for actual format conversion function
+	 *  \param[in] state opaque state pointer
+	 *  \param[out] out caller-allocated buffer for output data
+	 *  \param[in] in input data
+	 *  \param[in] in_len length of input data \a in
+	 *  \returns number of output bytes written to \a out; negative on error */
 	int  (*proc)(void *state, uint8_t *out, const uint8_t *in, unsigned int in_len);
 	void (*exit)(void *state);
 };

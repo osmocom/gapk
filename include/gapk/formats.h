@@ -53,6 +53,11 @@ enum format_type {
 
 #include <gapk/codecs.h>	/* need to import here because or enum interdep */
 
+/*! call-back for actual format conversion function
+ *  \param[out] dst caller-allocated buffer for output data
+ *  \param[in] src input data
+ *  \param[in] src_len length of input data \a src
+ *  \returns number of output bytes written to \a dst; negative on error */
 typedef int (*fmt_conv_cb_t)(uint8_t *dst, const uint8_t *src, unsigned int src_len);
 
 struct format_desc {
@@ -61,11 +66,14 @@ struct format_desc {
 	const char *		name;
 	const char *		description;
 
+	/*! length of frames in this format (as opposed to canonical) */
 	unsigned int		frame_len;
 	fmt_conv_cb_t		conv_from_canon;
 	fmt_conv_cb_t		conv_to_canon;
 
+	/*! length of a (global) header at start of file */
 	unsigned int		header_len;
+	/*! exact match for (global) header at start of file */
 	const uint8_t *		header;
 };
 
