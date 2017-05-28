@@ -88,8 +88,6 @@ codec_amr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 {
 	struct codec_amr_state *st = state;
 
-	printf("%s(): %u bytes in\n", __func__, cod_len);
-
 	BENCHMARK_START;
 	Decoder_Interface_Decode(
 		st->decoder,
