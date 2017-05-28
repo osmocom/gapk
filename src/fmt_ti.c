@@ -55,7 +55,7 @@ ti_hr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	for (i=0; i<112; i++) {
 		int si = bit_mapping[i];
 		int di = i >= 95 ? i+4 : i;
-		lsb_put_bit(dst, di, msb_get_bit(src, si));
+		msb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
 	return TI_LEN;
