@@ -111,7 +111,7 @@ print_help(char *progname)
 
 	for (i=CODEC_INVALID+1; i<_CODEC_MAX; i++) {
 		const struct codec_desc *codec = codec_get_from_type(i);
-		fprintf(stdout, " %s\t %c   %c   %c\t%s\n",
+		fprintf(stdout, " %4s  %c   %c   %c  \t%s\n",
 			codec->name,
 			'*',
 			codec->codec_encode ? '*' : ' ',
@@ -127,10 +127,8 @@ print_help(char *progname)
 	
 	for (i=FMT_INVALID+1; i<_FMT_MAX; i++) {
 		const struct format_desc *fmt = fmt_get_from_type(i);
-		fprintf(stdout, " %s%s%s\t%s\n",
+		fprintf(stdout, " %-19s %s\n",
 			fmt->name,
-			strlen(fmt->name) <  7 ? "\t" : "",
-			strlen(fmt->name) < 15 ? "\t" : "",
 			fmt->description
 		);
 	}
