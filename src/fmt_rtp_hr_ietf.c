@@ -52,7 +52,7 @@ rtp_hr_ietf_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	/* copy codec payload */
 	memcpy(dst+1, src, src_len);
 
-	return HR_CANON_LEN;
+	return HR_LEN;
 }
 
 /* conversion function: canonical format -> RTP payload */
