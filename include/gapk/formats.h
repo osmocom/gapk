@@ -52,6 +52,8 @@ enum format_type {
 	FMT_AMR_OPENCORE,
 	FMT_RTP_AMR,
 
+	FMT_RTP_EFR,
+
 	_FMT_MAX,
 };
 
