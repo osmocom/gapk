@@ -26,6 +26,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #include <osmocom/codec/codec.h>
 
@@ -33,14 +34,17 @@
 #include <gapk/formats.h>
 #include <gapk/utils.h>
 
+#define TI_LEN	33
 
 static int
-ti_hr_from_canon(uint8_t *dst, const uint8_t *src)
+ti_hr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i, voiced;
 	const uint16_t *bit_mapping;
 
-	memset(dst, 0x00, 33); /* Not even half the bits are written, so we pre-clear */
+	assert(src_len == HR_CANON_LEN);
+
+	memset(dst, 0x00, TI_LEN); /* Not even half the bits are written, so we pre-clear */
 
 	voiced = (msb_get_bit(src, 34) << 1) | msb_get_bit(src, 35);
 
@@ -54,14 +58,16 @@ ti_hr_from_canon(uint8_t *dst, const uint8_t *src)
 		lsb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return TI_LEN;
 }
 
 static int
-ti_hr_to_canon(uint8_t *dst, const uint8_t *src)
+ti_hr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i, voiced;
 	const uint16_t *bit_mapping;
+
+	assert(src_len == TI_LEN);
 
 	voiced = (msb_get_bit(src, 94) << 1) | msb_get_bit(src, 93);
 
@@ -75,7 +81,7 @@ ti_hr_to_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return HR_CANON_LEN;
 }
 
 const struct format_desc fmt_ti_hr = {
@@ -84,16 +90,18 @@ const struct format_desc fmt_ti_hr = {
 	.name			= "ti-hr",
 	.description		= "Texas Instrument HR TCH/H buffer format",
 
-	.frame_len		= 33,
+	.frame_len		= TI_LEN,
 	.conv_from_canon	= ti_hr_from_canon,
 	.conv_to_canon		= ti_hr_to_canon,
 };
 
 
 static int
-ti_fr_from_canon(uint8_t *dst, const uint8_t *src)
+ti_fr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == FR_CANON_LEN);
 
 	dst[22] = dst[23] = 0x00; /* some bits won't be writter, pre-clear them */
 
@@ -103,13 +111,15 @@ ti_fr_from_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return TI_LEN;
 }
 
 static int
-ti_fr_to_canon(uint8_t *dst, const uint8_t *src)
+ti_fr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == TI_LEN);
 
 	dst[32] = 0x00; /* last nibble won't written, pre-clear it */
 
@@ -119,7 +129,7 @@ ti_fr_to_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return FR_CANON_LEN;
 }
 
 const struct format_desc fmt_ti_fr = {
@@ -128,16 +138,18 @@ const struct format_desc fmt_ti_fr = {
 	.name			= "ti-fr",
 	.description		= "Texas Instrument FR TCH/F buffer format",
 
-	.frame_len		= 33,
+	.frame_len		= TI_LEN,
 	.conv_from_canon	= ti_fr_from_canon,
 	.conv_to_canon		= ti_fr_to_canon,
 };
 
 
 static int
-ti_efr_from_canon(uint8_t *dst, const uint8_t *src)
+ti_efr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == EFR_CANON_LEN);
 
 	memset(dst, 0x00, 33); /* pre-clear */
 
@@ -169,13 +181,15 @@ ti_efr_from_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return TI_LEN;
 }
 
 static int
-ti_efr_to_canon(uint8_t *dst, const uint8_t *src)
+ti_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == TI_LEN);
 
 	dst[30] = 0x00; /* last nibble won't written, pre-clear it */
 
@@ -207,7 +221,7 @@ ti_efr_to_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return EFR_CANON_LEN;
 }
 
 const struct format_desc fmt_ti_efr = {
@@ -216,7 +230,7 @@ const struct format_desc fmt_ti_efr = {
 	.name			= "ti-efr",
 	.description		= "Texas Instrument EFR TCH/F buffer format",
 
-	.frame_len		= 33,
+	.frame_len		= TI_LEN,
 	.conv_from_canon	= ti_efr_from_canon,
 	.conv_to_canon		= ti_efr_to_canon,
 };

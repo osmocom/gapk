@@ -26,10 +26,10 @@
 
 
 static int
-pq_cb_fmt_convert(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_fmt_convert(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	fmt_conv_cb_t f = _state;
-	return f(out, in);
+	return f(out, in, in_len);
 }
 
 /*! Add format conversion to processing queue

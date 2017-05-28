@@ -20,10 +20,14 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
+
 #include <gapk/codecs.h>
 #include <gapk/formats.h>
 #include <gapk/utils.h>
 
+#define HR_REF_DEC_LEN	(22 * sizeof(uint16_t))
+#define HR_REF_ENC_LEN	(20 * sizeof(uint16_t))
 
 static const int params_unvoiced[] = {
 	5,	/* R0 */
@@ -122,10 +126,12 @@ hr_ref_to_canon(uint8_t *canon, const uint16_t *hr_ref)
 }
 
 static int
-hr_ref_dec_from_canon(uint8_t *dst, const uint8_t *src)
+hr_ref_dec_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	uint16_t *hr_ref = (uint16_t *)dst;
 	int rv;
+
+	assert(src_len == HR_CANON_LEN);
 
 	rv = hr_ref_from_canon(hr_ref, src);
 	if (rv)
@@ -136,27 +142,31 @@ hr_ref_dec_from_canon(uint8_t *dst, const uint8_t *src)
 	hr_ref[20] = 0;		/* SID : 2 bit */
 	hr_ref[21] = 0;		/* TAF : 1 bit */
 
-	return 0;
+	return HR_REF_DEC_LEN;
 }
 
 static int
-hr_ref_dec_to_canon(uint8_t *dst, const uint8_t *src)
+hr_ref_dec_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	const uint16_t *hr_ref = (const uint16_t *)src;
 	int rv;
+
+	assert(src_len == HR_REF_DEC_LEN);
 
 	rv = hr_ref_to_canon(dst, hr_ref);
 	if (rv)
 		return rv;
 
-	return 0;
+	return HR_CANON_LEN;
 }
 
 static int
-hr_ref_enc_from_canon(uint8_t *dst, const uint8_t *src)
+hr_ref_enc_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	uint16_t *hr_ref = (uint16_t *)dst;
 	int rv;
+
+	assert(src_len == HR_CANON_LEN);
 
 	rv = hr_ref_from_canon(hr_ref, src);
 	if (rv)
@@ -165,20 +175,22 @@ hr_ref_enc_from_canon(uint8_t *dst, const uint8_t *src)
 	hr_ref[18] = 0;		/* SP  : 1 bit */
 	hr_ref[19] = 0;		/* VAD : 1 bit */
 
-	return 0;
+	return HR_REF_ENC_LEN;
 }
 
 static int
-hr_ref_enc_to_canon(uint8_t *dst, const uint8_t *src)
+hr_ref_enc_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	const uint16_t *hr_ref = (const uint16_t *)src;
 	int rv;
+
+	assert(src_len == HR_REF_ENC_LEN);
 
 	rv = hr_ref_to_canon(dst, hr_ref);
 	if (rv)
 		return rv;
 
-	return 0;
+	return HR_CANON_LEN;
 }
 
 
@@ -188,7 +200,7 @@ const struct format_desc fmt_hr_ref_dec = {
 	.name			= "hr-ref-dec",
 	.description		= "3GPP HR Reference decoder code parameters file format",
 
-	.frame_len		= 22 * sizeof(uint16_t),
+	.frame_len		= HR_REF_DEC_LEN,
 	.conv_from_canon	= hr_ref_dec_from_canon,
 	.conv_to_canon		= hr_ref_dec_to_canon,
 };
@@ -199,7 +211,7 @@ const struct format_desc fmt_hr_ref_enc = {
 	.name			= "hr-ref-enc",
 	.description		= "3GPP HR Reference encoder code parameters file format",
 
-	.frame_len		= 20 * sizeof(uint16_t),
+	.frame_len		= HR_REF_ENC_LEN,
 	.conv_from_canon	= hr_ref_enc_from_canon,
 	.conv_to_canon		= hr_ref_enc_to_canon,
 };

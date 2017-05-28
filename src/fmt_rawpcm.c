@@ -17,15 +17,18 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
+
 #include <gapk/codecs.h>
 #include <gapk/formats.h>
 
-
 static int
-rawpcm_s16le_from_canon(uint8_t *dst, const uint8_t *src)
+rawpcm_s16le_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
 	const uint16_t *samples = (const uint16_t *)src;
+
+	assert(src_len == PCM_CANON_LEN);
 
 	for (i=0; i<160; i++) {
 		uint16_t w = samples[i];
@@ -33,19 +36,21 @@ rawpcm_s16le_from_canon(uint8_t *dst, const uint8_t *src)
 		dst[(i<<1)+1] = (w >> 8) & 0xff;
 	}
 
-	return 0;
+	return PCM_CANON_LEN;
 }
 
 static int
-rawpcm_s16le_to_canon(uint8_t *dst, const uint8_t *src)
+rawpcm_s16le_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
 	uint16_t *samples = (uint16_t *)dst;
 
+	assert(src_len == PCM_CANON_LEN);
+
 	for (i=0; i<160; i++)
 		samples[i] = (src[(i<<1)+1] << 8) | src[(i<<1)];
 
-	return 0;
+	return PCM_CANON_LEN;
 }
 
 const struct format_desc fmt_rawpcm_s16le = {

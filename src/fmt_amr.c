@@ -18,6 +18,7 @@
  */
 
 #include <stdint.h>
+#include <assert.h>
 
 #include <osmocom/codec/codec.h>
 
@@ -25,12 +26,15 @@
 #include <gapk/formats.h>
 #include <gapk/utils.h>
 
+#define EFR_LEN		32
 
 /* conversion function: .amr file -> canonical format */
 static int
-amr_efr_from_canon(uint8_t *dst, const uint8_t *src)
+amr_efr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == EFR_CANON_LEN);
 
 	dst[ 0] = 0x3c;
 	dst[31] = 0x00;	/* last nibble won't written, pre-clear it */
@@ -41,14 +45,16 @@ amr_efr_from_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(&dst[1], di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return EFR_LEN;
 }
 
 /* conversion function: canonical format -> .amr file */
 static int
-amr_efr_to_canon(uint8_t *dst, const uint8_t *src)
+amr_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == EFR_LEN);
 
 	if (src[0] != 0x3c)
 		return -1;
@@ -61,7 +67,7 @@ amr_efr_to_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, msb_get_bit(&src[1], si));
 	}
 
-	return 0;
+	return EFR_CANON_LEN;
 }
 
 const struct format_desc fmt_amr_efr = {
@@ -70,7 +76,7 @@ const struct format_desc fmt_amr_efr = {
 	.name			= "amr-efr",
 	.description		= "Classic .amr file containing EFR (=AMR 12.2k) data",
 
-	.frame_len		= 32,
+	.frame_len		= EFR_LEN,
 	.conv_from_canon	= amr_efr_from_canon,
 	.conv_to_canon		= amr_efr_to_canon,
 

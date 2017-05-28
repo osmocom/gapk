@@ -53,7 +53,7 @@ enum format_type {
 
 #include <gapk/codecs.h>	/* need to import here because or enum interdep */
 
-typedef int (*fmt_conv_cb_t)(uint8_t *dst, const uint8_t *src);
+typedef int (*fmt_conv_cb_t)(uint8_t *dst, const uint8_t *src, unsigned int src_len);
 
 struct format_desc {
 	enum format_type	type;

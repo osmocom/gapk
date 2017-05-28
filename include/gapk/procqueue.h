@@ -29,7 +29,7 @@ struct pq_item {
 	int len_in;
 	int len_out;
 	void *state;
-	int  (*proc)(void *state, uint8_t *out, const uint8_t *in);
+	int  (*proc)(void *state, uint8_t *out, const uint8_t *in, unsigned int in_len);
 	void (*exit)(void *state);
 };
 

@@ -17,6 +17,8 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
+
 #include <gapk/codecs.h>
 #include <gapk/benchmark.h>
 
@@ -41,25 +43,31 @@ codec_hr_exit(void *_state)
 }
 
 static int
-codec_hr_encode(void *_state, uint8_t *cod, const uint8_t *pcm)
+codec_hr_encode(void *_state, uint8_t *cod, const uint8_t *pcm, unsigned int pcm_len)
 {
 	struct gsmhr *state = _state;
 	int rc;
+	assert(pcm_len == PCM_CANON_LEN);
 	BENCHMARK_START;
 	rc = gsmhr_encode(state, (int16_t *)cod, (const int16_t *)pcm);
 	BENCHMARK_STOP(CODEC_HR, 1);
-	return rc;
+	if (rc < 0)
+		return rc;
+	return HR_CANON_LEN;
 }
 
 static int
-codec_hr_decode(void *_state, uint8_t *pcm, const uint8_t *cod)
+codec_hr_decode(void *_state, uint8_t *pcm, const uint8_t *cod, unsigned int cod_len)
 {
 	struct gsmhr *state = _state;
 	int rc;
+	assert(cod_len == HR_CANON_LEN);
 	BENCHMARK_START;
 	rc = gsmhr_decode(state, (int16_t *)pcm, (const int16_t *)cod);
 	BENCHMARK_STOP(CODEC_HR, 0);
-	return rc;
+	if (rc < 0)
+		return rc;
+	return PCM_CANON_LEN;
 }
 
 #endif /* HAVE_LIBGSMHR */

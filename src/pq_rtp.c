@@ -88,7 +88,7 @@ struct pq_state_rtp {
 
 
 static int
-pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	struct pq_state_rtp *state = _state;
 	uint8_t buf[state->blk_len+256];
@@ -153,14 +153,14 @@ pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in)
 
 	memcpy(out, payload, payload_len);
 
-	return 0;
+	return payload_len;
 }
 
 static int
-pq_cb_rtp_output(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_rtp_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	struct pq_state_rtp *state = _state;
-	int len = state->blk_len + sizeof(struct rtp_hdr);
+	int len = in_len + sizeof(struct rtp_hdr);
 	uint8_t buf[len];
 	struct rtp_hdr *rtph = (struct rtp_hdr *)buf;
 	uint8_t *payload;
@@ -178,7 +178,7 @@ pq_cb_rtp_output(void *_state, uint8_t *out, const uint8_t *in)
 	rtph->ssrc = htonl(state->ssrc);
 
 	payload = buf + sizeof(*rtph);
-	memcpy(payload, in, state->blk_len);
+	memcpy(payload, in, in_len);
 
 	rv = write(state->fd, buf, len);
 	return rv == len ? 0 : -1;

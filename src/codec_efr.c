@@ -26,6 +26,7 @@
 #ifdef HAVE_OPENCORE_AMRNB
 
 #include <stdlib.h>
+#include <assert.h>
 
 #include <opencore-amrnb/interf_dec.h>
 #include <opencore-amrnb/interf_enc.h>
@@ -64,11 +65,12 @@ codec_efr_exit(void *state)
 }
 
 static int
-codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
+codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm, unsigned int pcm_len)
 {
 	struct codec_efr_state *st = state;
 	int rv;
 
+	assert(pcm_len == PCM_CANON_LEN);
 	BENCHMARK_START;
 	rv = Encoder_Interface_Encode(
 		st->encoder,
@@ -79,14 +81,18 @@ codec_efr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
 	);
 	BENCHMARK_STOP(CODEC_EFR, 1);
 
-	return rv != 32;
+	if (rv != 32)
+		return -1;
+
+	return EFR_CANON_LEN;
 }
 
 static int
-codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod)
+codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod_len)
 {
 	struct codec_efr_state *st = state;
 
+	assert(cod_len == EFR_CANON_LEN);
 	BENCHMARK_START;
 	Decoder_Interface_Decode(
 		st->decoder,
@@ -96,7 +102,7 @@ codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod)
 	);
 	BENCHMARK_STOP(CODEC_EFR, 0);
 
-	return 0;
+	return PCM_CANON_LEN;
 }
 
 #endif /* HAVE_OPENCORE_AMRNB */

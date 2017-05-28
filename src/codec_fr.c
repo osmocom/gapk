@@ -17,6 +17,8 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
+
 #include <gapk/codecs.h>
 #include <gapk/benchmark.h>
 
@@ -50,28 +52,32 @@ codec_fr_exit(void *state)
 }
 
 static int
-codec_fr_encode(void *state, uint8_t *cod, const uint8_t *pcm)
+codec_fr_encode(void *state, uint8_t *cod, const uint8_t *pcm, unsigned int pcm_len)
 {
 	gsm gh = (gsm)state;
-	uint8_t pcm_b[2*160];	/* local copy as libgsm src isn't const ! */
-	memcpy(pcm_b, pcm, 2*160);
+	uint8_t pcm_b[PCM_CANON_LEN];	/* local copy as libgsm src isn't const ! */
+	assert(pcm_len == PCM_CANON_LEN);
+	memcpy(pcm_b, pcm, PCM_CANON_LEN);
 	BENCHMARK_START;
 	gsm_encode(gh, (gsm_signal*)pcm, (gsm_byte*)cod);
 	BENCHMARK_STOP(CODEC_FR, 1);
-	return 0;
+	return FR_CANON_LEN;
 }
 
 static int
-codec_fr_decode(void *state, uint8_t *pcm, const uint8_t *cod)
+codec_fr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod_len)
 {
 	gsm gh = (gsm)state;
-	uint8_t cod_b[33];	/* local copy as libgsm src isn't const ! */
+	uint8_t cod_b[FR_CANON_LEN];	/* local copy as libgsm src isn't const ! */
 	int rc;
-	memcpy(cod_b, cod, 33);
+	assert(cod_len == FR_CANON_LEN);
+	memcpy(cod_b, cod, FR_CANON_LEN);
 	BENCHMARK_START;
 	rc = gsm_decode(gh, (gsm_byte*)cod_b, (gsm_signal*)pcm);
 	BENCHMARK_STOP(CODEC_FR, 1);
-	return rc;
+	if (rc < 0)
+		return rc;
+	return PCM_CANON_LEN;
 }
 
 #endif /* HAVE_LIBGSM */

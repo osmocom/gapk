@@ -23,7 +23,7 @@
 
 #include <gapk/procqueue.h>
 
-
+#define VAR_BUF_SIZE	320
 #define MAX_PQ_ITEMS	8
 
 struct pq {
@@ -98,11 +98,16 @@ pq_prepare(struct pq *pq)
 	for (i=0; i<pq->n_items; i++) {
 		struct pq_item *item = pq->items[i];
 
-		if (item->len_in != len_prev)
+		if (item->len_in && item->len_in != len_prev)
 			return -EINVAL;
 
 		if (i < (pq->n_items-1)) {
-			pq->buffers[i] = malloc(item->len_out);
+			unsigned int buf_size = item->len_out;
+			/* variable-length codec output, use maximum
+			 * known buffer size */
+			if (!buf_size)
+				buf_size = VAR_BUF_SIZE;
+			pq->buffers[i] = malloc(buf_size);
 			if (!pq->buffers[i])
 				return -ENOMEM;
 		} else{
@@ -124,8 +129,10 @@ pq_execute(struct pq *pq)
 {
 	int i;
 	void *buf_prev, *buf;
+	unsigned int len_prev;
 
 	buf_prev = NULL;
+	len_prev = 0;
 
 	for (i=0; i<pq->n_items; i++) {
 		int rv;
@@ -133,11 +140,14 @@ pq_execute(struct pq *pq)
 
 		buf = i < (pq->n_items-1) ? pq->buffers[i] : NULL;
 
-		rv = item->proc(item->state, buf, buf_prev);
-		if (rv)
+		rv = item->proc(item->state, buf, buf_prev, len_prev);
+		if (rv < 0) {
+			fprintf(stderr, "pq_execute(): abort, item returned %d\n", rv);
 			return rv;
+		}
 
 		buf_prev = buf;
+		len_prev = rv;
 	}
 
 	return 0;

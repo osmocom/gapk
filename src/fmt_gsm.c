@@ -17,36 +17,41 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include <gapk/codecs.h>
 #include <gapk/formats.h>
 
-
+#define GSM_LEN	  33
 #define GSM_MAGIC 0xd
 
 /* convert canonical -> .gsm */
 static int
-gsm_from_canon(uint8_t *dst, const uint8_t *src)
+gsm_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
 
+	assert(src_len == FR_CANON_LEN);
+
 	dst[0] = (GSM_MAGIC << 4) | (src[0] >> 4);
-	for (i=1; i<33; i++)
+	for (i=1; i<GSM_LEN; i++)
 		dst[i] = (src[i-1] << 4) | (src[i] >> 4);
 
-	return 0;
+	return GSM_LEN;
 }
 
 /* convert .gsm -> canonical */
 static int
-gsm_to_canon(uint8_t *dst, const uint8_t *src)
+gsm_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
 
-	for (i=0; i<32; i++)
-		dst[i] = (src[i] << 4) | (src[i+1] >> 4);
-	dst[32] = src[32] << 4;
+	assert(src_len == GSM_LEN);
 
-	return 0;
+	for (i=0; i<(GSM_LEN-1); i++)
+		dst[i] = (src[i] << 4) | (src[i+1] >> 4);
+	dst[GSM_LEN-1] = src[GSM_LEN-1] << 4;
+
+	return FR_CANON_LEN;
 }
 
 const struct format_desc fmt_gsm = {
@@ -55,7 +60,7 @@ const struct format_desc fmt_gsm = {
 	.name			= "gsm",
 	.description		= "Classic .gsm file format",
 
-	.frame_len		= 33,
+	.frame_len		= GSM_LEN,
 	.conv_from_canon	= gsm_from_canon,
 	.conv_to_canon		= gsm_to_canon,
 };

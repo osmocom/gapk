@@ -18,6 +18,7 @@
  */
 
 #include <stdint.h>
+#include <assert.h>
 
 #include <osmocom/codec/codec.h>
 
@@ -25,12 +26,17 @@
 #include <gapk/formats.h>
 #include <gapk/utils.h>
 
+#define RACAL_HR_LEN	14
+#define RACAL_FR_LEN	33
+#define RACAL_EFR_LEN	31
 
 static int
-racal_hr_from_canon(uint8_t *dst, const uint8_t *src)
+racal_hr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i, voiced;
 	const uint16_t *bit_mapping;
+
+	assert(src_len == HR_CANON_LEN);
 
 	voiced = (msb_get_bit(src, 34) << 1) | msb_get_bit(src, 35);
 
@@ -44,14 +50,16 @@ racal_hr_from_canon(uint8_t *dst, const uint8_t *src)
 		lsb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return RACAL_HR_LEN;
 }
 
 static int
-racal_hr_to_canon(uint8_t *dst, const uint8_t *src)
+racal_hr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i, voiced;
 	const uint16_t *bit_mapping;
+
+	assert(src_len == HR_CANON_LEN);
 
 	voiced = (lsb_get_bit(src, 94) << 1) | lsb_get_bit(src, 93);
 
@@ -65,7 +73,7 @@ racal_hr_to_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, lsb_get_bit(src, si));
 	}
 
-	return 0;
+	return RACAL_HR_LEN;
 }
 
 const struct format_desc fmt_racal_hr = {
@@ -74,16 +82,18 @@ const struct format_desc fmt_racal_hr = {
 	.name			= "racal-hr",
 	.description		= "Racal HR TCH/H recording",
 
-	.frame_len		= 14,
+	.frame_len		= RACAL_HR_LEN,
 	.conv_from_canon	= racal_hr_from_canon,
 	.conv_to_canon		= racal_hr_to_canon,
 };
 
 
 static int
-racal_fr_from_canon(uint8_t *dst, const uint8_t *src)
+racal_fr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == FR_CANON_LEN);
 
 	dst[32] = 0x00; /* last nibble won't written, pre-clear it */
 
@@ -93,13 +103,15 @@ racal_fr_from_canon(uint8_t *dst, const uint8_t *src)
 		lsb_put_bit(dst, di, msb_get_bit(src, si));
 	}
 
-	return 0;
+	return RACAL_FR_LEN;
 }
 
 static int 
-racal_fr_to_canon(uint8_t *dst, const uint8_t *src)
+racal_fr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == RACAL_FR_LEN);
 
 	dst[32] = 0x00; /* last nibble won't written, pre-clear it */
 
@@ -109,7 +121,7 @@ racal_fr_to_canon(uint8_t *dst, const uint8_t *src)
 		msb_put_bit(dst, di, lsb_get_bit(src, si));
 	}
 
-	return 0;
+	return FR_CANON_LEN;
 }
 
 const struct format_desc fmt_racal_fr = {
@@ -118,36 +130,40 @@ const struct format_desc fmt_racal_fr = {
 	.name			= "racal-fr",
 	.description		= "Racal FR TCH/F recording",
 
-	.frame_len		= 33,
+	.frame_len		= RACAL_FR_LEN,
 	.conv_from_canon	= racal_fr_from_canon,
 	.conv_to_canon		= racal_fr_to_canon,
 };
 
 
 static int
-racal_efr_from_canon(uint8_t *dst, const uint8_t *src)
+racal_efr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == EFR_CANON_LEN);
 
 	dst[30] = 0x00; /* last nibble won't written, pre-clear it */
 
 	for (i=0; i<244; i++)
 		lsb_put_bit(dst, i, msb_get_bit(src, i));
 
-	return 0;
+	return RACAL_EFR_LEN;
 }
 
 static int
-racal_efr_to_canon(uint8_t *dst, const uint8_t *src)
+racal_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
+
+	assert(src_len == RACAL_EFR_LEN);
 
 	dst[30] = 0x00; /* last nibble won't written, pre-clear it */
 
 	for (i=0; i<244; i++)
 		msb_put_bit(dst, i, lsb_get_bit(src, i));
 
-	return 0;
+	return EFR_CANON_LEN;
 }
 
 const struct format_desc fmt_racal_efr = {
@@ -156,7 +172,7 @@ const struct format_desc fmt_racal_efr = {
 	.name			= "racal-efr",
 	.description		= "Racal EFR TCH/F recording",
 
-	.frame_len		= 31,
+	.frame_len		= RACAL_EFR_LEN,
 	.conv_from_canon	= racal_efr_from_canon,
 	.conv_to_canon		= racal_efr_to_canon,
 };

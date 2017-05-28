@@ -40,20 +40,22 @@ struct pq_state_alsa {
 };
 
 static int
-pq_cb_alsa_input(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_alsa_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	struct pq_state_alsa *state = _state;
 	unsigned int num_samples = state->blk_len/2;
 	int rv;
 	rv = snd_pcm_readi(state->pcm_handle, out, num_samples);
-	return rv == num_samples ? 0 : -1;
+	if (rv < 0)
+		return rv;
+	return rv * sizeof(uint16_t);
 }
 
 static int
-pq_cb_alsa_output(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_alsa_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	struct pq_state_alsa *state = _state;
-	unsigned int num_samples = state->blk_len/2;
+	unsigned int num_samples = in_len/2;
 	int rv;
 	rv = snd_pcm_writei(state->pcm_handle, in, num_samples);
 	return rv == num_samples ? 0 : -1;

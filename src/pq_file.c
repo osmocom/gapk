@@ -34,20 +34,22 @@ struct pq_state_file {
 
 
 static int
-pq_cb_file_input(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_file_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	struct pq_state_file *state = _state;
 	int rv;
 	rv = fread(out, state->blk_len, 1, state->fh);
-	return rv == 1 ? 0 : -1;
+	if (rv < 0)
+		return rv;
+	return rv * state->blk_len;
 }
 
 static int
-pq_cb_file_output(void *_state, uint8_t *out, const uint8_t *in)
+pq_cb_file_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
 	struct pq_state_file *state = _state;
 	int rv;
-	rv = fwrite(in, state->blk_len, 1, state->fh);
+	rv = fwrite(in, in_len, 1, state->fh);
 	return rv == 1 ? 0 : -1;
 }
 
