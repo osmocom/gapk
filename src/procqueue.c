@@ -73,7 +73,7 @@ pq_add_item(struct pq *pq)
 	struct pq_item *item;
 
 	if (pq->n_items == MAX_PQ_ITEMS) {
-		fprintf(stderr, "Processing Queue cannot handle more than %u items\n",
+		fprintf(stderr, "[!] Processing Queue cannot handle more than %u items\n",
 			MAX_PQ_ITEMS);
 		return NULL;
 	}
@@ -102,7 +102,7 @@ pq_prepare(struct pq *pq)
 		struct pq_item *item = pq->items[i];
 
 		if (item->len_in && item->len_in != len_prev) {
-			fprintf(stderr, "PQ item requires input size %u, but previous output is %u\n",
+			fprintf(stderr, "[!] PQ item requires input size %u, but previous output is %u\n",
 				item->len_in, len_prev);
 			return -EINVAL;
 		}
@@ -148,7 +148,7 @@ pq_execute(struct pq *pq)
 
 		rv = item->proc(item->state, buf, buf_prev, len_prev);
 		if (rv < 0) {
-			fprintf(stderr, "pq_execute(): abort, item returned %d\n", rv);
+			fprintf(stderr, "[!] pq_execute(): abort, item returned %d\n", rv);
 			return rv;
 		}
 
