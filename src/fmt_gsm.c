@@ -58,7 +58,7 @@ const struct format_desc fmt_gsm = {
 	.type			= FMT_GSM,
 	.codec_type		= CODEC_FR,
 	.name			= "gsm",
-	.description		= "Classic .gsm file format",
+	.description		= "Classic .gsm file format (and RTP payload for FR according to RFC3551)",
 
 	.frame_len		= GSM_LEN,
 	.conv_from_canon	= gsm_from_canon,
