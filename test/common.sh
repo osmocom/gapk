@@ -4,7 +4,7 @@ REFDIR=./ref-files
 if [ -f ../src/gapk ]; then
 	GAPK=../src/gapk
 elif [ -f `which gapk` ]; then
-	GAPK=`whiich gapk`
+	GAPK=`which gapk`
 else
 	exit 1
 fi
