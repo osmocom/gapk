@@ -18,8 +18,8 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gapk/codecs.h>
-#include <gapk/benchmark.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/benchmark.h>
 
 #include "config.h"
 

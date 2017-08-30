@@ -39,7 +39,7 @@ enum codec_type {
 	_CODEC_MAX,
 };
 
-#include <gapk/formats.h>	/* need to import here because or enum interdep */
+#include <osmocom/gapk/formats.h>	/* need to import here because or enum interdep */
 
 /*! call-back for actual codec conversion function
  *  \param[in] state opaque state pointer (returned by codec->init)

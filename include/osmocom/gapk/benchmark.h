@@ -20,8 +20,8 @@
  * (C) 2014 Harald Welte <laforge@gnumonks.org>
  */
 
-#include <gapk/get_cycles.h>
-#include <gapk/codecs.h>
+#include <osmocom/gapk/get_cycles.h>
+#include <osmocom/gapk/codecs.h>
 
 #define NUM_AVG	102400
 

@@ -19,7 +19,7 @@
 
 #include <stdio.h>	/* for NULL */
 
-#include <gapk/codecs.h>
+#include <osmocom/gapk/codecs.h>
 
 /* Extern codec descriptors */
 extern const struct codec_desc codec_pcm_desc;

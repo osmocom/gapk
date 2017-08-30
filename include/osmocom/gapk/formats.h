@@ -62,7 +62,7 @@ enum format_type {
 	_FMT_MAX,
 };
 
-#include <gapk/codecs.h>	/* need to import here because or enum interdep */
+#include <osmocom/gapk/codecs.h>	/* need to import here because or enum interdep */
 
 /*! call-back for actual format conversion function
  *  \param[out] dst caller-allocated buffer for output data

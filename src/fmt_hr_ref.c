@@ -22,9 +22,9 @@
 
 #include <assert.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 static const int params_unvoiced[] = {
 	5,	/* R0 */

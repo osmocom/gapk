@@ -22,9 +22,9 @@
 
 #include <osmocom/codec/codec.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 #define RACAL_HR_LEN	14
 #define RACAL_FR_LEN	33

@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 
-#include <gapk/benchmark.h>
+#include <osmocom/gapk/benchmark.h>
 
 struct benchmark_cycles codec_cycles[_CODEC_MAX];
 

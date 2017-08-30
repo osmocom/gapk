@@ -21,9 +21,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 static int
 amr_opencore_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)

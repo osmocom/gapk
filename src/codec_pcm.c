@@ -17,7 +17,7 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gapk/codecs.h>
+#include <osmocom/gapk/codecs.h>
 
 const struct codec_desc codec_pcm_desc = {
 	.type = CODEC_PCM,

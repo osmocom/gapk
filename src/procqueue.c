@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <gapk/procqueue.h>
+#include <osmocom/gapk/procqueue.h>
 
 #define VAR_BUF_SIZE	320
 #define MAX_PQ_ITEMS	8

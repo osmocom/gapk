@@ -16,7 +16,6 @@ AC_CONFIG_FILES([
 	src/Makefile
 	libgsmhr/Makefile
 	include/Makefile
-	include/gapk/Makefile
 	include/gsmhr/Makefile
 ])
 

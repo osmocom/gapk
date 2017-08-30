@@ -18,8 +18,8 @@
  */
 
 #include <assert.h>
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
 
 #define GSM_LEN	  33
 #define GSM_MAGIC 0xd

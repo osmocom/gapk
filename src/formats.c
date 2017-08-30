@@ -20,7 +20,7 @@
 #include <stdio.h>	/* for NULL */
 #include <string.h>
 
-#include <gapk/formats.h>
+#include <osmocom/gapk/formats.h>
 
 /* Extern format descriptors */
 extern const struct format_desc fmt_amr_efr;

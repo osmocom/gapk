@@ -33,10 +33,10 @@
 
 #include <osmocom/core/socket.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/procqueue.h>
-#include <gapk/benchmark.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/procqueue.h>
+#include <osmocom/gapk/benchmark.h>
 
 
 struct gapk_options

@@ -19,8 +19,8 @@
 
 #include <assert.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
 
 static int
 rawpcm_s16le_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)

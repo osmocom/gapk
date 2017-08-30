@@ -22,9 +22,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/procqueue.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/procqueue.h>
 
 
 struct pq_state_file {

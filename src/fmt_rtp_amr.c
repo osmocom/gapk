@@ -23,9 +23,9 @@
 
 #include <osmocom/codec/codec.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 /* conversion function: RTP payload -> canonical format */
 static int
