@@ -17,8 +17,7 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GAPK_UTILS_H__
-#define __GAPK_UTILS_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -100,5 +99,3 @@ lsb_clr_bit(uint8_t *buf, int bn)
 
 	buf[pos_byte] &= ~(1 << pos_bit);
 }
-
-#endif /* __GAPK_UTILS_H__ */

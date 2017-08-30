@@ -17,8 +17,7 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GAPK_PROCQUEUE_H__
-#define __GAPK_PROCQUEUE_H__
+#pragma once
 
 #include <stdint.h>
 #include <stdio.h> /* for FILE */
@@ -68,5 +67,3 @@ int pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_fr
 /* Codec */
 struct codec_desc;
 int pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int encode);
-
-#endif /* __GAPK_PROCQUEUE_H__ */

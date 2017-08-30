@@ -17,8 +17,7 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GAPK_CODECS_H__
-#define __GAPK_CODECS_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -67,5 +66,3 @@ struct codec_desc {
 };
 
 const struct codec_desc *codec_get_from_type(enum codec_type type);
-
-#endif /* __GAPK_CODECS_H__ */

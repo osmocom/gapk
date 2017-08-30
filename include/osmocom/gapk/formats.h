@@ -17,8 +17,7 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GAPK_FORMATS_H__
-#define __GAPK_FORMATS_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -90,5 +89,3 @@ struct format_desc {
 
 const struct format_desc *fmt_get_from_type(enum format_type type);
 const struct format_desc *fmt_get_from_name(const char *name);
-
-#endif /* __GAPK_FORMATS_H__ */

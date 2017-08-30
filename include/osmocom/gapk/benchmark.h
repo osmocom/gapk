@@ -1,6 +1,3 @@
-#ifndef _BENCHMARK_H
-#define _BENCHMARK_H
-
 /*
  * This file is part of gapk (GSM Audio Pocket Knife).
  *
@@ -19,6 +16,8 @@
  *
  * (C) 2014 Harald Welte <laforge@gnumonks.org>
  */
+
+#pragma once
 
 #include <osmocom/gapk/get_cycles.h>
 #include <osmocom/gapk/codecs.h>
@@ -56,5 +55,3 @@ static inline void benchmark_stop(enum codec_type codec, int encode, unsigned lo
 				} while (0)
 
 void benchmark_dump(void);
-
-#endif

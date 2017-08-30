@@ -17,8 +17,7 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GSM_HR_H__
-#define __GSM_HR_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -36,5 +35,3 @@ int           gsmhr_decode(struct gsmhr *state, int16_t *pcm, const int16_t *hr_
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __GSM_HR_H__ */

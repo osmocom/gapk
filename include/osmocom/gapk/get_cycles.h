@@ -33,8 +33,7 @@
  * $Id$
  */
 
-#ifndef GET_CLOCK_H
-#define GET_CLOCK_H
+#pragma once
 
 #if 0
 
@@ -134,5 +133,3 @@ static inline cycles_t get_cycles()
 #endif
 
 extern double get_cpu_mhz(void);
-
-#endif /* GET_CLOCK_H */
