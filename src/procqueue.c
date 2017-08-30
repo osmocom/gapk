@@ -23,16 +23,6 @@
 
 #include <osmocom/gapk/procqueue.h>
 
-#define VAR_BUF_SIZE	320
-#define MAX_PQ_ITEMS	8
-
-struct pq {
-	int		n_items;
-	struct pq_item* items[MAX_PQ_ITEMS];
-	void *		buffers[MAX_PQ_ITEMS+1];
-};
-
-
 /* crate a new (empty) processing queue */
 struct pq *
 pq_create(void)

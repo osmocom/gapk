@@ -22,8 +22,6 @@
 #include <stdint.h>
 #include <stdio.h> /* for FILE */
 
-struct pq;
-
 struct pq_item {
 	/*! input frame size (in bytes). '0' in case of variable frames */
 	int len_in;
@@ -39,6 +37,15 @@ struct pq_item {
 	 *  \returns number of output bytes written to \a out; negative on error */
 	int  (*proc)(void *state, uint8_t *out, const uint8_t *in, unsigned int in_len);
 	void (*exit)(void *state);
+};
+
+#define VAR_BUF_SIZE	320
+#define MAX_PQ_ITEMS	8
+
+struct pq {
+	unsigned n_items;
+	struct pq_item *items[MAX_PQ_ITEMS];
+	void *buffers[MAX_PQ_ITEMS + 1];
 };
 
 /* Management */
