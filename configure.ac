@@ -17,6 +17,7 @@ AC_CONFIG_FILES([
 	libgsmhr/Makefile
 	include/Makefile
 	include/gsmhr/Makefile
+	libosmogapk.pc
 ])
 
 # Options
