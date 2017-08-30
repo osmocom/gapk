@@ -75,16 +75,16 @@ libosmogapk_la_SOURCES += \
 	$(NULL)
 
 # libosmogapk representative application
-bin_PROGRAMS = gapk
+bin_PROGRAMS = osmo-gapk
 
-gapk_SOURCES = \
+osmo_gapk_SOURCES = \
 	main.c \
 	$(NULL)
 
-gapk_LDFLAGS = \
+osmo_gapk_LDFLAGS = \
 	$(LIBOSMOCORE_LIBS) \
 	$(NULL)
 
-gapk_LDADD = \
+osmo_gapk_LDADD = \
 	$(top_builddir)/src/libosmogapk.la \
 	$(NULL)
