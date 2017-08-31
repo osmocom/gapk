@@ -21,14 +21,14 @@
 
 #include <osmocom/gapk/benchmark.h>
 
-struct benchmark_cycles codec_cycles[_CODEC_MAX];
+struct osmo_gapk_bench_cycles osmo_gapk_bench_codec[_CODEC_MAX];
 
 void benchmark_dump(void)
 {
 	int i;
 
 	for (i = 0; i < _CODEC_MAX; i++) {
-		struct benchmark_cycles *bc = &codec_cycles[i];
+		struct osmo_gapk_bench_cycles *bc = &osmo_gapk_bench_codec[i];
 		unsigned long long total;
 		int j;
 

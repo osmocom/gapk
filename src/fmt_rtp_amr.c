@@ -48,7 +48,7 @@ rtp_amr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return src_len-1;
 }
 
-const struct format_desc fmt_rtp_amr = {
+const struct osmo_gapk_format_desc fmt_rtp_amr = {
 	.type			= FMT_RTP_AMR,
 	.codec_type		= CODEC_AMR,
 	.name			= "rtp-amr",

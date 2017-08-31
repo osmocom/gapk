@@ -28,7 +28,7 @@
 static int
 pq_cb_fmt_convert(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
 {
-	fmt_conv_cb_t f = _state;
+	osmo_gapk_fmt_conv_cb_t f = _state;
 	return f(out, in, in_len);
 }
 
@@ -37,18 +37,19 @@ pq_cb_fmt_convert(void *_state, uint8_t *out, const uint8_t *in, unsigned int in
  *  \param[in] fmt Format description for conversion
  *  \param[in] to_from_n convert to (0) or from (1) specified format */
 int
-pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n)
+osmo_gapk_pq_queue_fmt_convert(struct osmo_gapk_pq *pq, const struct osmo_gapk_format_desc *fmt, int to_from_n)
 {
-	struct pq_item *item;
-	const struct codec_desc *codec = codec_get_from_type(fmt->codec_type);
+	const struct osmo_gapk_codec_desc *codec;
+	struct osmo_gapk_pq_item *item;
 
+	codec = osmo_gapk_codec_get_from_type(fmt->codec_type);
 	if (!codec) {
 		fprintf(stderr, "[!] Cannot determine codec from format %s\n", fmt->name);
 		return -EINVAL;
 	}
 
 
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item)
 		return -ENOMEM;
 

@@ -108,7 +108,7 @@ codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 #endif /* HAVE_OPENCORE_AMRNB */
 
 
-const struct codec_desc codec_efr_desc = {
+const struct osmo_gapk_codec_desc codec_efr_desc = {
 	.type = CODEC_EFR,
 	.name = "efr",
 	.description = "GSM 06.60 Enhanced Full Rate codec",

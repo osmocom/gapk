@@ -24,18 +24,19 @@
 
 #define NUM_AVG	102400
 
-struct benchmark_cycles {
+struct osmo_gapk_bench_cycles {
 	cycles_t enc[NUM_AVG];
 	unsigned int enc_used;
 	cycles_t dec[NUM_AVG];
 	unsigned int dec_used;
 };
 
-extern struct benchmark_cycles codec_cycles[_CODEC_MAX];
+extern struct osmo_gapk_bench_cycles osmo_gapk_bench_codec[_CODEC_MAX];
 
-static inline void benchmark_stop(enum codec_type codec, int encode, unsigned long cycles)
+static inline void benchmark_stop(enum osmo_gapk_codec_type codec,
+	int encode, unsigned long cycles)
 {
-	struct benchmark_cycles *bc = &codec_cycles[codec];
+	struct osmo_gapk_bench_cycles *bc = &osmo_gapk_bench_codec[codec];
 
 	if (encode) {
 		bc->enc_used = (bc->enc_used + 1) % NUM_AVG;

@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include <stdio.h> /* for FILE */
 
-struct pq_item {
+struct osmo_gapk_pq_item {
 	/*! input frame size (in bytes). '0' in case of variable frames */
 	int len_in;
 	/*! output frame size (in bytes). '0' in case of variable frames */
@@ -42,35 +42,37 @@ struct pq_item {
 #define VAR_BUF_SIZE	320
 #define MAX_PQ_ITEMS	8
 
-struct pq {
+struct osmo_gapk_pq {
 	unsigned n_items;
-	struct pq_item *items[MAX_PQ_ITEMS];
+	struct osmo_gapk_pq_item *items[MAX_PQ_ITEMS];
 	void *buffers[MAX_PQ_ITEMS + 1];
 };
 
-/* Management */
-struct pq *		pq_create(void);
-void			pq_destroy(struct pq *pq);
-struct pq_item *	pq_add_item(struct pq *pq);
-int			pq_prepare(struct pq *pq);
-int			pq_execute(struct pq *pq);
+/* Processing queue management */
+struct osmo_gapk_pq *osmo_gapk_pq_create(void);
+int osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq);
+int osmo_gapk_pq_execute(struct osmo_gapk_pq *pq);
+void osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq);
+
+/* Processing queue item management */
+struct osmo_gapk_pq_item *osmo_gapk_pq_add_item(struct osmo_gapk_pq *pq);
 
 /* File */
-int pq_queue_file_input(struct pq *pq, FILE *src, unsigned int block_len);
-int pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int block_len);
+int osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int block_len);
+int osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int block_len);
 
 /* RTP */
-int pq_queue_rtp_input(struct pq *pq, int rtp_fd, unsigned int block_len);
-int pq_queue_rtp_output(struct pq *pq, int rtp_fd, unsigned int block_len);
+int osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int rtp_fd, unsigned int block_len);
+int osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int rtp_fd, unsigned int block_len);
 
 /* ALSA */
-int pq_queue_alsa_input(struct pq *pq, const char *hwdev, unsigned int blk_len);
-int pq_queue_alsa_output(struct pq *pq, const char *hwdev, unsigned int blk_len);
+int osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len);
+int osmo_gapk_pq_queue_alsa_output(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len);
 
 /* Format */
-struct format_desc;
-int pq_queue_fmt_convert(struct pq *pq, const struct format_desc *fmt, int to_from_n);
+struct osmo_gapk_format_desc;
+int osmo_gapk_pq_queue_fmt_convert(struct osmo_gapk_pq *pq, const struct osmo_gapk_format_desc *fmt, int to_from_n);
 
 /* Codec */
-struct codec_desc;
-int pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int encode);
+struct osmo_gapk_codec_desc;
+int osmo_gapk_pq_queue_codec(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_desc *codec, int encode);

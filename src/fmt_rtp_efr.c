@@ -61,7 +61,7 @@ rtp_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return EFR_CANON_LEN;
 }
 
-const struct format_desc fmt_rtp_efr = {
+const struct osmo_gapk_format_desc fmt_rtp_efr = {
 	.type			= FMT_RTP_EFR,
 	.codec_type		= CODEC_EFR,
 	.name			= "rtp-efr",

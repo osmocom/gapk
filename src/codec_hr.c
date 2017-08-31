@@ -73,7 +73,7 @@ codec_hr_decode(void *_state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 #endif /* HAVE_LIBGSMHR */
 
 
-const struct codec_desc codec_hr_desc = {
+const struct osmo_gapk_codec_desc codec_hr_desc = {
 	.type = CODEC_HR,
 	.name = "hr",
 	.description = "GSM 06.20 Half Rate codec",

@@ -47,7 +47,7 @@ struct gapk_options
 		uint16_t port;
 	} rtp_in;
 	const char *alsa_in;
-	const struct format_desc *fmt_in;
+	const struct osmo_gapk_format_desc *fmt_in;
 
 	const char *fname_out;
 	struct {
@@ -55,14 +55,14 @@ struct gapk_options
 		uint16_t port;
 	} rtp_out;
 	const char *alsa_out;
-	const struct format_desc *fmt_out;
+	const struct osmo_gapk_format_desc *fmt_out;
 };
 
 struct gapk_state
 {
 	struct gapk_options opts;
 
-	struct pq *pq;
+	struct osmo_gapk_pq *pq;
 
 	struct {
 		struct {
@@ -87,6 +87,7 @@ struct gapk_state
 static void
 print_help(char *progname)
 {
+	const struct osmo_gapk_codec_desc *codec;
 	int i;
 
 	/* Header */
@@ -110,7 +111,7 @@ print_help(char *progname)
 	fprintf(stdout, " name\tfmt enc dec\tdescription\n");
 
 	for (i=CODEC_INVALID+1; i<_CODEC_MAX; i++) {
-		const struct codec_desc *codec = codec_get_from_type(i);
+		codec = osmo_gapk_codec_get_from_type(i);
 		fprintf(stdout, " %4s  %c   %c   %c  \t%s\n",
 			codec->name,
 			'*',
@@ -126,7 +127,7 @@ print_help(char *progname)
 	fprintf(stdout, "Supported formats:\n");
 	
 	for (i=FMT_INVALID+1; i<_FMT_MAX; i++) {
-		const struct format_desc *fmt = fmt_get_from_type(i);
+		const struct osmo_gapk_format_desc *fmt = osmo_gapk_fmt_get_from_type(i);
 		fprintf(stdout, " %-19s %s\n",
 			fmt->name,
 			fmt->description
@@ -230,7 +231,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 			break;
 
 		case 'f':
-			opt->fmt_in = fmt_get_from_name(optarg);
+			opt->fmt_in = osmo_gapk_fmt_get_from_name(optarg);
 			if (!opt->fmt_in) {
 				fprintf(stderr, "[!] Unsupported format: %s\n", optarg);
 				return -EINVAL;
@@ -238,7 +239,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 			break;
 
 		case 'g':
-			opt->fmt_out = fmt_get_from_name(optarg);
+			opt->fmt_out = osmo_gapk_fmt_get_from_name(optarg);
 			if (!opt->fmt_out) {
 				fprintf(stderr, "[!] Unsupported format: %s\n", optarg);
 				return -EINVAL;
@@ -269,10 +270,10 @@ check_options(struct gapk_state *gs)
 
 	/* Transcoding */
 	if (gs->opts.fmt_in->codec_type != gs->opts.fmt_out->codec_type) {
-		const struct codec_desc *codec;
+		const struct osmo_gapk_codec_desc *codec;
 
 		/* Check source codec */
-		codec = codec_get_from_type(gs->opts.fmt_in->codec_type);
+		codec = osmo_gapk_codec_get_from_type(gs->opts.fmt_in->codec_type);
 		if (!codec) {
 			fprintf(stderr, "[!] Internal error: bad codec reference\n");
 			return -EINVAL;
@@ -283,7 +284,7 @@ check_options(struct gapk_state *gs)
 		}
 
 		/* Check destination codec */
-		codec = codec_get_from_type(gs->opts.fmt_out->codec_type);
+		codec = osmo_gapk_codec_get_from_type(gs->opts.fmt_out->codec_type);
 		if (!codec) {
 			fprintf(stderr, "[!] Internal error: bad codec reference\n");
 			return -EINVAL;
@@ -413,16 +414,16 @@ handle_headers(struct gapk_state *gs)
 static int
 make_processing_chain(struct gapk_state *gs)
 {
-	const struct format_desc *fmt_in, *fmt_out;
-	const struct codec_desc *codec_in, *codec_out;
+	const struct osmo_gapk_format_desc *fmt_in, *fmt_out;
+	const struct osmo_gapk_codec_desc *codec_in, *codec_out;
 
 	int need_dec, need_enc;
 
 	fmt_in  = gs->opts.fmt_in;
 	fmt_out = gs->opts.fmt_out;
 
-	codec_in  = codec_get_from_type(fmt_in->codec_type);
-	codec_out = codec_get_from_type(fmt_out->codec_type);
+	codec_in  = osmo_gapk_codec_get_from_type(fmt_in->codec_type);
+	codec_out = osmo_gapk_codec_get_from_type(fmt_out->codec_type);
 
 	need_dec = (fmt_in->codec_type != CODEC_PCM) &&
 	           (fmt_in->codec_type != fmt_out->codec_type);
@@ -431,12 +432,12 @@ make_processing_chain(struct gapk_state *gs)
 
 	/* File read */
 	if (gs->in.file.fh)
-		pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
+		osmo_gapk_pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
 	else if (gs->in.rtp.fd != -1)
-		pq_queue_rtp_input(gs->pq, gs->in.rtp.fd, fmt_in->frame_len);
+		osmo_gapk_pq_queue_rtp_input(gs->pq, gs->in.rtp.fd, fmt_in->frame_len);
 #ifdef HAVE_ALSA
 	else if (gs->opts.alsa_in)
-		pq_queue_alsa_input(gs->pq, gs->opts.alsa_in, fmt_in->frame_len);
+		osmo_gapk_pq_queue_alsa_input(gs->pq, gs->opts.alsa_in, fmt_in->frame_len);
 #endif
 	else {
 		fprintf(stderr, "Unknown/invalid input\n");
@@ -449,64 +450,64 @@ make_processing_chain(struct gapk_state *gs)
 		/* Convert input to decoder input fmt */
 		if (fmt_in->type != codec_in->codec_dec_format_type)
 		{
-			const struct format_desc *fmt_dec;
+			const struct osmo_gapk_format_desc *fmt_dec;
 
-			fmt_dec = fmt_get_from_type(codec_in->codec_dec_format_type);
+			fmt_dec = osmo_gapk_fmt_get_from_type(codec_in->codec_dec_format_type);
 			if (!fmt_dec) {
 				fprintf(stderr, "Cannot determine decoder input format for codec %s\n",
 					codec_in->name);
 				return -EINVAL;
 			}
 
-			pq_queue_fmt_convert(gs->pq, fmt_in, 0);
-			pq_queue_fmt_convert(gs->pq, fmt_dec, 1);
+			osmo_gapk_pq_queue_fmt_convert(gs->pq, fmt_in, 0);
+			osmo_gapk_pq_queue_fmt_convert(gs->pq, fmt_dec, 1);
 		}
 
 		/* Do decoding */
-		pq_queue_codec(gs->pq, codec_in, 0);
+		osmo_gapk_pq_queue_codec(gs->pq, codec_in, 0);
 	}
 	else if (fmt_in->type != fmt_out->type)
 	{
 		/* Convert input to canonical fmt */
-		pq_queue_fmt_convert(gs->pq, fmt_in, 0);
+		osmo_gapk_pq_queue_fmt_convert(gs->pq, fmt_in, 0);
 	}
 
 	/* Encoding from PCM ? */
 	if (need_enc)
 	{
 		/* Do encoding */
-		pq_queue_codec(gs->pq, codec_out, 1);
+		osmo_gapk_pq_queue_codec(gs->pq, codec_out, 1);
 
 		/* Convert encoder output to output fmt */
 		if (fmt_out->type != codec_out->codec_enc_format_type)
 		{
-			const struct format_desc *fmt_enc;
+			const struct osmo_gapk_format_desc *fmt_enc;
 
-			fmt_enc = fmt_get_from_type(codec_out->codec_enc_format_type);
+			fmt_enc = osmo_gapk_fmt_get_from_type(codec_out->codec_enc_format_type);
 			if (!fmt_enc) {
 				fprintf(stderr, "Cannot determine encoder output format for codec %s\n",
 					codec_out->name);
 				return -EINVAL;
 			}
 
-			pq_queue_fmt_convert(gs->pq, fmt_enc, 0);
-			pq_queue_fmt_convert(gs->pq, fmt_out, 1);
+			osmo_gapk_pq_queue_fmt_convert(gs->pq, fmt_enc, 0);
+			osmo_gapk_pq_queue_fmt_convert(gs->pq, fmt_out, 1);
 		}
 	}
 	else if (fmt_in->type != fmt_out->type)
 	{
 		/* Convert canonical to output fmt */
-		pq_queue_fmt_convert(gs->pq, fmt_out, 1);
+		osmo_gapk_pq_queue_fmt_convert(gs->pq, fmt_out, 1);
 	}
 
 	/* File write */
 	if (gs->out.file.fh)
-		pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
+		osmo_gapk_pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
 	else if (gs->out.rtp.fd != -1)
-		pq_queue_rtp_output(gs->pq, gs->out.rtp.fd, fmt_out->frame_len);
+		osmo_gapk_pq_queue_rtp_output(gs->pq, gs->out.rtp.fd, fmt_out->frame_len);
 #ifdef HAVE_ALSA
 	else if (gs->opts.alsa_out)
-		pq_queue_alsa_output(gs->pq, gs->opts.alsa_out, fmt_out->frame_len);
+		osmo_gapk_pq_queue_alsa_output(gs->pq, gs->opts.alsa_out, fmt_out->frame_len);
 #endif
 	else {
 		fprintf(stderr, "Unknown/invalid output\n");
@@ -521,11 +522,11 @@ run(struct gapk_state *gs)
 {
 	int rv, frames;
 
-	rv = pq_prepare(gs->pq);
+	rv = osmo_gapk_pq_prepare(gs->pq);
 	if (rv)
 		return rv;
 
-	for (frames=0; !(rv = pq_execute(gs->pq)); frames++);
+	for (frames=0; !(rv = osmo_gapk_pq_execute(gs->pq)); frames++);
 
 	fprintf(stderr, "[+] Processed %d frames\n", frames);
 
@@ -541,7 +542,7 @@ static void signal_handler(int signal)
 	case SIGINT:
 		fprintf(stderr, "catching sigint, closing files\n");
 		files_close(gs);
-		pq_destroy(gs->pq);
+		osmo_gapk_pq_destroy(gs->pq);
 		exit(0);
 		break;
 	default:
@@ -574,7 +575,7 @@ int main(int argc, char *argv[])
 		return rv;
 
 	/* Create processing queue */
-	gs->pq = pq_create();
+	gs->pq = osmo_gapk_pq_create();
 	if (!gs->pq) {
 		rv = -ENOMEM;
 		fprintf(stderr, "Error creating processing queue\n");
@@ -612,7 +613,7 @@ error:
 	files_close(gs);
 
 	/* Release processing queue */
-	pq_destroy(gs->pq);
+	osmo_gapk_pq_destroy(gs->pq);
 
 	benchmark_dump();
 	

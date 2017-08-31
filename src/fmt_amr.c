@@ -70,7 +70,7 @@ amr_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return EFR_CANON_LEN;
 }
 
-const struct format_desc fmt_amr_efr = {
+const struct osmo_gapk_format_desc fmt_amr_efr = {
 	.type			= FMT_AMR_EFR,
 	.codec_type		= CODEC_EFR,
 	.name			= "amr-efr",

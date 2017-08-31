@@ -24,16 +24,16 @@
 #include <osmocom/gapk/procqueue.h>
 
 /* crate a new (empty) processing queue */
-struct pq *
-pq_create(void)
+struct osmo_gapk_pq *
+osmo_gapk_pq_create(void)
 {
-	return (struct pq *) calloc(1, sizeof(struct pq));
+	return (struct osmo_gapk_pq *) calloc(1, sizeof(struct osmo_gapk_pq));
 }
 
 /*! destroy a processing queue, calls exit() callback of each item
  *  \param[in] pq Processing Queue to be destroyed */
 void
-pq_destroy(struct pq *pq)
+osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq)
 {
 	int i;
 
@@ -57,10 +57,10 @@ pq_destroy(struct pq *pq)
 /*! allocate + add an item to a processing queue; return new item
  *  \param[in] pq Processing Queue to which item is added
  *  \returns new PQ item; NULL on error */
-struct pq_item *
-pq_add_item(struct pq *pq)
+struct osmo_gapk_pq_item *
+osmo_gapk_pq_add_item(struct osmo_gapk_pq *pq)
 {
-	struct pq_item *item;
+	struct osmo_gapk_pq_item *item;
 
 	if (pq->n_items == MAX_PQ_ITEMS) {
 		fprintf(stderr, "[!] Processing Queue cannot handle more than %u items\n",
@@ -68,7 +68,7 @@ pq_add_item(struct pq *pq)
 		return NULL;
 	}
 
-	item = calloc(1, sizeof(struct pq_item));
+	item = calloc(1, sizeof(struct osmo_gapk_pq_item));
 	if (!item)
 		return NULL;
 
@@ -81,7 +81,7 @@ pq_add_item(struct pq *pq)
  *  \param[in] pq Processing Queue to be prepared
  *  \returns 0 on succcess; negative on error */
 int
-pq_prepare(struct pq *pq)
+osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 {
 	int i;
 	unsigned int len_prev;
@@ -89,7 +89,7 @@ pq_prepare(struct pq *pq)
 	len_prev = 0;
 
 	for (i=0; i<pq->n_items; i++) {
-		struct pq_item *item = pq->items[i];
+		struct osmo_gapk_pq_item *item = pq->items[i];
 
 		if (item->len_in && item->len_in != len_prev) {
 			fprintf(stderr, "[!] PQ item requires input size %u, but previous output is %u\n",
@@ -121,7 +121,7 @@ pq_prepare(struct pq *pq)
  *  \param[in] pq Processing Queue to be executed
  *  \returns 0 on success; negative on error (if any item returns negative) */
 int
-pq_execute(struct pq *pq)
+osmo_gapk_pq_execute(struct osmo_gapk_pq *pq)
 {
 	int i;
 	void *buf_prev, *buf;
@@ -132,13 +132,13 @@ pq_execute(struct pq *pq)
 
 	for (i=0; i<pq->n_items; i++) {
 		int rv;
-		struct pq_item *item = pq->items[i];
+		struct osmo_gapk_pq_item *item = pq->items[i];
 
 		buf = i < (pq->n_items-1) ? pq->buffers[i] : NULL;
 
 		rv = item->proc(item->state, buf, buf_prev, len_prev);
 		if (rv < 0) {
-			fprintf(stderr, "[!] pq_execute(): abort, item returned %d\n", rv);
+			fprintf(stderr, "[!] osmo_gapk_pq_execute(): abort, item returned %d\n", rv);
 			return rv;
 		}
 

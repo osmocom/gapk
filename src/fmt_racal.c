@@ -76,7 +76,7 @@ racal_hr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return RACAL_HR_LEN;
 }
 
-const struct format_desc fmt_racal_hr = {
+const struct osmo_gapk_format_desc fmt_racal_hr = {
 	.type			= FMT_RACAL_HR,
 	.codec_type		= CODEC_HR,
 	.name			= "racal-hr",
@@ -124,7 +124,7 @@ racal_fr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return FR_CANON_LEN;
 }
 
-const struct format_desc fmt_racal_fr = {
+const struct osmo_gapk_format_desc fmt_racal_fr = {
 	.type			= FMT_RACAL_FR,
 	.codec_type		= CODEC_FR,
 	.name			= "racal-fr",
@@ -166,7 +166,7 @@ racal_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return EFR_CANON_LEN;
 }
 
-const struct format_desc fmt_racal_efr = {
+const struct osmo_gapk_format_desc fmt_racal_efr = {
 	.type			= FMT_RACAL_EFR,
 	.codec_type		= CODEC_EFR,
 	.name			= "racal-efr",

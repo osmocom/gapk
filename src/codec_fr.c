@@ -83,7 +83,7 @@ codec_fr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod_
 #endif /* HAVE_LIBGSM */
 
 
-const struct codec_desc codec_fr_desc = {
+const struct osmo_gapk_codec_desc codec_fr_desc = {
 	.type = CODEC_FR,
 	.name = "fr",
 	.description = "GSM 06.10 Full Rate codec (classic gsm codec)",

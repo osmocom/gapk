@@ -192,9 +192,9 @@ pq_cb_rtp_exit(void *_state)
 }
 
 static int
-pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
+pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 {
-	struct pq_item *item;
+	struct osmo_gapk_pq_item *item;
 	struct pq_state_rtp *state;
 
 	state = calloc(1, sizeof(struct pq_state_rtp));
@@ -217,7 +217,7 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 		state->payload_type = RTP_PT_GSM_FULL;
 	}
 
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
 		free(state);
 		return -ENOMEM;
@@ -239,7 +239,7 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
  *  \param[in] udp_fd UDP file descriptor for the RTP input
  *  \param[in] blk_len Block Length to read from RTP */
 int
-pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
+osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
 	fprintf(stderr, "[+] PQ: Adding RTP input (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
@@ -251,7 +251,7 @@ pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
  *  \param[in] udp_fd UDP file descriptor for the RTP output
  *  \param[in] blk_len Block Length to read from RTP */
 int
-pq_queue_rtp_output(struct pq *pq, int udp_fd, unsigned int blk_len)
+osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
 	fprintf(stderr, "[+] PQ: Adding RTP output (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);

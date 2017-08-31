@@ -28,7 +28,7 @@
 #define HR_REF_ENC_LEN  (20 * sizeof(uint16_t))
 #define HR_REF_DEC_LEN  (22 * sizeof(uint16_t))
 
-enum codec_type {
+enum osmo_gapk_codec_type {
 	CODEC_INVALID = 0,
 	CODEC_PCM,	/* 16 bits PCM samples */
 	CODEC_HR,	/* GSM Half Rate codec GSM 06.20 */
@@ -38,7 +38,8 @@ enum codec_type {
 	_CODEC_MAX,
 };
 
-#include <osmocom/gapk/formats.h>	/* need to import here because or enum interdep */
+/* Need to import here because of enum interdep */
+#include <osmocom/gapk/formats.h>
 
 /*! call-back for actual codec conversion function
  *  \param[in] state opaque state pointer (returned by codec->init)
@@ -46,23 +47,33 @@ enum codec_type {
  *  \param[in] src input data
  *  \param[in] src_len length of input data \a src
  *  \returns number of output bytes written to \a dst; negative on error */
-typedef int (*codec_conv_cb_t)(void *state, uint8_t *dst, const uint8_t *src, unsigned int src_len);
+typedef int (*osmo_gapk_codec_conv_cb_t)(void *state, uint8_t *dst,
+	const uint8_t *src, unsigned int src_len);
 
-struct codec_desc {
-	enum codec_type		type;
-	const char *		name;
-	const char *		description;
-	/*! canonical frame size (in bytes); 0 in case of variable length */
-	unsigned int		canon_frame_len;
+struct osmo_gapk_codec_desc {
+	enum osmo_gapk_codec_type type;
+	const char *description;
+	const char *name;
 
-	enum format_type	codec_enc_format_type;	/* what the encoder provides */
-	enum format_type	codec_dec_format_type;	/* what to give the decoder */
-	/*! codec initialization function pointer, returns opaque state */
-	void *			(*codec_init)(void);
-	/*! codec exit function pointer, gets passed opaque state */
-	void			(*codec_exit)(void *state);
-	codec_conv_cb_t		codec_encode;
-	codec_conv_cb_t		codec_decode;
+	/*!
+	 * Canonical frame size (in bytes);
+	 * 0 in case of variable length
+	 */
+	unsigned int canon_frame_len;
+
+	/*! What the encoder provides */
+	enum osmo_gapk_format_type codec_enc_format_type;
+	/*! What to give the decoder */
+	enum osmo_gapk_format_type codec_dec_format_type;
+
+	/* (De)initialization function pointers */
+	void *(*codec_init)(void);
+	void  (*codec_exit)(void *state);
+
+	/* Encoding / decoding function pointers */
+	osmo_gapk_codec_conv_cb_t codec_encode;
+	osmo_gapk_codec_conv_cb_t codec_decode;
 };
 
-const struct codec_desc *codec_get_from_type(enum codec_type type);
+const struct osmo_gapk_codec_desc *
+osmo_gapk_codec_get_from_type(enum osmo_gapk_codec_type type);

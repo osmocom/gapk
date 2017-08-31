@@ -19,7 +19,7 @@
 
 #include <osmocom/gapk/codecs.h>
 
-const struct codec_desc codec_pcm_desc = {
+const struct osmo_gapk_codec_desc codec_pcm_desc = {
 	.type = CODEC_PCM,
 	.name = "pcm",
 	.description = "Raw PCM signed 16 bits samples",

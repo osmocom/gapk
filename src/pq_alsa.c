@@ -77,9 +77,9 @@ pq_cb_alsa_exit(void *_state)
 }
 
 static int
-pq_queue_alsa_op(struct pq *pq, const char *alsa_dev, unsigned int blk_len, int in_out_n)
+pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk_len, int in_out_n)
 {
-	struct pq_item *item;
+	struct osmo_gapk_pq_item *item;
 	struct pq_state_alsa *state;
 	snd_pcm_hw_params_t *hw_params;
 	int rc = -1;
@@ -127,7 +127,7 @@ pq_queue_alsa_op(struct pq *pq, const char *alsa_dev, unsigned int blk_len, int 
 
 	snd_pcm_hw_params_free(hw_params);
 
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
 		rc = -ENOMEM;
 		goto out_close;
@@ -160,7 +160,7 @@ out_print:
  *  \param[in] blk_len block length to be read from device
  *  \returns 0 on sucess; negative on error */
 int
-pq_queue_alsa_input(struct pq *pq, const char *hwdev, unsigned int blk_len)
+osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
 	fprintf(stderr, "[+] PQ: Adding ALSA input (dev='%s', blk_len=%u)\n", hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 1);
@@ -173,7 +173,7 @@ pq_queue_alsa_input(struct pq *pq, const char *hwdev, unsigned int blk_len)
  *  \param[in] blk_len block length to be written to device
  *  \returns 0 on sucess; negative on error */
 int
-pq_queue_alsa_output(struct pq *pq, const char *hwdev, unsigned int blk_len)
+osmo_gapk_pq_queue_alsa_output(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
 	fprintf(stderr, "[+] PQ: Adding ALSA output (dev='%s', blk_len=%u)\n", hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 0);

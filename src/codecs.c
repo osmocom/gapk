@@ -22,15 +22,15 @@
 #include <osmocom/gapk/codecs.h>
 
 /* Extern codec descriptors */
-extern const struct codec_desc codec_pcm_desc;
-extern const struct codec_desc codec_hr_desc;
-extern const struct codec_desc codec_fr_desc;
-extern const struct codec_desc codec_efr_desc;
-extern const struct codec_desc codec_amr_desc;
+extern const struct osmo_gapk_codec_desc codec_pcm_desc;
+extern const struct osmo_gapk_codec_desc codec_hr_desc;
+extern const struct osmo_gapk_codec_desc codec_fr_desc;
+extern const struct osmo_gapk_codec_desc codec_efr_desc;
+extern const struct osmo_gapk_codec_desc codec_amr_desc;
 
 
-const struct codec_desc *
-codec_get_from_type(enum codec_type type)
+const struct osmo_gapk_codec_desc *
+osmo_gapk_codec_get_from_type(enum osmo_gapk_codec_type type)
 {
 	switch (type) {
 	case CODEC_PCM:	return &codec_pcm_desc;

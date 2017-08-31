@@ -23,24 +23,24 @@
 #include <osmocom/gapk/formats.h>
 
 /* Extern format descriptors */
-extern const struct format_desc fmt_amr_efr;
-extern const struct format_desc fmt_gsm;
-extern const struct format_desc fmt_hr_ref_dec;
-extern const struct format_desc fmt_hr_ref_enc;
-extern const struct format_desc fmt_racal_hr;
-extern const struct format_desc fmt_racal_fr;
-extern const struct format_desc fmt_racal_efr;
-extern const struct format_desc fmt_rawpcm_s16le;
-extern const struct format_desc fmt_ti_hr;
-extern const struct format_desc fmt_ti_fr;
-extern const struct format_desc fmt_ti_efr;
-extern const struct format_desc fmt_amr_opencore;
-extern const struct format_desc fmt_rtp_amr;
-extern const struct format_desc fmt_rtp_efr;
-extern const struct format_desc fmt_rtp_hr_etsi;
-extern const struct format_desc fmt_rtp_hr_ietf;
+extern const struct osmo_gapk_format_desc fmt_amr_efr;
+extern const struct osmo_gapk_format_desc fmt_gsm;
+extern const struct osmo_gapk_format_desc fmt_hr_ref_dec;
+extern const struct osmo_gapk_format_desc fmt_hr_ref_enc;
+extern const struct osmo_gapk_format_desc fmt_racal_hr;
+extern const struct osmo_gapk_format_desc fmt_racal_fr;
+extern const struct osmo_gapk_format_desc fmt_racal_efr;
+extern const struct osmo_gapk_format_desc fmt_rawpcm_s16le;
+extern const struct osmo_gapk_format_desc fmt_ti_hr;
+extern const struct osmo_gapk_format_desc fmt_ti_fr;
+extern const struct osmo_gapk_format_desc fmt_ti_efr;
+extern const struct osmo_gapk_format_desc fmt_amr_opencore;
+extern const struct osmo_gapk_format_desc fmt_rtp_amr;
+extern const struct osmo_gapk_format_desc fmt_rtp_efr;
+extern const struct osmo_gapk_format_desc fmt_rtp_hr_etsi;
+extern const struct osmo_gapk_format_desc fmt_rtp_hr_ietf;
 
-static const struct format_desc *supported_formats[_FMT_MAX] = {
+static const struct osmo_gapk_format_desc *supported_formats[_FMT_MAX] = {
 	[FMT_INVALID]		= NULL,
 	[FMT_AMR_EFR]		= &fmt_amr_efr,
 	[FMT_GSM]		= &fmt_gsm,
@@ -61,20 +61,20 @@ static const struct format_desc *supported_formats[_FMT_MAX] = {
 };
 
 
-const struct format_desc *
-fmt_get_from_type(enum format_type type)
+const struct osmo_gapk_format_desc *
+osmo_gapk_fmt_get_from_type(enum osmo_gapk_format_type type)
 {
 	if (type <= FMT_INVALID || type >= _FMT_MAX)
 		return NULL;
 	return supported_formats[type];
 }
 
-const struct format_desc *
-fmt_get_from_name(const char *name)
+const struct osmo_gapk_format_desc *
+osmo_gapk_fmt_get_from_name(const char *name)
 {
 	int i;
 	for (i=FMT_INVALID+1; i<_FMT_MAX; i++) {
-		const struct format_desc *fmt = supported_formats[i];
+		const struct osmo_gapk_format_desc *fmt = supported_formats[i];
 		if (!fmt)
 			continue;
 		if (!strcmp(fmt->name, name))

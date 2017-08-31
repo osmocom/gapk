@@ -39,7 +39,7 @@ amr_opencore_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return src_len;
 }
 
-const struct format_desc fmt_amr_opencore = {
+const struct osmo_gapk_format_desc fmt_amr_opencore = {
 	.type			= FMT_AMR_OPENCORE,
 	.codec_type		= CODEC_AMR,
 	.name			= "amr-opencore",
