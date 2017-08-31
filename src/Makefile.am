@@ -18,6 +18,7 @@ AM_CFLAGS = \
 	$(NULL)
 
 lib_LTLIBRARIES = libosmogapk.la
+EXTRA_DIST = libosmogapk.map
 
 libosmogapk_la_LDFLAGS = \
 	$(LIBOSMOCORE_LIBS) \
@@ -25,6 +26,7 @@ libosmogapk_la_LDFLAGS = \
 	${OPENCORE_AMRNB_LIBS} \
 	${LIBGSM_LIBS} \
 	$(LIBALSA_LIBS) \
+	$(LTLDFLAGS_OSMOGAPK) \
 	-version-info $(LIBVERSION) \
 	-no-undefined \
 	$(NULL)

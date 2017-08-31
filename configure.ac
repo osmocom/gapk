@@ -45,6 +45,16 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([char foo;])],
 CFLAGS="$saved_CFLAGS"
 AC_SUBST(SYMBOL_VISIBILITY)
 
+dnl check os: some linker flags not available on osx
+case $host in
+*-darwin*)
+	;;
+*)
+	LTLDFLAGS_OSMOGAPK='-Wl,--version-script=$(srcdir)/libosmogapk.map'
+	;;
+esac
+AC_SUBST(LTLDFLAGS_OSMOGAPK)
+
 # Checks for programs.
 AC_PROG_CC
 
