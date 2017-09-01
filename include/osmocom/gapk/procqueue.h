@@ -24,9 +24,9 @@
 
 struct osmo_gapk_pq_item {
 	/*! input frame size (in bytes). '0' in case of variable frames */
-	int len_in;
+	unsigned int len_in;
 	/*! output frame size (in bytes). '0' in case of variable frames */
-	int len_out;
+	unsigned int len_out;
 	/*! opaque state */
 	void *state;
 	/*! call-back for actual format conversion function
