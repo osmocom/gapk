@@ -124,7 +124,7 @@ int
 osmo_gapk_pq_execute(struct osmo_gapk_pq *pq)
 {
 	int i;
-	void *buf_prev, *buf;
+	uint8_t *buf_prev, *buf;
 	unsigned int len_prev;
 
 	buf_prev = NULL;
