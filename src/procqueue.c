@@ -45,11 +45,10 @@ osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq)
 			continue;
 		if (pq->items[i]->exit)
 			pq->items[i]->exit(pq->items[i]->state);
+
+		free(pq->items[i]->buf);
 		free(pq->items[i]);
 	}
-
-	for (i=0; i<pq->n_items-1; i++)
-		free(pq->buffers[i]); /* free is NULL safe */
 
 	free(pq);
 }
@@ -103,8 +102,9 @@ osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 			 * known buffer size */
 			if (!buf_size)
 				buf_size = VAR_BUF_SIZE;
-			pq->buffers[i] = malloc(buf_size);
-			if (!pq->buffers[i])
+
+			item->buf = malloc(buf_size);
+			if (!item->buf)
 				return -ENOMEM;
 		} else{
 			if (item->len_out)
@@ -134,7 +134,7 @@ osmo_gapk_pq_execute(struct osmo_gapk_pq *pq)
 		int rv;
 		struct osmo_gapk_pq_item *item = pq->items[i];
 
-		buf = i < (pq->n_items-1) ? pq->buffers[i] : NULL;
+		buf = i < (pq->n_items-1) ? item->buf : NULL;
 
 		rv = item->proc(item->state, buf, buf_prev, len_prev);
 		if (rv < 0) {

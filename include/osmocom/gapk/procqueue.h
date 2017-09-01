@@ -29,6 +29,8 @@ struct osmo_gapk_pq_item {
 	unsigned int len_out;
 	/*! opaque state */
 	void *state;
+	/*! buffer for output data */
+	uint8_t *buf;
 	/*! call-back for actual format conversion function
 	 *  \param[in] state opaque state pointer
 	 *  \param[out] out caller-allocated buffer for output data
@@ -45,7 +47,6 @@ struct osmo_gapk_pq_item {
 struct osmo_gapk_pq {
 	unsigned n_items;
 	struct osmo_gapk_pq_item *items[MAX_PQ_ITEMS];
-	void *buffers[MAX_PQ_ITEMS + 1];
 };
 
 /* Processing queue management */
