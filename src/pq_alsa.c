@@ -57,7 +57,15 @@ pq_cb_alsa_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in
 	struct pq_state_alsa *state = _state;
 	unsigned int num_samples = in_len/2;
 	int rv;
+
 	rv = snd_pcm_writei(state->pcm_handle, in, num_samples);
+	if (rv == -EPIPE) {
+		/* Recover from buffer underrun */
+		snd_pcm_prepare(state->pcm_handle);
+		/* Send a new sample again */
+		rv = snd_pcm_writei(state->pcm_handle, in, num_samples);
+	}
+
 	return rv == num_samples ? 0 : -1;
 }
 
