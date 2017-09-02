@@ -85,13 +85,16 @@ pq_queue_alsa_op(struct pq *pq, const char *alsa_dev, unsigned int blk_len, int 
 	int rc = -1;
 
 	state = calloc(1, sizeof(struct pq_state_alsa));
-	if (!state)
-		return -ENOMEM;
+	if (!state) {
+		rc = -ENOMEM;
+		goto out_print;
+	}
 
 	rc = snd_pcm_open(&state->pcm_handle, alsa_dev,
 			  in_out_n ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, 0);
 	if (rc < 0)
-		return rc;
+		goto out_print;
+
 	state->blk_len = blk_len;
 
 	rc = snd_pcm_hw_params_malloc(&hw_params);
@@ -143,6 +146,9 @@ out_free_par:
 out_close:
 	snd_pcm_close(state->pcm_handle);
 	free(state);
+out_print:
+	fprintf(stderr, "[!] Couldn't init ALSA device '%s': %s\n",
+		alsa_dev, snd_strerror(rc));
 	return rc;
 }
 
