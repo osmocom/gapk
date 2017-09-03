@@ -74,7 +74,7 @@ codec_fr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod_
 	memcpy(cod_b, cod, FR_CANON_LEN);
 	BENCHMARK_START;
 	rc = gsm_decode(gh, (gsm_byte*)cod_b, (gsm_signal*)pcm);
-	BENCHMARK_STOP(CODEC_FR, 1);
+	BENCHMARK_STOP(CODEC_FR, 0);
 	if (rc < 0)
 		return rc;
 	return PCM_CANON_LEN;

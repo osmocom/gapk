@@ -78,7 +78,7 @@ codec_amr_encode(void *state, uint8_t *cod, const uint8_t *pcm, unsigned int pcm
 		(unsigned char*) cod,
 		1
 	);
-	BENCHMARK_STOP(CODEC_EFR, 1);
+	BENCHMARK_STOP(CODEC_AMR, 1);
 
 	return rv;
 }
@@ -95,7 +95,7 @@ codec_amr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 		(short *) pcm,
 		0
 	);
-	BENCHMARK_STOP(CODEC_EFR, 0);
+	BENCHMARK_STOP(CODEC_AMR, 0);
 
 	return PCM_CANON_LEN;
 }
