@@ -24,27 +24,25 @@
 #include <osmocom/gapk/benchmark.h>
 #include <osmocom/gapk/codecs.h>
 
-static inline void benchmark_store(enum osmo_gapk_codec_type codec,
-	int encode, unsigned long cycles)
-{
-	struct osmo_gapk_bench_cycles *bc = &osmo_gapk_bench_codec[codec];
-
-	if (encode) {
-		bc->enc_used = (bc->enc_used + 1) % OSMO_GAPK_CYCLES_NUM_AVG;
-		bc->enc[bc->enc_used] = cycles;
-	} else {
-		bc->dec_used = (bc->dec_used + 1) % OSMO_GAPK_CYCLES_NUM_AVG;
-		bc->dec[bc->dec_used] = cycles;
-	}
-}	
-
 #define BENCHMARK_START					\
 	do {						\
 		cycles_t _cycles_start, _cycles_stop;	\
+		struct osmo_gapk_bench_cycles *_bc;	\
 		_cycles_start = get_cycles()
 
-#define BENCHMARK_STOP(codec, enc)			\
-		_cycles_stop = get_cycles();		\
-		benchmark_store(codec, enc,		\
-			_cycles_stop - _cycles_start);	\
+#define BENCHMARK_STOP(codec, encode)				\
+		_cycles_stop = get_cycles();			\
+		_bc = &osmo_gapk_bench_codec[codec];		\
+								\
+		if (encode) {					\
+			_bc->enc_used = (_bc->enc_used + 1)	\
+				% OSMO_GAPK_CYCLES_NUM_AVG;	\
+			_bc->enc[_bc->enc_used] =		\
+				_cycles_stop - _cycles_start;	\
+		} else {					\
+			_bc->dec_used = (_bc->dec_used + 1)	\
+				% OSMO_GAPK_CYCLES_NUM_AVG;	\
+			_bc->dec[_bc->dec_used] =		\
+				_cycles_stop - _cycles_start;	\
+		}						\
 	} while (0)
