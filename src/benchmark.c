@@ -43,6 +43,42 @@ int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec)
 	return 0;
 }
 
+unsigned long long
+osmo_gapk_bench_get_cycles(enum osmo_gapk_codec_type codec, int enc)
+{
+	struct osmo_gapk_bench_cycles *bench;
+	unsigned long long cycles = 0;
+	int i;
+
+	/* Check if there are benchmark data */
+	bench = osmo_gapk_bench_codec[codec];
+	if (!bench)
+		return -EAGAIN;
+
+	if (enc) {
+		for (i = 0; i < bench->enc_used; i++)
+			cycles += bench->enc[i];
+	} else {
+		for (i = 0; i < bench->dec_used; i++)
+			cycles += bench->dec[i];
+	}
+
+	return cycles;
+}
+
+unsigned int
+osmo_gapk_bench_get_frames(enum osmo_gapk_codec_type codec, int enc)
+{
+	struct osmo_gapk_bench_cycles *bench;
+
+	/* Check if there are benchmark data */
+	bench = osmo_gapk_bench_codec[codec];
+	if (!bench)
+		return -EAGAIN;
+
+	return enc ? bench->enc_used : bench->dec_used;
+}
+
 void osmo_gapk_bench_free(void)
 {
 	int i;

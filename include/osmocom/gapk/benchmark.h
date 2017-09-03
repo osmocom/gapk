@@ -35,3 +35,8 @@ extern struct osmo_gapk_bench_cycles *osmo_gapk_bench_codec[_CODEC_MAX];
 
 int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec);
 void osmo_gapk_bench_free(void);
+
+unsigned long long
+osmo_gapk_bench_get_cycles(enum osmo_gapk_codec_type codec, int enc);
+unsigned int
+osmo_gapk_bench_get_frames(enum osmo_gapk_codec_type codec, int enc);

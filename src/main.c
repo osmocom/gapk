@@ -313,32 +313,34 @@ check_options(struct gapk_state *gs)
 static void
 benchmark_dump(void)
 {
-	int i, j;
+	int i;
 
 	for (i = 0; i < _CODEC_MAX; i++) {
-		struct osmo_gapk_bench_cycles *bc = osmo_gapk_bench_codec[i];
-		unsigned long long total;
+		struct osmo_gapk_bench_cycles *bc;
+		unsigned long long cycles;
+		unsigned int frames;
+
+		/* Check if there are benchmark data */
+		bc = osmo_gapk_bench_codec[i];
+		if (!bc)
+			continue;
 
 		if (bc->enc_used) {
-			total = 0;
-			for (j = 0; j < bc->enc_used; j++)
-				total += bc->enc[j];
+			cycles = osmo_gapk_bench_get_cycles(i, 1);
+			frames = osmo_gapk_bench_get_frames(i, 1);
 
-			fprintf(stderr,
-			        "Codec %u (ENC): %llu cycles for %u frames => "
-				"%llu cycles/frame\n", i, total, bc->enc_used,
-				total / bc->enc_used);
+			fprintf(stderr, "Codec %u (ENC): %llu cycles for %u frames"
+				" => %llu cycles/frame\n", i, cycles,
+				frames, cycles / frames);
 		}
 
 		if (bc->dec_used) {
-			total = 0;
-			for (j = 0; j < bc->dec_used; j++)
-				total += bc->dec[j];
+			cycles = osmo_gapk_bench_get_cycles(i, 0);
+			frames = osmo_gapk_bench_get_frames(i, 0);
 
-			fprintf(stderr,
-				"Codec %u (DEC): %llu cycles for %u frames => "
-				"%llu cycles/frame\n", i, total, bc->dec_used,
-				total / bc->dec_used);
+			fprintf(stderr, "Codec %u (DEC): %llu cycles for %u frames"
+				" => %llu cycles/frame\n", i, cycles,
+				frames, cycles / frames);
 		}
 	}
 }
