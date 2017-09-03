@@ -31,4 +31,7 @@ struct osmo_gapk_bench_cycles {
 	unsigned int dec_used;
 };
 
-extern struct osmo_gapk_bench_cycles osmo_gapk_bench_codec[_CODEC_MAX];
+extern struct osmo_gapk_bench_cycles *osmo_gapk_bench_codec[_CODEC_MAX];
+
+int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec);
+void osmo_gapk_bench_free(void);

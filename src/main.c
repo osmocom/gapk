@@ -316,7 +316,7 @@ benchmark_dump(void)
 	int i, j;
 
 	for (i = 0; i < _CODEC_MAX; i++) {
-		struct osmo_gapk_bench_cycles *bc = &osmo_gapk_bench_codec[i];
+		struct osmo_gapk_bench_cycles *bc = osmo_gapk_bench_codec[i];
 		unsigned long long total;
 
 		if (bc->enc_used) {
@@ -498,6 +498,9 @@ make_processing_chain(struct gapk_state *gs)
 
 		/* Do decoding */
 		osmo_gapk_pq_queue_codec(gs->pq, codec_in, 0);
+
+		/* Allocate memory for benchmarking */
+		osmo_gapk_bench_enable(fmt_in->codec_type);
 	}
 	else if (fmt_in->type != fmt_out->type)
 	{
@@ -510,6 +513,9 @@ make_processing_chain(struct gapk_state *gs)
 	{
 		/* Do encoding */
 		osmo_gapk_pq_queue_codec(gs->pq, codec_out, 1);
+
+		/* Allocate memory for benchmarking */
+		osmo_gapk_bench_enable(fmt_out->codec_type);
 
 		/* Convert encoder output to output fmt */
 		if (fmt_out->type != codec_out->codec_enc_format_type)
@@ -649,6 +655,9 @@ error:
 	osmo_gapk_pq_destroy(gs->pq);
 
 	benchmark_dump();
+
+	/* Free memory taken by benchmark data */
+	osmo_gapk_bench_free();
 	
 	return rv;
 }

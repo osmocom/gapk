@@ -32,7 +32,8 @@
 
 #define BENCHMARK_STOP(codec, encode)				\
 		_cycles_stop = get_cycles();			\
-		_bc = &osmo_gapk_bench_codec[codec];		\
+		_bc = osmo_gapk_bench_codec[codec];		\
+		if (!_bc) break;				\
 								\
 		if (encode) {					\
 			_bc->enc_used = (_bc->enc_used + 1)	\

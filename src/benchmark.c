@@ -18,7 +18,35 @@
  */
 
 #include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
 
 #include <osmocom/gapk/benchmark.h>
+#include <osmocom/gapk/codecs.h>
 
-struct osmo_gapk_bench_cycles osmo_gapk_bench_codec[_CODEC_MAX];
+struct osmo_gapk_bench_cycles *
+	osmo_gapk_bench_codec[_CODEC_MAX] = { NULL };
+
+int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec)
+{
+	struct osmo_gapk_bench_cycles *bench;
+
+	/* Allocate zero-initialized memory */
+	bench = (struct osmo_gapk_bench_cycles *)
+		calloc(1, sizeof(struct osmo_gapk_bench_cycles));
+	if (!bench)
+		return -ENOMEM;
+
+	/* Set up pointer */
+	osmo_gapk_bench_codec[codec] = bench;
+
+	return 0;
+}
+
+void osmo_gapk_bench_free(void)
+{
+	int i;
+
+	for (i = 0; i < _CODEC_MAX; i++)
+		free(osmo_gapk_bench_codec[i]);
+}
