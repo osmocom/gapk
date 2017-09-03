@@ -1,5 +1,6 @@
 noinst_HEADERS = \
 	osmocom/gapk/utils.h \
+	osmocom/gapk/bench.h \
 	$(NULL)
 
 nobase_include_HEADERS = \

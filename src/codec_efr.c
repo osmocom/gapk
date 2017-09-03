@@ -19,6 +19,7 @@
 
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/benchmark.h>
+#include <osmocom/gapk/bench.h>
 
 #include "config.h"
 

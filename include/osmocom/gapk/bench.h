@@ -1,6 +1,8 @@
 /*
  * This file is part of gapk (GSM Audio Pocket Knife).
  *
+ * (C) 2014 Harald Welte <laforge@gnumonks.org>
+ *
  * gapk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -14,21 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  *
- * (C) 2014 Harald Welte <laforge@gnumonks.org>
  */
 
 #pragma once
 
 #include <osmocom/gapk/get_cycles.h>
+#include <osmocom/gapk/benchmark.h>
 #include <osmocom/gapk/codecs.h>
 
-#define OSMO_GAPK_CYCLES_NUM_AVG 102400
+static inline void benchmark_store(enum osmo_gapk_codec_type codec,
+	int encode, unsigned long cycles)
+{
+	struct osmo_gapk_bench_cycles *bc = &osmo_gapk_bench_codec[codec];
 
-struct osmo_gapk_bench_cycles {
-	cycles_t enc[OSMO_GAPK_CYCLES_NUM_AVG];
-	unsigned int enc_used;
-	cycles_t dec[OSMO_GAPK_CYCLES_NUM_AVG];
-	unsigned int dec_used;
-};
+	if (encode) {
+		bc->enc_used = (bc->enc_used + 1) % OSMO_GAPK_CYCLES_NUM_AVG;
+		bc->enc[bc->enc_used] = cycles;
+	} else {
+		bc->dec_used = (bc->dec_used + 1) % OSMO_GAPK_CYCLES_NUM_AVG;
+		bc->dec[bc->dec_used] = cycles;
+	}
+}	
 
-extern struct osmo_gapk_bench_cycles osmo_gapk_bench_codec[_CODEC_MAX];
+#define BENCHMARK_START					\
+	do {						\
+		cycles_t _cycles_start, _cycles_stop;	\
+		_cycles_start = get_cycles()
+
+#define BENCHMARK_STOP(codec, enc)			\
+		_cycles_stop = get_cycles();		\
+		benchmark_store(codec, enc,		\
+			_cycles_stop - _cycles_start);	\
+	} while (0)
