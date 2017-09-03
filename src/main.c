@@ -310,6 +310,39 @@ check_options(struct gapk_state *gs)
 	return 0;
 }
 
+static void
+benchmark_dump(void)
+{
+	int i, j;
+
+	for (i = 0; i < _CODEC_MAX; i++) {
+		struct osmo_gapk_bench_cycles *bc = &osmo_gapk_bench_codec[i];
+		unsigned long long total;
+
+		if (bc->enc_used) {
+			total = 0;
+			for (j = 0; j < bc->enc_used; j++)
+				total += bc->enc[j];
+
+			fprintf(stderr,
+			        "Codec %u (ENC): %llu cycles for %u frames => "
+				"%llu cycles/frame\n", i, total, bc->enc_used,
+				total / bc->enc_used);
+		}
+
+		if (bc->dec_used) {
+			total = 0;
+			for (j = 0; j < bc->dec_used; j++)
+				total += bc->dec[j];
+
+			fprintf(stderr,
+				"Codec %u (DEC): %llu cycles for %u frames => "
+				"%llu cycles/frame\n", i, total, bc->dec_used,
+				total / bc->dec_used);
+		}
+	}
+}
+
 static int
 files_open(struct gapk_state *gs)
 {

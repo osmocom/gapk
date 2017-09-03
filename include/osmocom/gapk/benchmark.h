@@ -54,5 +54,3 @@ static inline void benchmark_stop(enum osmo_gapk_codec_type codec,
 #define BENCHMARK_STOP(x,y)		_cycles_stop = get_cycles();			    \
 					benchmark_stop(x, y, _cycles_stop - _cycles_start); \
 				} while (0)
-
-void benchmark_dump(void);
