@@ -80,7 +80,7 @@ libosmogapk_la_SOURCES += \
 bin_PROGRAMS = osmo-gapk
 
 osmo_gapk_SOURCES = \
-	main.c \
+	app_osmo_gapk.c \
 	$(NULL)
 
 osmo_gapk_LDFLAGS = \
