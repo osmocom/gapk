@@ -587,13 +587,27 @@ run(struct gapk_state *gs)
 
 static struct gapk_state _gs, *gs = &_gs;
 
+static void app_shutdown(void)
+{
+	/* Close source / destination files */
+	files_close(gs);
+
+	/* Release processing queue */
+	osmo_gapk_pq_destroy(gs->pq);
+
+	/* Print benchmarking results, if enabled */
+	benchmark_dump();
+
+	/* Free memory taken by benchmark data */
+	osmo_gapk_bench_free();
+}
+
 static void signal_handler(int signal)
 {
 	switch (signal) {
 	case SIGINT:
-		fprintf(stderr, "catching sigint, closing files\n");
-		files_close(gs);
-		osmo_gapk_pq_destroy(gs->pq);
+		fprintf(stderr, "catching sigint, shutting down...\n");
+		app_shutdown();
 		exit(0);
 		break;
 	default:
@@ -660,16 +674,6 @@ int main(int argc, char *argv[])
 	rv = run(gs);
 
 error:
-	/* Close source / destination files */
-	files_close(gs);
-
-	/* Release processing queue */
-	osmo_gapk_pq_destroy(gs->pq);
-
-	benchmark_dump();
-
-	/* Free memory taken by benchmark data */
-	osmo_gapk_bench_free();
-	
+	app_shutdown();
 	return rv;
 }
