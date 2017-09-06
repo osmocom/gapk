@@ -56,6 +56,8 @@ struct gapk_options
 	} rtp_out;
 	const char *alsa_out;
 	const struct osmo_gapk_format_desc *fmt_out;
+
+	int benchmark;
 };
 
 struct gapk_state
@@ -104,6 +106,7 @@ print_help(char *progname)
 #endif
 	fprintf(stdout, "  -f, --input-format=FMT\tInput format (see below)\n");
 	fprintf(stdout, "  -g, --output-format=FMT\tOutput format (see below)\n");
+	fprintf(stdout, "  -b, --enable-benchmark\tEnable codec benchmarking\n");
 	fprintf(stdout, "\n");
 
 	/* Print all codecs */
@@ -172,9 +175,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 #endif
 		{"input-format", 1, 0, 'f'},
 		{"output-format", 1, 0, 'g'},
+		{"enable-benchmark", 0, 0, 'b'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:I:O:f:g:h"
+	const char *short_options = "i:o:I:O:f:g:bh"
 #ifdef HAVE_ALSA
 		"a:A:"
 #endif
@@ -244,6 +248,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 				fprintf(stderr, "[!] Unsupported format: %s\n", optarg);
 				return -EINVAL;
 			}
+			break;
+
+		case 'b':
+			opt->benchmark = 1;
 			break;
 
 		case 'h':
@@ -502,7 +510,8 @@ make_processing_chain(struct gapk_state *gs)
 		osmo_gapk_pq_queue_codec(gs->pq, codec_in, 0);
 
 		/* Allocate memory for benchmarking */
-		osmo_gapk_bench_enable(fmt_in->codec_type);
+		if (gs->opts.benchmark)
+			osmo_gapk_bench_enable(fmt_in->codec_type);
 	}
 	else if (fmt_in->type != fmt_out->type)
 	{
@@ -517,7 +526,8 @@ make_processing_chain(struct gapk_state *gs)
 		osmo_gapk_pq_queue_codec(gs->pq, codec_out, 1);
 
 		/* Allocate memory for benchmarking */
-		osmo_gapk_bench_enable(fmt_out->codec_type);
+		if (gs->opts.benchmark)
+			osmo_gapk_bench_enable(fmt_out->codec_type);
 
 		/* Convert encoder output to output fmt */
 		if (fmt_out->type != codec_out->codec_enc_format_type)
