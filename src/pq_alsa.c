@@ -70,6 +70,13 @@ pq_cb_alsa_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in
 	return rv == num_samples ? 0 : -1;
 }
 
+static int
+pq_cb_alsa_wait(void *_state)
+{
+	struct pq_state_alsa *state = _state;
+	return snd_pcm_avail_update(state->pcm_handle) > 0;
+}
+
 static void
 pq_cb_alsa_exit(void *_state)
 {
@@ -138,7 +145,7 @@ pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_alsa_input : pq_cb_alsa_output;
-	item->wait    = NULL;
+	item->wait    = pq_cb_alsa_wait;
 	item->exit    = pq_cb_alsa_exit;
 
 	return 0;
