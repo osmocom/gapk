@@ -99,7 +99,7 @@ static struct log_info_cat gapk_log_info_cat[] = {
 		.name = "DAPP",
 		.description = "Application",
 		.color = "\033[0;36m",
-		.enabled = 1, .loglevel = LOGL_DEBUG,
+		.enabled = 1, .loglevel = LOGL_NOTICE,
 	},
 };
 
@@ -130,6 +130,7 @@ print_help(char *progname)
 	fprintf(stdout, "  -f, --input-format=FMT\tInput format (see below)\n");
 	fprintf(stdout, "  -g, --output-format=FMT\tOutput format (see below)\n");
 	fprintf(stdout, "  -b, --enable-benchmark\tEnable codec benchmarking\n");
+	fprintf(stdout, "  -v, --verbose\t\t\tEnable debug messages\n");
 	fprintf(stdout, "\n");
 
 	/* Print all codecs */
@@ -199,9 +200,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		{"input-format", 1, 0, 'f'},
 		{"output-format", 1, 0, 'g'},
 		{"enable-benchmark", 0, 0, 'b'},
+		{"verbose", 0, 0, 'v'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:I:O:f:g:bh"
+	const char *short_options = "i:o:I:O:f:g:bvh"
 #ifdef HAVE_ALSA
 		"a:A:"
 #endif
@@ -275,6 +277,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 		case 'b':
 			opt->benchmark = 1;
+			break;
+
+		case 'v':
+			log_parse_category_mask(osmo_stderr_target, "DAPP");
 			break;
 
 		case 'h':
@@ -379,7 +385,10 @@ benchmark_dump(void)
 static int
 files_open(struct gapk_state *gs)
 {
+	LOGP(DAPP, LOGL_NOTICE, "Opening I/O streams\n");
+
 	if (gs->opts.fname_in) {
+		LOGP(DAPP, LOGL_NOTICE, "Using a file as source\n");
 		gs->in.file.fh = fopen(gs->opts.fname_in, "rb");
 		if (!gs->in.file.fh) {
 			LOGP(DAPP, LOGL_ERROR, "Error while opening input file for reading\n");
@@ -387,6 +396,7 @@ files_open(struct gapk_state *gs)
 			return -errno;
 		}
 	} else if (gs->opts.rtp_in.port) {
+		LOGP(DAPP, LOGL_NOTICE, "Using RTP as source\n");
 		gs->in.rtp.fd = osmo_sock_init(AF_UNSPEC, SOCK_DGRAM,
 						IPPROTO_UDP,
 						gs->opts.rtp_in.hostname,
@@ -398,10 +408,14 @@ files_open(struct gapk_state *gs)
 		}
 	} else if (gs->opts.alsa_in) {
 		/* Do nothing, ALSA source does the initialization itself */
-	} else
+		LOGP(DAPP, LOGL_NOTICE, "Using ALSA as source\n");
+	} else {
+		LOGP(DAPP, LOGL_NOTICE, "Using stdin as source\n");
 		gs->in.file.fh = stdin;
+	}
 
 	if (gs->opts.fname_out) {
+		LOGP(DAPP, LOGL_NOTICE, "Using a file as sink\n");
 		gs->out.file.fh = fopen(gs->opts.fname_out, "wb");
 		if (!gs->out.file.fh) {
 			LOGP(DAPP, LOGL_ERROR, "Error while opening output file for writing\n");
@@ -409,6 +423,7 @@ files_open(struct gapk_state *gs)
 			return -errno;
 		}
 	} else if (gs->opts.rtp_out.port) {
+		LOGP(DAPP, LOGL_NOTICE, "Using RTP as sink\n");
 		gs->out.rtp.fd = osmo_sock_init(AF_UNSPEC, SOCK_DGRAM,
 						IPPROTO_UDP,
 						gs->opts.rtp_out.hostname,
@@ -420,8 +435,11 @@ files_open(struct gapk_state *gs)
 		}
 	} else if (gs->opts.alsa_out) {
 		/* Do nothing, ALSA sink does the initialization itself */
-	} else
+		LOGP(DAPP, LOGL_NOTICE, "Using ALSA as sink\n");
+	} else {
+		LOGP(DAPP, LOGL_NOTICE, "Using stdout as sink\n");
 		gs->out.file.fh = stdout;
+	}
 
 	return 0;
 }
@@ -429,6 +447,8 @@ files_open(struct gapk_state *gs)
 static void
 files_close(struct gapk_state *gs)
 {
+	LOGP(DAPP, LOGL_NOTICE, "Closing I/O streams\n");
+
 	if (gs->in.file.fh && gs->in.file.fh != stdin)
 		fclose(gs->in.file.fh);
 	if (gs->in.rtp.fd >= 0)
@@ -484,6 +504,8 @@ make_processing_chain(struct gapk_state *gs)
 	const struct osmo_gapk_codec_desc *codec_in, *codec_out;
 
 	int need_dec, need_enc;
+
+	LOGP(DAPP, LOGL_NOTICE, "Creating a processing queue\n");
 
 	fmt_in  = gs->opts.fmt_in;
 	fmt_out = gs->opts.fmt_out;
@@ -699,6 +721,7 @@ int main(int argc, char *argv[])
 	signal(SIGINT, &signal_handler);
 
 	/* Run the processing queue */
+	LOGP(DAPP, LOGL_NOTICE, "Init complete, starting processing queue...\n");
 	rv = run(gs);
 
 error:
