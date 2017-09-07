@@ -234,7 +234,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		case 'I':
 			rv = parse_host_port(optarg, &opt->rtp_in.hostname);
 			if (rv < 0 || rv > 0xffff) {
-				fprintf(stderr, "[!] Invalid port: %d\n", rv);
+				LOGP(DAPP, LOGL_ERROR, "Invalid port: %d\n", rv);
 				return -EINVAL;
 			}
 			opt->rtp_in.port = rv;
@@ -251,7 +251,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		case 'O':
 			rv = parse_host_port(optarg, &opt->rtp_out.hostname);
 			if (rv < 0 || rv > 0xffff) {
-				fprintf(stderr, "[!] Invalid port: %d\n", rv);
+				LOGP(DAPP, LOGL_ERROR, "Invalid port: %d\n", rv);
 				return -EINVAL;
 			}
 			opt->rtp_out.port = rv;
@@ -260,7 +260,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		case 'f':
 			opt->fmt_in = osmo_gapk_fmt_get_from_name(optarg);
 			if (!opt->fmt_in) {
-				fprintf(stderr, "[!] Unsupported format: %s\n", optarg);
+				LOGP(DAPP, LOGL_ERROR, "Unsupported format: %s\n", optarg);
 				return -EINVAL;
 			}
 			break;
@@ -268,7 +268,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		case 'g':
 			opt->fmt_out = osmo_gapk_fmt_get_from_name(optarg);
 			if (!opt->fmt_out) {
-				fprintf(stderr, "[!] Unsupported format: %s\n", optarg);
+				LOGP(DAPP, LOGL_ERROR, "Unsupported format: %s\n", optarg);
 				return -EINVAL;
 			}
 			break;
@@ -281,7 +281,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 			return 1;
 
 		default:
-			fprintf(stderr, "[+] Unknown option\n");
+			LOGP(DAPP, LOGL_ERROR, "Unknown option\n");
 			return -EINVAL;
 
 		}
@@ -295,7 +295,7 @@ check_options(struct gapk_state *gs)
 {
 	/* Required formats */
 	if (!gs->opts.fmt_in || !gs->opts.fmt_out) {
-		fprintf(stderr, "[!] Input and output formats are required arguments !\n");
+		LOGP(DAPP, LOGL_ERROR, "Input and output formats are required arguments\n");
 		return -EINVAL;
 	}
 
@@ -306,35 +306,35 @@ check_options(struct gapk_state *gs)
 		/* Check source codec */
 		codec = osmo_gapk_codec_get_from_type(gs->opts.fmt_in->codec_type);
 		if (!codec) {
-			fprintf(stderr, "[!] Internal error: bad codec reference\n");
+			LOGP(DAPP, LOGL_ERROR, "Internal error: bad codec reference\n");
 			return -EINVAL;
 		}
 		if ((codec->type != CODEC_PCM) && !codec->codec_decode) {
-			fprintf(stderr, "[!] Decoding from '%s' codec is unsupported\n", codec->name);
+			LOGP(DAPP, LOGL_ERROR, "Decoding from '%s' codec is unsupported\n", codec->name);
 			return -ENOTSUP;
 		}
 
 		/* Check destination codec */
 		codec = osmo_gapk_codec_get_from_type(gs->opts.fmt_out->codec_type);
 		if (!codec) {
-			fprintf(stderr, "[!] Internal error: bad codec reference\n");
+			LOGP(DAPP, LOGL_ERROR, "Internal error: bad codec reference\n");
 			return -EINVAL;
 		}
 		if ((codec->type != CODEC_PCM) && !codec->codec_encode) {
-			fprintf(stderr, "[!] Encoding to '%s' codec is unsupported\n", codec->name);
+			LOGP(DAPP, LOGL_ERROR, "Encoding to '%s' codec is unsupported\n", codec->name);
 			return -ENOTSUP;
 		}
 	}
 
 	/* Input combinations */
 	if (gs->opts.fname_in && gs->opts.rtp_in.port) {
-		fprintf(stderr, "[!] You have to decide on either file or RTP input\n");
+		LOGP(DAPP, LOGL_ERROR, "You have to decide on either file or RTP input\n");
 		return -EINVAL;
 	}
 
 	/* Output combinations */
 	if (gs->opts.fname_out && gs->opts.rtp_out.port) {
-		fprintf(stderr, "[!] You have to decide on either file or RTP output\n");
+		LOGP(DAPP, LOGL_ERROR, "You have to decide on either file or RTP output\n");
 		return -EINVAL;
 	}
 
@@ -360,7 +360,7 @@ benchmark_dump(void)
 			cycles = osmo_gapk_bench_get_cycles(i, 1);
 			frames = osmo_gapk_bench_get_frames(i, 1);
 
-			fprintf(stderr, "Codec %u (ENC): %llu cycles for %u frames"
+			LOGP(DAPP, LOGL_NOTICE, "Codec %u (ENC): %llu cycles for %u frames"
 				" => %llu cycles/frame\n", i, cycles,
 				frames, cycles / frames);
 		}
@@ -369,7 +369,7 @@ benchmark_dump(void)
 			cycles = osmo_gapk_bench_get_cycles(i, 0);
 			frames = osmo_gapk_bench_get_frames(i, 0);
 
-			fprintf(stderr, "Codec %u (DEC): %llu cycles for %u frames"
+			LOGP(DAPP, LOGL_NOTICE, "Codec %u (DEC): %llu cycles for %u frames"
 				" => %llu cycles/frame\n", i, cycles,
 				frames, cycles / frames);
 		}
@@ -382,7 +382,7 @@ files_open(struct gapk_state *gs)
 	if (gs->opts.fname_in) {
 		gs->in.file.fh = fopen(gs->opts.fname_in, "rb");
 		if (!gs->in.file.fh) {
-			fprintf(stderr, "[!] Error while opening input file for reading\n");
+			LOGP(DAPP, LOGL_ERROR, "Error while opening input file for reading\n");
 			perror("fopen");
 			return -errno;
 		}
@@ -393,7 +393,7 @@ files_open(struct gapk_state *gs)
 						gs->opts.rtp_in.port,
 						OSMO_SOCK_F_BIND);
 		if (gs->in.rtp.fd < 0) {
-			fprintf(stderr, "[!] Error while opening input socket\n");
+			LOGP(DAPP, LOGL_ERROR, "Error while opening input socket\n");
 			return gs->in.rtp.fd;
 		}
 	} else if (gs->opts.alsa_in) {
@@ -404,7 +404,7 @@ files_open(struct gapk_state *gs)
 	if (gs->opts.fname_out) {
 		gs->out.file.fh = fopen(gs->opts.fname_out, "wb");
 		if (!gs->out.file.fh) {
-			fprintf(stderr, "[!] Error while opening output file for writing\n");
+			LOGP(DAPP, LOGL_ERROR, "Error while opening output file for writing\n");
 			perror("fopen");
 			return -errno;
 		}
@@ -415,7 +415,7 @@ files_open(struct gapk_state *gs)
 						gs->opts.rtp_out.port,
 						OSMO_SOCK_F_CONNECT);
 		if (gs->out.rtp.fd < 0) {
-			fprintf(stderr, "[!] Error while opening output socket\n");
+			LOGP(DAPP, LOGL_ERROR, "Error while opening output socket\n");
 			return gs->out.rtp.fd;
 		}
 	} else if (gs->opts.alsa_out) {
@@ -459,7 +459,7 @@ handle_headers(struct gapk_state *gs)
 		    memcmp(buf, gs->opts.fmt_in->header, len))
 		{
 			free(buf);
-			fprintf(stderr, "[!] Invalid header in input file");
+			LOGP(DAPP, LOGL_ERROR, "Invalid header in input file");
 			return -EINVAL;
 		}
 
@@ -506,7 +506,7 @@ make_processing_chain(struct gapk_state *gs)
 		osmo_gapk_pq_queue_alsa_input(gs->pq, gs->opts.alsa_in, fmt_in->frame_len);
 #endif
 	else {
-		fprintf(stderr, "Unknown/invalid input\n");
+		LOGP(DAPP, LOGL_ERROR, "Unknown/invalid input\n");
 		return -1;
 	}
 
@@ -520,8 +520,8 @@ make_processing_chain(struct gapk_state *gs)
 
 			fmt_dec = osmo_gapk_fmt_get_from_type(codec_in->codec_dec_format_type);
 			if (!fmt_dec) {
-				fprintf(stderr, "Cannot determine decoder input format for codec %s\n",
-					codec_in->name);
+				LOGP(DAPP, LOGL_ERROR, "Cannot determine decoder input format "
+					"for codec %s\n", codec_in->name);
 				return -EINVAL;
 			}
 
@@ -559,8 +559,8 @@ make_processing_chain(struct gapk_state *gs)
 
 			fmt_enc = osmo_gapk_fmt_get_from_type(codec_out->codec_enc_format_type);
 			if (!fmt_enc) {
-				fprintf(stderr, "Cannot determine encoder output format for codec %s\n",
-					codec_out->name);
+				LOGP(DAPP, LOGL_ERROR, "Cannot determine encoder output format "
+					"for codec %s\n", codec_out->name);
 				return -EINVAL;
 			}
 
@@ -584,7 +584,7 @@ make_processing_chain(struct gapk_state *gs)
 		osmo_gapk_pq_queue_alsa_output(gs->pq, gs->opts.alsa_out, fmt_out->frame_len);
 #endif
 	else {
-		fprintf(stderr, "Unknown/invalid output\n");
+		LOGP(DAPP, LOGL_ERROR, "Unknown/invalid output\n");
 		return -1;
 	}
 
@@ -602,7 +602,7 @@ run(struct gapk_state *gs)
 
 	for (frames=0; !(rv = osmo_gapk_pq_execute(gs->pq)); frames++);
 
-	fprintf(stderr, "[+] Processed %d frames\n", frames);
+	LOGP(DAPP, LOGL_NOTICE, "Processed %d frames\n", frames);
 
 	return frames > 0 ? 0 : rv;
 }
@@ -671,28 +671,28 @@ int main(int argc, char *argv[])
 	gs->pq = osmo_gapk_pq_create();
 	if (!gs->pq) {
 		rv = -ENOMEM;
-		fprintf(stderr, "Error creating processing queue\n");
+		LOGP(DAPP, LOGL_ERROR, "Error creating processing queue\n");
 		goto error;
 	}
 
 	/* Open source / destination files */
 	rv = files_open(gs);
 	if (rv) {
-		fprintf(stderr, "Error opening file(s)\n");
+		LOGP(DAPP, LOGL_ERROR, "Error opening file(s)\n");
 		goto error;
 	}
 
 	/* Handle input/output headers */
 	rv = handle_headers(gs);
 	if (rv) {
-		fprintf(stderr, "Error handling header(s)\n");
+		LOGP(DAPP, LOGL_ERROR, "Error handling header(s)\n");
 		goto error;
 	}
 
 	/* Make processing chain */
 	rv = make_processing_chain(gs);
 	if (rv) {
-		fprintf(stderr, "Error making processing chain\n");
+		LOGP(DAPP, LOGL_ERROR, "Error making processing chain\n");
 		goto error;
 	}
 
