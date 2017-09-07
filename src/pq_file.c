@@ -83,6 +83,7 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_file_input : pq_cb_file_output;
+	item->wait    = NULL;
 	item->exit    = pq_cb_file_exit;
 
 	return 0;

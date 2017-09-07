@@ -138,6 +138,7 @@ pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_alsa_input : pq_cb_alsa_output;
+	item->wait    = NULL;
 	item->exit    = pq_cb_alsa_exit;
 
 	return 0;

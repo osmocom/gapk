@@ -40,6 +40,7 @@ struct osmo_gapk_pq_item {
 	 *  \param[in] in_len length of input data \a in
 	 *  \returns number of output bytes written to \a out; negative on error */
 	int  (*proc)(void *state, uint8_t *out, const uint8_t *in, unsigned int in_len);
+	int  (*wait)(void *state);
 	void (*exit)(void *state);
 
 	/*! \brief link to a processing queue */

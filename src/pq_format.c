@@ -70,6 +70,7 @@ osmo_gapk_pq_queue_fmt_convert(struct osmo_gapk_pq *pq, const struct osmo_gapk_f
 	}
 
 	item->proc = pq_cb_fmt_convert;
+	item->wait = NULL;
 
 	return 0;
 }

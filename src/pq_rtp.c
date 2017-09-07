@@ -229,6 +229,7 @@ pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int i
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_rtp_input : pq_cb_rtp_output;
+	item->wait    = NULL;
 	item->exit    = pq_cb_rtp_exit;
 
 	return 0;
