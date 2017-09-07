@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <stdint.h>
 
+#include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/procqueue.h>
@@ -71,7 +72,7 @@ osmo_gapk_pq_queue_codec(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_d
 
 	item->exit = codec->codec_exit;
 
-	fprintf(stderr, "[+] PQ: Adding Codec %s, %s format %s\n", codec->name,
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding codec %s, %s format %s\n", codec->name,
 		enc_dec_n ? "encoding to" : "decoding from", fmt->name);
 
 	if (!item->proc)

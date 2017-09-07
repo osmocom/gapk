@@ -27,6 +27,7 @@
 
 #include <arpa/inet.h>
 
+#include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/procqueue.h>
@@ -86,7 +87,8 @@ struct pq_state_rtp {
 	uint32_t ssrc;
 };
 
-#define rtp_err(x, args...)	fprintf(stderr, "[!] %s():" x, __func__, ## args)
+#define rtp_err(err_msg, args...) \
+	LOGPGAPK(LOGL_ERROR, "%s():" err_msg, __func__, ## args)
 
 static int
 pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
@@ -241,7 +243,7 @@ pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int i
 int
 osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding RTP input (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding RTP input (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
 }
 
@@ -253,6 +255,6 @@ osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int b
 int
 osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding RTP output (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding RTP output (blk_len=%u)\n", blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);
 }

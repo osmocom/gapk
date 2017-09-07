@@ -24,6 +24,7 @@
 #include <osmocom/core/linuxlist.h>
 
 #include <osmocom/gapk/procqueue.h>
+#include <osmocom/gapk/logging.h>
 
 /* crate a new (empty) processing queue */
 struct osmo_gapk_pq *
@@ -102,7 +103,7 @@ osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 	llist_for_each_entry(item, &pq->items, list) {
 		/* Make sure I/O data lengths are equal */
 		if (item->len_in && item->len_in != len_prev) {
-			fprintf(stderr, "[!] PQ item requires input size %u, "
+			LOGPGAPK(LOGL_ERROR, "PQ item requires input size %u, "
 				"but previous output is %u\n", item->len_in, len_prev);
 			return -EINVAL;
 		}
@@ -151,8 +152,8 @@ osmo_gapk_pq_execute(struct osmo_gapk_pq *pq)
 		/* Call item's processing handler */
 		rv = item->proc(item->state, item->buf, buf_prev, len_prev);
 		if (rv < 0) {
-			fprintf(stderr, "[!] osmo_gapk_pq_execute(): "
-				"abort, item returned %d\n", rv);
+			LOGPGAPK(LOGL_ERROR, "Queue execution aborted: "
+				"item returned %d\n", rv);
 			return rv;
 		}
 

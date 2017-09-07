@@ -76,6 +76,11 @@ libosmogapk_la_SOURCES += \
 	benchmark.c \
 	$(NULL)
 
+# Logging
+libosmogapk_la_SOURCES += \
+	logging.c \
+	$(NULL)
+
 # libosmogapk representative application
 bin_PROGRAMS = osmo-gapk
 

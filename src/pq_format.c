@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <stdint.h>
 
+#include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/procqueue.h>
@@ -44,7 +45,8 @@ osmo_gapk_pq_queue_fmt_convert(struct osmo_gapk_pq *pq, const struct osmo_gapk_f
 
 	codec = osmo_gapk_codec_get_from_type(fmt->codec_type);
 	if (!codec) {
-		fprintf(stderr, "[!] Cannot determine codec from format %s\n", fmt->name);
+		LOGPGAPK(LOGL_ERROR, "Cannot determine codec from "
+			"format %s\n", fmt->name);
 		return -EINVAL;
 	}
 
@@ -54,14 +56,14 @@ osmo_gapk_pq_queue_fmt_convert(struct osmo_gapk_pq *pq, const struct osmo_gapk_f
 		return -ENOMEM;
 
 	if (to_from_n) {
-		fprintf(stderr, "[+] PQ: Adding conversion from canon to %s (for codec %s)\n",
-			fmt->name, codec->name);
+		LOGPGAPK(LOGL_DEBUG, "PQ: Adding conversion from canon "
+			"to %s (for codec %s)\n", fmt->name, codec->name);
 		item->len_in  = codec->canon_frame_len;
 		item->len_out = fmt->frame_len;
 		item->state   = fmt->conv_from_canon;
 	} else {
-		fprintf(stderr, "[+] PQ: Adding conversion from %s to canon (for codec %s)\n",
-			fmt->name, codec->name);
+		LOGPGAPK(LOGL_DEBUG, "PQ: Adding conversion from %s "
+			"to canon (for codec %s)\n", fmt->name, codec->name);
 		item->len_in  = fmt->frame_len;
 		item->len_out = codec->canon_frame_len;
 		item->state   = fmt->conv_to_canon;

@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/procqueue.h>
@@ -97,7 +98,7 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 int
 osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding file input (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding file input (blk_len=%u)\n", blk_len);
 	return pq_queue_file_op(pq, src, blk_len, 1);
 }
 
@@ -110,6 +111,6 @@ osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int b
 int
 osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding file output (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding file output (blk_len=%u)\n", blk_len);
 	return pq_queue_file_op(pq, dst, blk_len, 0);
 }

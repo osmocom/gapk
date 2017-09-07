@@ -31,8 +31,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include <osmocom/core/application.h>
+#include <osmocom/core/logging.h>
 #include <osmocom/core/socket.h>
+#include <osmocom/core/utils.h>
 
+#include <osmocom/gapk/common.h>
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/procqueue.h>
@@ -83,6 +87,25 @@ struct gapk_state
 			int fd;
 		} rtp;
 	} out;
+};
+
+/* Logging related routines */
+enum {
+	DAPP,
+};
+
+static struct log_info_cat gapk_log_info_cat[] = {
+	[DAPP] = {
+		.name = "DAPP",
+		.description = "Application",
+		.color = "\033[0;36m",
+		.enabled = 1, .loglevel = LOGL_DEBUG,
+	},
+};
+
+static const struct log_info gapk_log_info = {
+	.cat = gapk_log_info_cat,
+	.num_cat = ARRAY_SIZE(gapk_log_info_cat),
 };
 
 
@@ -619,6 +642,11 @@ static void signal_handler(int signal)
 int main(int argc, char *argv[])
 {
 	int rv;
+
+	/* Init Osmocom logging framework */
+	osmo_init_logging(&gapk_log_info);
+	/* and GAPK logging wrapper */
+	osmo_gapk_log_init(DAPP);
 
 	/* Clear state */
 	memset(gs, 0x00, sizeof(struct gapk_state));

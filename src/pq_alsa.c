@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/procqueue.h>
@@ -147,7 +148,7 @@ out_close:
 	snd_pcm_close(state->pcm_handle);
 	free(state);
 out_print:
-	fprintf(stderr, "[!] Couldn't init ALSA device '%s': %s\n",
+	LOGPGAPK(LOGL_ERROR, "Couldn't init ALSA device '%s': %s\n",
 		alsa_dev, snd_strerror(rc));
 	return rc;
 }
@@ -162,7 +163,8 @@ out_print:
 int
 osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding ALSA input (dev='%s', blk_len=%u)\n", hwdev, blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding ALSA input "
+		"(dev='%s', blk_len=%u)\n", hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 1);
 }
 
@@ -175,7 +177,8 @@ osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsign
 int
 osmo_gapk_pq_queue_alsa_output(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding ALSA output (dev='%s', blk_len=%u)\n", hwdev, blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ: Adding ALSA output "
+		"(dev='%s', blk_len=%u)\n", hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 0);
 }
 

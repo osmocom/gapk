@@ -1,6 +1,8 @@
 LIBOSMOGAPK_1.0 {
 global:
 
+osmo_gapk_log_init;
+
 osmo_gapk_pq;
 osmo_gapk_pq_item;
 
