@@ -67,8 +67,8 @@ struct gapk_options
 struct gapk_state
 {
 	struct gapk_options opts;
-
 	struct osmo_gapk_pq *pq;
+	int exit;
 
 	struct {
 		struct {
@@ -622,7 +622,11 @@ run(struct gapk_state *gs)
 	if (rv)
 		return rv;
 
-	for (frames=0; !(rv = osmo_gapk_pq_execute(gs->pq)); frames++);
+	for (frames = 0; !gs->exit; frames++) {
+		rv = osmo_gapk_pq_execute(gs->pq);
+		if (rv)
+			break;
+	}
 
 	LOGP(DAPP, LOGL_NOTICE, "Processed %d frames\n", frames);
 
@@ -649,11 +653,14 @@ static void app_shutdown(void)
 
 static void signal_handler(int signal)
 {
+	fprintf(stderr, "signal %u received\n", signal);
+
 	switch (signal) {
 	case SIGINT:
-		fprintf(stderr, "catching sigint, shutting down...\n");
-		app_shutdown();
-		exit(0);
+		if (gs->exit++) {
+			app_shutdown();
+			exit(0);
+		}
 		break;
 	default:
 		break;
