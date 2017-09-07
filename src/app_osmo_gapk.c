@@ -616,6 +616,7 @@ make_processing_chain(struct gapk_state *gs)
 static int
 run(struct gapk_state *gs)
 {
+	struct osmo_gapk_pq_item *item;
 	int rv, frames;
 
 	rv = osmo_gapk_pq_prepare(gs->pq);
@@ -629,6 +630,14 @@ run(struct gapk_state *gs)
 	}
 
 	LOGP(DAPP, LOGL_NOTICE, "Processed %d frames\n", frames);
+
+	/* Wait for sink to process buffers */
+	item = llist_last_entry(&gs->pq->items, struct osmo_gapk_pq_item, list);
+	if (item->wait && !gs->exit) {
+		LOGP(DAPP, LOGL_NOTICE, "Waiting for sink to finish...\n");
+		while (item->wait(item->state))
+			continue;
+	}
 
 	return frames > 0 ? 0 : rv;
 }
