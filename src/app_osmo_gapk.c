@@ -397,7 +397,7 @@ files_open(struct gapk_state *gs)
 			return gs->in.rtp.fd;
 		}
 	} else if (gs->opts.alsa_in) {
-		printf("alsa_in, not stdin\n");
+		/* Do nothing, ALSA source does the initialization itself */
 	} else
 		gs->in.file.fh = stdin;
 
@@ -419,7 +419,7 @@ files_open(struct gapk_state *gs)
 			return gs->out.rtp.fd;
 		}
 	} else if (gs->opts.alsa_out) {
-		printf("alsa_out, not stdout\n");
+		/* Do nothing, ALSA sink does the initialization itself */
 	} else
 		gs->out.file.fh = stdout;
 
