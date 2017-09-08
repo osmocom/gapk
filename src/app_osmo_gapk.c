@@ -332,15 +332,27 @@ check_options(struct gapk_state *gs)
 		}
 	}
 
-	/* Input combinations */
-	if (gs->opts.fname_in && gs->opts.rtp_in.port) {
-		LOGP(DAPP, LOGL_ERROR, "You have to decide on either file or RTP input\n");
-		return -EINVAL;
-	}
+	/* Check I/O combinations */
+	int src_count = 0;
+	int sink_count = 0;
 
-	/* Output combinations */
-	if (gs->opts.fname_out && gs->opts.rtp_out.port) {
-		LOGP(DAPP, LOGL_ERROR, "You have to decide on either file or RTP output\n");
+	if (gs->opts.fname_in)
+		src_count++;
+	if (gs->opts.rtp_in.port)
+		src_count++;
+	if (gs->opts.alsa_in)
+		src_count++;
+
+	if (gs->opts.fname_out)
+		sink_count++;
+	if (gs->opts.rtp_out.port)
+		sink_count++;
+	if (gs->opts.alsa_out)
+		sink_count++;
+
+	if (src_count != 1 || sink_count != 1) {
+		LOGP(DAPP, LOGL_ERROR, "You have to decide on "
+			"a single input and a single output\n");
 		return -EINVAL;
 	}
 
