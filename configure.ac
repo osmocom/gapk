@@ -1,6 +1,7 @@
 AC_PREREQ([2.65])
 AC_INIT([gapk],
-	m4_esyscmd([./git-version-gen .tarball-version]), [main@lists.airprobe.org])
+	m4_esyscmd([./git-version-gen .tarball-version]),
+	[openbsc@lists.osmocom.org])
 
 AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
 LT_INIT([disable-static])
