@@ -53,6 +53,10 @@ struct osmo_gapk_pq_item {
 	struct llist_head list;
 	/*! \brief type of item */
 	enum osmo_gapk_pq_item_type type;
+	/*! \brief category name (src, format, codec, sink) */
+	const char *cat_name;
+	/*! \brief sub-category name (file, rtp-amr, amr, alsa) */
+	const char *sub_name;
 };
 
 #define VAR_BUF_SIZE	320
@@ -70,6 +74,7 @@ struct osmo_gapk_pq *osmo_gapk_pq_create(const char *name);
 int osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq);
 int osmo_gapk_pq_execute(struct osmo_gapk_pq *pq);
 void osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq);
+char *osmo_gapk_pq_describe(struct osmo_gapk_pq *pq);
 
 /* Processing queue item management */
 struct osmo_gapk_pq_item *osmo_gapk_pq_add_item(struct osmo_gapk_pq *pq);

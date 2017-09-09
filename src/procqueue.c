@@ -176,3 +176,20 @@ osmo_gapk_pq_execute(struct osmo_gapk_pq *pq)
 
 	return 0;
 }
+
+char *
+osmo_gapk_pq_describe(struct osmo_gapk_pq *pq)
+{
+	struct osmo_gapk_pq_item *item;
+	char *result = NULL;
+	int i = 0;
+
+	/* Iterate over all items in queue */
+	llist_for_each_entry(item, &pq->items, list) {
+		result = talloc_asprintf_append(result, "%s/%s%s",
+			item->cat_name, item->sub_name,
+			++i < pq->n_items ? " -> " : "");
+	}
+
+	return result;
+}

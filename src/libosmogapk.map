@@ -12,6 +12,7 @@ osmo_gapk_pq_create;
 osmo_gapk_pq_prepare;
 osmo_gapk_pq_execute;
 osmo_gapk_pq_destroy;
+osmo_gapk_pq_describe;
 
 osmo_gapk_pq_add_item;
 

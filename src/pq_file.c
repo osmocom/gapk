@@ -80,6 +80,8 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 
 	item->type = in_out_n ?
 		OSMO_GAPK_ITEM_TYPE_SOURCE : OSMO_GAPK_ITEM_TYPE_SINK;
+	item->cat_name = in_out_n ? "source" : "sink";
+	item->sub_name = "file";
 
 	item->len_in  = in_out_n ? 0 : blk_len;
 	item->len_out = in_out_n ? blk_len : 0;
