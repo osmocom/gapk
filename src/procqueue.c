@@ -32,7 +32,7 @@ extern TALLOC_CTX *gapk_root_ctx;
 
 /* crate a new (empty) processing queue */
 struct osmo_gapk_pq *
-osmo_gapk_pq_create(void)
+osmo_gapk_pq_create(const char *name)
 {
 	struct osmo_gapk_pq *pq;
 
@@ -40,6 +40,13 @@ osmo_gapk_pq_create(void)
 	pq = talloc_zero(gapk_root_ctx, struct osmo_gapk_pq);
 	if (!pq)
 		return NULL;
+
+	if (name != NULL) {
+		/* Rename talloc context */
+		talloc_set_name(pq, "struct osmo_gapk_pq '%s'", name);
+		/* Set queue name */
+		pq->name = name;
+	}
 
 	/* Init its list of items */
 	INIT_LLIST_HEAD(&pq->items);

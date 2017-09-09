@@ -734,7 +734,7 @@ int main(int argc, char *argv[])
 		return rv;
 
 	/* Create processing queue */
-	gs->pq = osmo_gapk_pq_create();
+	gs->pq = osmo_gapk_pq_create("main");
 	if (!gs->pq) {
 		rv = -ENOMEM;
 		LOGP(DAPP, LOGL_ERROR, "Error creating processing queue\n");
