@@ -76,9 +76,9 @@ libosmogapk_la_SOURCES += \
 	benchmark.c \
 	$(NULL)
 
-# Logging
+# Common routines
 libosmogapk_la_SOURCES += \
-	logging.c \
+	common.c \
 	$(NULL)
 
 # libosmogapk representative application
