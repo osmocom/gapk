@@ -61,6 +61,8 @@ codec_amr_exit(void *state)
 	Decoder_Interface_exit(st->decoder);
 	Encoder_Interface_exit(st->encoder);
 
+	talloc_free(st);
+
 	return;
 }
 
