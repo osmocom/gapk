@@ -70,6 +70,7 @@ osmo_gapk_pq_queue_codec(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_d
 		item->proc    = codec->codec_decode;
 	}
 
+	item->type = OSMO_GAPK_ITEM_TYPE_PROC;
 	item->exit = codec->codec_exit;
 	item->wait = NULL;
 

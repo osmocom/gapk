@@ -140,6 +140,9 @@ pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk
 		goto out_close;
 	}
 
+	item->type = in_out_n ?
+		OSMO_GAPK_ITEM_TYPE_SOURCE : OSMO_GAPK_ITEM_TYPE_SINK;
+
 	item->len_in  = in_out_n ? 0 : blk_len;
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;

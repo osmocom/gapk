@@ -6,6 +6,7 @@ osmo_gapk_set_talloc_ctx;
 
 osmo_gapk_pq;
 osmo_gapk_pq_item;
+osmo_gapk_pq_item_type;
 
 osmo_gapk_pq_create;
 osmo_gapk_pq_prepare;
