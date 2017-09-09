@@ -26,6 +26,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <talloc.h>
 
 #include <sys/signal.h>
 #include <sys/socket.h>
@@ -42,6 +43,8 @@
 #include <osmocom/gapk/procqueue.h>
 #include <osmocom/gapk/benchmark.h>
 
+/* The root talloc context of application */
+TALLOC_CTX *app_root_ctx;
 
 struct gapk_options
 {
@@ -62,6 +65,7 @@ struct gapk_options
 	const struct osmo_gapk_format_desc *fmt_out;
 
 	int benchmark;
+	int verbose;
 };
 
 struct gapk_state
@@ -281,6 +285,7 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 		case 'v':
 			log_parse_category_mask(osmo_stderr_target, "DAPP");
+			opt->verbose = 1;
 			break;
 
 		case 'h':
@@ -482,7 +487,7 @@ handle_headers(struct gapk_state *gs)
 	if (len && gs->in.file.fh) {
 		uint8_t *buf;
 		
-		buf = malloc(len);
+		buf = talloc_size(app_root_ctx, len);
 		if (!buf)
 			return -ENOMEM;
 
@@ -490,12 +495,12 @@ handle_headers(struct gapk_state *gs)
 		if ((rv != 1) ||
 		    memcmp(buf, gs->opts.fmt_in->header, len))
 		{
-			free(buf);
 			LOGP(DAPP, LOGL_ERROR, "Invalid header in input file");
+			talloc_free(buf);
 			return -EINVAL;
 		}
 
-		free(buf);
+		talloc_free(buf);
 	}
 
 	/* Output file header (write it) */
@@ -670,6 +675,9 @@ static void app_shutdown(void)
 
 	/* Free memory taken by benchmark data */
 	osmo_gapk_bench_free();
+
+	if (gs->opts.verbose)
+		talloc_report_full(app_root_ctx, stderr);
 }
 
 static void signal_handler(int signal)
@@ -683,6 +691,10 @@ static void signal_handler(int signal)
 			exit(0);
 		}
 		break;
+	case SIGABRT:
+	case SIGUSR1:
+	case SIGUSR2:
+		talloc_report_full(app_root_ctx, stderr);
 	default:
 		break;
 	}
@@ -692,6 +704,10 @@ static void signal_handler(int signal)
 int main(int argc, char *argv[])
 {
 	int rv;
+
+	/* Init talloc memory management system */
+	app_root_ctx = talloc_init("osmo-gapk root context");
+	osmo_gapk_set_talloc_ctx(app_root_ctx);
 
 	/* Init Osmocom logging framework */
 	osmo_init_logging(&gapk_log_info);
@@ -747,6 +763,9 @@ int main(int argc, char *argv[])
 	}
 
 	signal(SIGINT, &signal_handler);
+	signal(SIGABRT, &signal_handler);
+	signal(SIGUSR1, &signal_handler);
+	signal(SIGUSR2, &signal_handler);
 
 	/* Run the processing queue */
 	LOGP(DAPP, LOGL_NOTICE, "Init complete, starting processing queue...\n");
