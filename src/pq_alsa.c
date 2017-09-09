@@ -20,8 +20,7 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <talloc.h>
 
 #include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
@@ -92,7 +91,7 @@ pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk
 	snd_pcm_hw_params_t *hw_params;
 	int rc = -1;
 
-	state = calloc(1, sizeof(struct pq_state_alsa));
+	state = talloc_zero(pq, struct pq_state_alsa);
 	if (!state) {
 		rc = -ENOMEM;
 		goto out_print;
@@ -148,13 +147,16 @@ pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk
 	item->wait    = pq_cb_alsa_wait;
 	item->exit    = pq_cb_alsa_exit;
 
+	/* Change state's talloc context from pq to item */
+	talloc_steal(item, state);
+
 	return 0;
 
 out_free_par:
 	snd_pcm_hw_params_free(hw_params);
 out_close:
 	snd_pcm_close(state->pcm_handle);
-	free(state);
+	talloc_free(state);
 out_print:
 	LOGPGAPK(LOGL_ERROR, "Couldn't init ALSA device '%s': %s\n",
 		alsa_dev, snd_strerror(rc));

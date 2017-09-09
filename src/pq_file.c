@@ -19,8 +19,7 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <talloc.h>
 
 #include <osmocom/gapk/logging.h>
 #include <osmocom/gapk/codecs.h>
@@ -57,7 +56,7 @@ pq_cb_file_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in
 static void
 pq_cb_file_exit(void *_state)
 {
-	free(_state);
+	talloc_free(_state);
 }
 
 static int
@@ -66,7 +65,7 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 	struct osmo_gapk_pq_item *item;
 	struct pq_state_file *state;
 
-	state = calloc(1, sizeof(struct pq_state_file));
+	state = talloc_zero(pq, struct pq_state_file);
 	if (!state)
 		return -ENOMEM;
 
@@ -75,7 +74,7 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 
 	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
-		free(state);
+		talloc_free(state);
 		return -ENOMEM;
 	}
 
@@ -85,6 +84,9 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 	item->proc    = in_out_n ? pq_cb_file_input : pq_cb_file_output;
 	item->wait    = NULL;
 	item->exit    = pq_cb_file_exit;
+
+	/* Change state's talloc context from pq to item */
+	talloc_steal(item, state);
 
 	return 0;
 }

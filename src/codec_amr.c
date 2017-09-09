@@ -27,8 +27,7 @@
 
 #ifdef HAVE_OPENCORE_AMRNB
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <talloc.h>
 
 #include <opencore-amrnb/interf_dec.h>
 #include <opencore-amrnb/interf_enc.h>
@@ -44,7 +43,7 @@ codec_amr_init(void)
 {
 	struct codec_amr_state *st;
 
-	st = calloc(1, sizeof(*st));
+	st = talloc_zero(NULL, struct codec_amr_state);
 	if (!st)
 		return NULL;
 

@@ -17,9 +17,8 @@
  * (C) 2014 Harald Welte <laforge@gnumonks.org>
  */
 
-#include <stdio.h>
+#include <talloc.h>
 #include <errno.h>
-#include <stdlib.h>
 
 #include <osmocom/gapk/benchmark.h>
 #include <osmocom/gapk/codecs.h>
@@ -32,8 +31,7 @@ int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec)
 	struct osmo_gapk_bench_cycles *bench;
 
 	/* Allocate zero-initialized memory */
-	bench = (struct osmo_gapk_bench_cycles *)
-		calloc(1, sizeof(struct osmo_gapk_bench_cycles));
+	bench = talloc_zero(NULL, struct osmo_gapk_bench_cycles);
 	if (!bench)
 		return -ENOMEM;
 
@@ -84,5 +82,5 @@ void osmo_gapk_bench_free(void)
 	int i;
 
 	for (i = 0; i < _CODEC_MAX; i++)
-		free(osmo_gapk_bench_codec[i]);
+		talloc_free(osmo_gapk_bench_codec[i]);
 }

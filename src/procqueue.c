@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <talloc.h>
 
 #include <osmocom/core/linuxlist.h>
 
@@ -33,7 +34,9 @@ osmo_gapk_pq_create(void)
 	struct osmo_gapk_pq *pq;
 
 	/* Allocate memory for a new processing queue */
-	pq = (struct osmo_gapk_pq *) calloc(1, sizeof(struct osmo_gapk_pq));
+	pq = talloc_zero(NULL, struct osmo_gapk_pq);
+	if (!pq)
+		return NULL;
 
 	/* Init its list of items */
 	INIT_LLIST_HEAD(&pq->items);
@@ -54,7 +57,7 @@ osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq)
 	/* Iterate over all items in queue */
 	llist_for_each_entry_safe(item, item_next, &pq->items, list) {
 		/* Free output buffer memory */
-		free(item->buf);
+		talloc_free(item->buf);
 
 		/* Call exit handler if preset */
 		if (item->exit)
@@ -62,10 +65,10 @@ osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq)
 
 		/* Delete an item from list */
 		llist_del(&item->list);
-		free(item);
+		talloc_free(item);
 	}
 
-	free(pq);
+	talloc_free(pq);
 }
 
 /*! allocate + add an item to a processing queue; return new item
@@ -77,7 +80,7 @@ osmo_gapk_pq_add_item(struct osmo_gapk_pq *pq)
 	struct osmo_gapk_pq_item *item;
 
 	/* Allocate memory for a new item */
-	item = calloc(1, sizeof(struct osmo_gapk_pq_item));
+	item = talloc_zero(pq, struct osmo_gapk_pq_item);
 	if (!item)
 		return NULL;
 
@@ -120,7 +123,7 @@ osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 				buf_size = VAR_BUF_SIZE;
 
 			/* Allocate memory for an output buffer */
-			item->buf = malloc(buf_size);
+			item->buf = talloc_size(item, buf_size);
 			if (!item->buf)
 				return -ENOMEM;
 		} else {
