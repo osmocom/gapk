@@ -28,11 +28,11 @@ void osmo_gapk_set_talloc_ctx(void *ctx)
 }
 
 /* Internal GAPK logging */
-int osmo_gapk_log_init_complete = 0;
-int osmo_gapk_log_subsys;
+int gapk_log_init_complete = 0;
+int gapk_log_subsys;
 
 void osmo_gapk_log_init(int subsys)
 {
-	osmo_gapk_log_subsys = subsys;
-	osmo_gapk_log_init_complete = 1;
+	gapk_log_subsys = subsys;
+	gapk_log_init_complete = 1;
 }

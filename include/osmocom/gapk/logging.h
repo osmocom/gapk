@@ -20,9 +20,9 @@
 
 #include <osmocom/core/logging.h>
 
-extern int osmo_gapk_log_init_complete;
-extern int osmo_gapk_log_subsys;
+extern int gapk_log_init_complete;
+extern int gapk_log_subsys;
 
 #define LOGPGAPK(level, fmt, args...) \
-	if (osmo_gapk_log_init_complete) \
-		LOGP(osmo_gapk_log_subsys, level, fmt, ## args)
+	if (gapk_log_init_complete) \
+		LOGP(gapk_log_subsys, level, fmt, ## args)
