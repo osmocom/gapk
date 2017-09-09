@@ -27,6 +27,9 @@
 #include <osmocom/gapk/procqueue.h>
 #include <osmocom/gapk/logging.h>
 
+/* Internal root talloc context */
+extern TALLOC_CTX *gapk_root_ctx;
+
 /* crate a new (empty) processing queue */
 struct osmo_gapk_pq *
 osmo_gapk_pq_create(void)
@@ -34,7 +37,7 @@ osmo_gapk_pq_create(void)
 	struct osmo_gapk_pq *pq;
 
 	/* Allocate memory for a new processing queue */
-	pq = talloc_zero(NULL, struct osmo_gapk_pq);
+	pq = talloc_zero(gapk_root_ctx, struct osmo_gapk_pq);
 	if (!pq)
 		return NULL;
 

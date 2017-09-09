@@ -17,6 +17,16 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <talloc.h>
+
+/* Internal root talloc context */
+TALLOC_CTX *gapk_root_ctx = NULL;
+
+void osmo_gapk_set_talloc_ctx(void *ctx)
+{
+	gapk_root_ctx = ctx;
+}
+
 /* Internal GAPK logging */
 int osmo_gapk_log_init_complete = 0;
 int osmo_gapk_log_subsys;

@@ -32,6 +32,8 @@
 #include <opencore-amrnb/interf_dec.h>
 #include <opencore-amrnb/interf_enc.h>
 
+/* Internal root talloc context */
+extern TALLOC_CTX *gapk_root_ctx;
 
 struct codec_efr_state {
 	void *encoder;
@@ -44,7 +46,7 @@ codec_efr_init(void)
 {
 	struct codec_efr_state *st;
 
-	st = talloc_zero(NULL, struct codec_efr_state);
+	st = talloc_zero(gapk_root_ctx, struct codec_efr_state);
 	if (!st)
 		return NULL;
 

@@ -32,6 +32,9 @@
 #include <opencore-amrnb/interf_dec.h>
 #include <opencore-amrnb/interf_enc.h>
 
+/* Internal root talloc context */
+extern TALLOC_CTX *gapk_root_ctx;
+
 struct codec_amr_state {
 	void *encoder;
 	void *decoder;
@@ -43,7 +46,7 @@ codec_amr_init(void)
 {
 	struct codec_amr_state *st;
 
-	st = talloc_zero(NULL, struct codec_amr_state);
+	st = talloc_zero(gapk_root_ctx, struct codec_amr_state);
 	if (!st)
 		return NULL;
 

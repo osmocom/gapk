@@ -18,4 +18,5 @@
 
 #pragma once
 
+void osmo_gapk_set_talloc_ctx(void *ctx);
 void osmo_gapk_log_init(int subsys);

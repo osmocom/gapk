@@ -23,6 +23,9 @@
 #include <osmocom/gapk/benchmark.h>
 #include <osmocom/gapk/codecs.h>
 
+/* Internal root talloc context */
+extern TALLOC_CTX *gapk_root_ctx;
+
 struct osmo_gapk_bench_cycles *
 	osmo_gapk_bench_codec[_CODEC_MAX] = { NULL };
 
@@ -31,7 +34,7 @@ int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec)
 	struct osmo_gapk_bench_cycles *bench;
 
 	/* Allocate zero-initialized memory */
-	bench = talloc_zero(NULL, struct osmo_gapk_bench_cycles);
+	bench = talloc_zero(gapk_root_ctx, struct osmo_gapk_bench_cycles);
 	if (!bench)
 		return -ENOMEM;
 
