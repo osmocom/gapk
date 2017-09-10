@@ -199,8 +199,9 @@ osmo_gapk_pq_execute(struct osmo_gapk_pq *pq)
 		/* Call item's processing handler */
 		rv = item->proc(item->state, item->buf, buf_prev, len_prev);
 		if (rv < 0) {
-			LOGPGAPK(LOGL_ERROR, "Queue execution aborted: "
-				"item returned %d\n", rv);
+			LOGPGAPK(LOGL_ERROR, "PQ '%s': execution aborted: "
+				"item '%s/%s' returned %d\n", pq->name,
+				item->cat_name, item->sub_name, rv);
 			return rv;
 		}
 

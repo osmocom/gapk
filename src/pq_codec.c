@@ -78,8 +78,9 @@ osmo_gapk_pq_queue_codec(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_d
 	item->cat_name = "codec";
 	item->sub_name = codec->name;
 
-	LOGPGAPK(LOGL_DEBUG, "PQ: Adding codec %s, %s format %s\n", codec->name,
-		enc_dec_n ? "encoding to" : "decoding from", fmt->name);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding codec %s, %s format %s\n",
+		pq->name, codec->name, enc_dec_n ?
+			"encoding to" : "decoding from", fmt->name);
 
 	if (!item->proc)
 		return -ENOTSUP;

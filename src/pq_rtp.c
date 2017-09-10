@@ -251,7 +251,8 @@ pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int i
 int
 osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
-	LOGPGAPK(LOGL_DEBUG, "PQ: Adding RTP input (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding RTP input (blk_len=%u)\n",
+		pq->name, blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
 }
 
@@ -263,6 +264,7 @@ osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int b
 int
 osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
-	LOGPGAPK(LOGL_DEBUG, "PQ: Adding RTP output (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding RTP output (blk_len=%u)\n",
+		pq->name, blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);
 }

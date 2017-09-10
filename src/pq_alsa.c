@@ -178,8 +178,8 @@ out_print:
 int
 osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
-	LOGPGAPK(LOGL_DEBUG, "PQ: Adding ALSA input "
-		"(dev='%s', blk_len=%u)\n", hwdev, blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding ALSA input "
+		"(dev='%s', blk_len=%u)\n", pq->name, hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 1);
 }
 
@@ -192,8 +192,8 @@ osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsign
 int
 osmo_gapk_pq_queue_alsa_output(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
-	LOGPGAPK(LOGL_DEBUG, "PQ: Adding ALSA output "
-		"(dev='%s', blk_len=%u)\n", hwdev, blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding ALSA output "
+		"(dev='%s', blk_len=%u)\n", pq->name, hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 0);
 }
 
