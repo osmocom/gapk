@@ -71,6 +71,7 @@ struct osmo_gapk_pq {
 
 /* Processing queue management */
 struct osmo_gapk_pq *osmo_gapk_pq_create(const char *name);
+int osmo_gapk_pq_check(struct osmo_gapk_pq *pq, int strict);
 int osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq);
 int osmo_gapk_pq_execute(struct osmo_gapk_pq *pq);
 void osmo_gapk_pq_destroy(struct osmo_gapk_pq *pq);

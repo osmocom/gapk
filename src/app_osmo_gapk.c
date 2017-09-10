@@ -521,6 +521,7 @@ make_processing_chain(struct gapk_state *gs)
 	const struct osmo_gapk_codec_desc *codec_in, *codec_out;
 
 	int need_dec, need_enc;
+	int rc;
 
 	LOGP(DAPP, LOGL_NOTICE, "Creating a processing queue\n");
 
@@ -626,6 +627,11 @@ make_processing_chain(struct gapk_state *gs)
 		LOGP(DAPP, LOGL_ERROR, "Unknown/invalid output\n");
 		return -1;
 	}
+
+	/* Check the processing queue in strict mode */
+	rc = osmo_gapk_pq_check(gs->pq, 1);
+	if (rc)
+		return rc;
 
 	return 0;
 }

@@ -103,24 +103,65 @@ osmo_gapk_pq_add_item(struct osmo_gapk_pq *pq)
 	return item;
 }
 
-/*! prepare a processing queue; allocates buffers; checks lengths
+/*! check a processing queue; make sure I/O data lengths are equal
+ *  \param[in] pq     Make sure both source and sink are preset
+ *  \param[in] strict Processing Queue to be checked
+ *  \returns 0 on succcess; negative on error */
+int
+osmo_gapk_pq_check(struct osmo_gapk_pq *pq, int strict)
+{
+	struct osmo_gapk_pq_item *item_prev = NULL;
+	struct osmo_gapk_pq_item *item;
+
+	/* Make sure I/O data lengths are equal */
+	llist_for_each_entry(item, &pq->items, list) {
+		if (item_prev && item->len_in) {
+			if (item->len_in != item_prev->len_out) {
+				LOGPGAPK(LOGL_ERROR, "PQ '%s': item '%s/%s' requires "
+					"input size %u, but previous '%s/%s' has %u\n",
+					pq->name, item->cat_name, item->sub_name,
+					item->len_in, item_prev->cat_name,
+					item_prev->sub_name, item_prev->len_out);
+				return -EINVAL;
+			}
+		}
+
+		/* Save pointer to the previous item */
+		item_prev = item;
+	}
+
+	if (strict) {
+		/* Make sure the first item is a source */
+		item = llist_first_entry(&pq->items,
+			struct osmo_gapk_pq_item, list);
+		if (item->type != OSMO_GAPK_ITEM_TYPE_SOURCE)
+			goto src_sink_err;
+
+		/* Make sure the last item is a sink */
+		item = llist_last_entry(&pq->items,
+			struct osmo_gapk_pq_item, list);
+		if (item->type != OSMO_GAPK_ITEM_TYPE_SINK)
+			goto src_sink_err;
+	}
+
+	return 0;
+
+src_sink_err:
+	LOGPGAPK(LOGL_ERROR, "PQ '%s': the first item should be a source, "
+		"and the last one should be a sink\n", pq->name);
+	return -EINVAL;
+}
+
+/*! prepare a processing queue; allocates buffers
  *  \param[in] pq Processing Queue to be prepared
  *  \returns 0 on succcess; negative on error */
 int
 osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 {
 	struct osmo_gapk_pq_item *item;
-	unsigned int len_prev = 0;
 
 	/* Iterate over all items in queue */
 	llist_for_each_entry(item, &pq->items, list) {
-		/* Make sure I/O data lengths are equal */
-		if (item->len_in && item->len_in != len_prev) {
-			LOGPGAPK(LOGL_ERROR, "PQ item requires input size %u, "
-				"but previous output is %u\n", item->len_in, len_prev);
-			return -EINVAL;
-		}
-
 		/* The sink item doesn't require an output buffer */
 		if (item->list.next != &pq->items) {
 			unsigned int buf_size = item->len_out;
@@ -136,14 +177,7 @@ osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 			item->buf = talloc_size(item, buf_size);
 			if (!item->buf)
 				return -ENOMEM;
-		} else {
-			/* Make sure the last item is a sink */
-			if (item->len_out)
-				return -EINVAL;
 		}
-
-		/* Store output length for further comparation */
-		len_prev = item->len_out;
 	}
 
 	return 0;
