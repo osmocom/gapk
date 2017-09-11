@@ -219,12 +219,22 @@ osmo_gapk_pq_describe(struct osmo_gapk_pq *pq)
 	char *result = NULL;
 	int i = 0;
 
+	/* Nothing to describe */
+	if (!pq->n_items)
+		return NULL;
+
 	/* Iterate over all items in queue */
 	llist_for_each_entry(item, &pq->items, list) {
 		result = talloc_asprintf_append(result, "%s/%s%s",
 			item->cat_name, item->sub_name,
 			++i < pq->n_items ? " -> " : "");
 	}
+
+	/* Change talloc context name */
+	talloc_set_name_const(result, ".description");
+
+	/* Change parent talloc context to pq */
+	talloc_steal(pq, result);
 
 	return result;
 }
