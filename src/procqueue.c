@@ -174,7 +174,7 @@ osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 				buf_size = VAR_BUF_SIZE;
 
 			/* Allocate memory for an output buffer */
-			item->buf = talloc_size(item, buf_size);
+			item->buf = talloc_named_const(item, buf_size, ".buffer");
 			if (!item->buf)
 				return -ENOMEM;
 		}
