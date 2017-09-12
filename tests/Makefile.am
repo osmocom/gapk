@@ -12,10 +12,19 @@ AM_CFLAGS = \
 
 check_PROGRAMS = \
 	procqueue/pq_test \
+	io/pq_file_test \
 	$(NULL)
 
 procqueue_pq_test_SOURCES = procqueue/pq_test.c
 procqueue_pq_test_LDADD = \
+	$(top_builddir)/src/libosmogapk.la \
+	$(LIBOSMOCORE_LIBS) \
+	$(LIBOSMOCODEC_LIBS) \
+	$(TALLOC_LIBS) \
+	$(NULL)
+
+io_pq_file_test_SOURCES = io/pq_file_test.c
+io_pq_file_test_LDADD = \
 	$(top_builddir)/src/libosmogapk.la \
 	$(LIBOSMOCORE_LIBS) \
 	$(LIBOSMOCODEC_LIBS) \
@@ -48,6 +57,8 @@ EXTRA_DIST = \
 
 EXTRA_DIST += \
 	procqueue/pq_test.ok \
+	io/pq_file_test.ok \
+	io/io_sample.txt \
 	$(NULL)
 
 DISTCLEANFILES = atconfig

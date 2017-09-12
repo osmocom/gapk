@@ -6,3 +6,12 @@ AT_KEYWORDS([procqueue])
 cat $abs_srcdir/procqueue/pq_test.ok > expout
 AT_CHECK([$abs_top_builddir/tests/procqueue/pq_test], [0], [expout])
 AT_CLEANUP
+
+AT_SETUP([pq_file])
+AT_KEYWORDS([pq_file])
+cat $abs_srcdir/io/pq_file_test.ok > expout
+AT_CHECK([
+	$abs_top_builddir/tests/io/pq_file_test \
+		$abs_top_builddir/tests/io/io_sample.txt],
+	[0], [expout])
+AT_CLEANUP
