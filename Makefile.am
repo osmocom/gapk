@@ -12,4 +12,4 @@ if ENABLE_GSMHR
 SUBDIRS += libgsmhr
 endif
 
-SUBDIRS += src
+SUBDIRS += src tests

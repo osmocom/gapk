@@ -36,6 +36,15 @@ stamp-h1
 
 libgsmhr/refsrc
 
+# GNU autotest
+tests/package.m4
+tests/atconfig
+tests/atlocal
+tests/testsuite
+tests/testsuite.dir/
+tests/testsuite.log
+tests/*/*_test
+
 # final executables
 src/osmo-gapk
 

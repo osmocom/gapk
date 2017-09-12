@@ -12,6 +12,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CONFIG_SRCDIR([src/app_osmo_gapk.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_TESTDIR(tests)
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
@@ -19,6 +20,7 @@ AC_CONFIG_FILES([
 	include/Makefile
 	include/gsmhr/Makefile
 	libosmogapk.pc
+	tests/Makefile
 ])
 
 # Options
