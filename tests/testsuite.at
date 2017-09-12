@@ -1,2 +1,8 @@
 AT_INIT
 AT_BANNER([Regression tests.])
+
+AT_SETUP([procqueue])
+AT_KEYWORDS([procqueue])
+cat $abs_srcdir/procqueue/pq_test.ok > expout
+AT_CHECK([$abs_top_builddir/tests/procqueue/pq_test], [0], [expout])
+AT_CLEANUP

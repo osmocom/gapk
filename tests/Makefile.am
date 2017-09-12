@@ -11,6 +11,15 @@ AM_CFLAGS = \
 	$(NULL)
 
 check_PROGRAMS = \
+	procqueue/pq_test \
+	$(NULL)
+
+procqueue_pq_test_SOURCES = procqueue/pq_test.c
+procqueue_pq_test_LDADD = \
+	$(top_builddir)/src/libosmogapk.la \
+	$(LIBOSMOCORE_LIBS) \
+	$(LIBOSMOCODEC_LIBS) \
+	$(TALLOC_LIBS) \
 	$(NULL)
 
 # The `:;' works around a Bash 3.2 bug when the output is not writeable.
@@ -35,6 +44,10 @@ EXTRA_DIST = \
 	testsuite.at \
 	$(TESTSUITE) \
 	$(srcdir)/package.m4 \
+	$(NULL)
+
+EXTRA_DIST += \
+	procqueue/pq_test.ok \
 	$(NULL)
 
 DISTCLEANFILES = atconfig
