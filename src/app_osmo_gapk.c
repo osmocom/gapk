@@ -355,7 +355,7 @@ check_options(struct gapk_state *gs)
 	if (gs->opts.alsa_out)
 		sink_count++;
 
-	if (src_count != 1 || sink_count != 1) {
+	if (src_count > 1 || sink_count > 1) {
 		LOGP(DAPP, LOGL_ERROR, "You have to decide on "
 			"a single input and a single output\n");
 		return -EINVAL;
