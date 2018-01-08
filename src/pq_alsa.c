@@ -81,6 +81,7 @@ pq_cb_alsa_exit(void *_state)
 {
 	struct pq_state_alsa *state = _state;
 	snd_pcm_close(state->pcm_handle);
+	talloc_free(state);
 }
 
 static int
