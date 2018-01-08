@@ -79,6 +79,7 @@ gsmhr_init(void)
 EXPORT void
 gsmhr_exit(struct gsmhr *state)
 {
+	free(state->bss_save);
 	free(state);
 }
 
