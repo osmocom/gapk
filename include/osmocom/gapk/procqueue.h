@@ -30,6 +30,10 @@ enum osmo_gapk_pq_item_type {
 	OSMO_GAPK_ITEM_TYPE_PROC,
 };
 
+#define OSMO_GAPK_CAT_NAME_SOURCE	"source"
+#define OSMO_GAPK_CAT_NAME_SINK	"sink"
+#define OSMO_GAPK_CAT_NAME_PROC	"proc"
+
 struct osmo_gapk_pq_item {
 	/*! input frame size (in bytes). '0' in case of variable frames */
 	unsigned int len_in;

@@ -283,16 +283,18 @@ int main(int argc, char **argv)
 	assert(queue_desc == NULL);
 
 	/* Fill in some data */
-	q3_i0->cat_name = "source";
+	q3_i0->cat_name = OSMO_GAPK_CAT_NAME_SOURCE;
 	q3_i0->sub_name = "file";
-	q3_i1->cat_name = "proc";
+
+	q3_i1->cat_name = OSMO_GAPK_CAT_NAME_PROC;
 	q3_i1->sub_name = "dummy";
-	q3_i2->cat_name = "sink";
+
+	q3_i2->cat_name = OSMO_GAPK_CAT_NAME_SINK;
 	q3_i2->sub_name = "alsa";
 
-	q2_i0->cat_name = "source";
+	q2_i0->cat_name = OSMO_GAPK_CAT_NAME_SOURCE;
 	q2_i0->sub_name = "dummy";
-	q2_i1->cat_name = "sink";
+	q2_i1->cat_name = OSMO_GAPK_CAT_NAME_SINK;
 	q2_i1->sub_name = "dummy";
 
 	q1_i0->cat_name = "dummy";

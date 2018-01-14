@@ -151,7 +151,7 @@ static int init_gen_queue(struct osmo_gapk_pq *pq,
 
 	/* Fill in meta information */
 	src_rand->type = OSMO_GAPK_ITEM_TYPE_SOURCE;
-	src_rand->cat_name = "source";
+	src_rand->cat_name = OSMO_GAPK_CAT_NAME_SOURCE;
 	src_rand->sub_name = "random";
 
 	/* Set I/O buffer lengths */
@@ -237,7 +237,7 @@ static int init_chk_queue(struct osmo_gapk_pq *pq,
 
 	/* Fill in meta information */
 	sink_chk->type = OSMO_GAPK_ITEM_TYPE_SINK;
-	sink_chk->cat_name = "sink";
+	sink_chk->cat_name = OSMO_GAPK_CAT_NAME_SINK;
 	sink_chk->sub_name = "checker";
 
 	/* Set I/O buffer lengths */
