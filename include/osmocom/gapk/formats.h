@@ -17,12 +17,11 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GAPK_FORMATS_H__
-#define __GAPK_FORMATS_H__
+#pragma once
 
 #include <stdint.h>
 
-enum format_type {
+enum osmo_gapk_format_type {
 	FMT_INVALID = 0,
 
 	/* Classic .amr container */
@@ -62,33 +61,37 @@ enum format_type {
 	_FMT_MAX,
 };
 
-#include <gapk/codecs.h>	/* need to import here because or enum interdep */
+/* Need to import here because of enum interdep */
+#include <osmocom/gapk/codecs.h>
 
 /*! call-back for actual format conversion function
  *  \param[out] dst caller-allocated buffer for output data
  *  \param[in] src input data
  *  \param[in] src_len length of input data \a src
  *  \returns number of output bytes written to \a dst; negative on error */
-typedef int (*fmt_conv_cb_t)(uint8_t *dst, const uint8_t *src, unsigned int src_len);
+typedef int (*osmo_gapk_fmt_conv_cb_t)(uint8_t *dst,
+	const uint8_t *src, unsigned int src_len);
 
-struct format_desc {
-	enum format_type	type;
-	enum codec_type		codec_type;
-	const char *		name;
-	const char *		description;
+struct osmo_gapk_format_desc {
+	enum osmo_gapk_format_type type;
+	enum osmo_gapk_codec_type codec_type;
+	const char *description;
+	const char *name;
 
-	/*! length of frames in this format (as opposed to canonical) */
-	unsigned int		frame_len;
-	fmt_conv_cb_t		conv_from_canon;
-	fmt_conv_cb_t		conv_to_canon;
+	/*! Length of frames in this format (as opposed to canonical) */
+	unsigned int frame_len;
 
-	/*! length of a (global) header at start of file */
-	unsigned int		header_len;
-	/*! exact match for (global) header at start of file */
-	const uint8_t *		header;
+	/* Format conversation function pointers */
+	osmo_gapk_fmt_conv_cb_t conv_from_canon;
+	osmo_gapk_fmt_conv_cb_t conv_to_canon;
+
+	/*! Length of a (global) header at start of file */
+	unsigned int header_len;
+	/*! Exact match for (global) header at start of file */
+	const uint8_t *header;
 };
 
-const struct format_desc *fmt_get_from_type(enum format_type type);
-const struct format_desc *fmt_get_from_name(const char *name);
-
-#endif /* __GAPK_FORMATS_H__ */
+const struct osmo_gapk_format_desc *
+osmo_gapk_fmt_get_from_type(enum osmo_gapk_format_type type);
+const struct osmo_gapk_format_desc *
+osmo_gapk_fmt_get_from_name(const char *name);

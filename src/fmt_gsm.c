@@ -18,8 +18,8 @@
  */
 
 #include <assert.h>
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
 
 #define GSM_LEN	  33
 #define GSM_MAGIC 0xd
@@ -54,7 +54,7 @@ gsm_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return FR_CANON_LEN;
 }
 
-const struct format_desc fmt_gsm = {
+const struct osmo_gapk_format_desc fmt_gsm = {
 	.type			= FMT_GSM,
 	.codec_type		= CODEC_FR,
 	.name			= "gsm",

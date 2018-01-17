@@ -1,5 +1,3 @@
-/* Null codec: Raw PCM data (16 bits signed) */
-
 /*
  * This file is part of gapk (GSM Audio Pocket Knife).
  *
@@ -15,13 +13,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * (C) 2014 Harald Welte <laforge@gnumonks.org>
  */
 
+#pragma once
+
+#include <osmocom/gapk/get_cycles.h>
 #include <osmocom/gapk/codecs.h>
 
-const struct osmo_gapk_codec_desc codec_pcm_desc = {
-	.type = CODEC_PCM,
-	.name = "pcm",
-	.description = "Raw PCM signed 16 bits samples",
-	.canon_frame_len = PCM_CANON_LEN,
+#define OSMO_GAPK_CYCLES_NUM_AVG 102400
+
+struct osmo_gapk_bench_cycles {
+	cycles_t enc[OSMO_GAPK_CYCLES_NUM_AVG];
+	unsigned int enc_used;
+	cycles_t dec[OSMO_GAPK_CYCLES_NUM_AVG];
+	unsigned int dec_used;
 };
+
+extern struct osmo_gapk_bench_cycles *osmo_gapk_bench_codec[_CODEC_MAX];
+
+int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec);
+void osmo_gapk_bench_free(void);
+
+unsigned long long
+osmo_gapk_bench_get_cycles(enum osmo_gapk_codec_type codec, int enc);
+unsigned int
+osmo_gapk_bench_get_frames(enum osmo_gapk_codec_type codec, int enc);

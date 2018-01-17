@@ -20,16 +20,16 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <talloc.h>
 
 #include <arpa/inet.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/procqueue.h>
+#include <osmocom/gapk/logging.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/procqueue.h>
 
 #ifndef __BYTE_ORDER
 # ifdef __APPLE__
@@ -86,7 +86,8 @@ struct pq_state_rtp {
 	uint32_t ssrc;
 };
 
-#define rtp_err(x, args...)	fprintf(stderr, "[!] %s():" x, __func__, ## args)
+#define rtp_err(err_msg, args...) \
+	LOGPGAPK(LOGL_ERROR, "%s():" err_msg, __func__, ## args)
 
 static int
 pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_len)
@@ -188,16 +189,16 @@ pq_cb_rtp_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_
 static void
 pq_cb_rtp_exit(void *_state)
 {
-	free(_state);
+	talloc_free(_state);
 }
 
 static int
-pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
+pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 {
-	struct pq_item *item;
+	struct osmo_gapk_pq_item *item;
 	struct pq_state_rtp *state;
 
-	state = calloc(1, sizeof(struct pq_state_rtp));
+	state = talloc_zero(pq, struct pq_state_rtp);
 	if (!state)
 		return -ENOMEM;
 
@@ -217,17 +218,27 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
 		state->payload_type = RTP_PT_GSM_FULL;
 	}
 
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
-		free(state);
+		talloc_free(state);
 		return -ENOMEM;
 	}
+
+	item->type = in_out_n ?
+		OSMO_GAPK_ITEM_TYPE_SOURCE : OSMO_GAPK_ITEM_TYPE_SINK;
+	item->cat_name = in_out_n ?
+		OSMO_GAPK_CAT_NAME_SOURCE : OSMO_GAPK_CAT_NAME_SINK;
+	item->sub_name = "rtp";
 
 	item->len_in  = in_out_n ? 0 : blk_len;
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_rtp_input : pq_cb_rtp_output;
+	item->wait    = NULL;
 	item->exit    = pq_cb_rtp_exit;
+
+	/* Change state's talloc context from pq to item */
+	talloc_steal(item, state);
 
 	return 0;
 }
@@ -239,9 +250,10 @@ pq_queue_rtp_op(struct pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
  *  \param[in] udp_fd UDP file descriptor for the RTP input
  *  \param[in] blk_len Block Length to read from RTP */
 int
-pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
+osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding RTP input (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding RTP input (blk_len=%u)\n",
+		pq->name, blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
 }
 
@@ -251,8 +263,9 @@ pq_queue_rtp_input(struct pq *pq, int udp_fd, unsigned int blk_len)
  *  \param[in] udp_fd UDP file descriptor for the RTP output
  *  \param[in] blk_len Block Length to read from RTP */
 int
-pq_queue_rtp_output(struct pq *pq, int udp_fd, unsigned int blk_len)
+osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding RTP output (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding RTP output (blk_len=%u)\n",
+		pq->name, blk_len);
 	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);
 }

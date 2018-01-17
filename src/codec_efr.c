@@ -17,20 +17,23 @@
  * along with gapk.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gapk/codecs.h>
-#include <gapk/benchmark.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/benchmark.h>
+#include <osmocom/gapk/bench.h>
 
 #include "config.h"
 
 
 #ifdef HAVE_OPENCORE_AMRNB
 
-#include <stdlib.h>
+#include <talloc.h>
 #include <assert.h>
 
 #include <opencore-amrnb/interf_dec.h>
 #include <opencore-amrnb/interf_enc.h>
 
+/* Internal root talloc context */
+extern TALLOC_CTX *gapk_root_ctx;
 
 struct codec_efr_state {
 	void *encoder;
@@ -43,7 +46,7 @@ codec_efr_init(void)
 {
 	struct codec_efr_state *st;
 
-	st = calloc(1, sizeof(*st));
+	st = talloc_zero(gapk_root_ctx, struct codec_efr_state);
 	if (!st)
 		return NULL;
 
@@ -60,6 +63,8 @@ codec_efr_exit(void *state)
 
 	Decoder_Interface_exit(st->decoder);
 	Encoder_Interface_exit(st->encoder);
+
+	talloc_free(st);
 
 	return;
 }
@@ -108,7 +113,7 @@ codec_efr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod
 #endif /* HAVE_OPENCORE_AMRNB */
 
 
-const struct codec_desc codec_efr_desc = {
+const struct osmo_gapk_codec_desc codec_efr_desc = {
 	.type = CODEC_EFR,
 	.name = "efr",
 	.description = "GSM 06.60 Enhanced Full Rate codec",

@@ -22,9 +22,9 @@
 #include <assert.h>
 #include <string.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 #define HR_LEN	(HR_CANON_LEN+1)
 
@@ -68,7 +68,7 @@ rtp_hr_ietf_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return HR_CANON_LEN;
 }
 
-const struct format_desc fmt_rtp_hr_ietf = {
+const struct osmo_gapk_format_desc fmt_rtp_hr_ietf = {
 	.type			= FMT_RTP_HR_IETF,
 	.codec_type		= CODEC_HR,
 	.name			= "rtp-hr-ietf",

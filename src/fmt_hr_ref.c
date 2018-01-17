@@ -22,9 +22,9 @@
 
 #include <assert.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 static const int params_unvoiced[] = {
 	5,	/* R0 */
@@ -191,7 +191,7 @@ hr_ref_enc_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 }
 
 
-const struct format_desc fmt_hr_ref_dec = {
+const struct osmo_gapk_format_desc fmt_hr_ref_dec = {
 	.type			= FMT_HR_REF_DEC,
 	.codec_type		= CODEC_HR,
 	.name			= "hr-ref-dec",
@@ -202,7 +202,7 @@ const struct format_desc fmt_hr_ref_dec = {
 	.conv_to_canon		= hr_ref_dec_to_canon,
 };
 
-const struct format_desc fmt_hr_ref_enc = {
+const struct osmo_gapk_format_desc fmt_hr_ref_enc = {
 	.type			= FMT_HR_REF_ENC,
 	.codec_type		= CODEC_HR,
 	.name			= "hr-ref-enc",

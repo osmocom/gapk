@@ -19,8 +19,8 @@
 
 #include <assert.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
 
 static int
 rawpcm_s16le_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
@@ -53,7 +53,7 @@ rawpcm_s16le_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return PCM_CANON_LEN;
 }
 
-const struct format_desc fmt_rawpcm_s16le = {
+const struct osmo_gapk_format_desc fmt_rawpcm_s16le = {
 	.type			= FMT_RAWPCM_S16LE,
 	.codec_type		= CODEC_PCM,
 	.name			= "rawpcm-s16le",

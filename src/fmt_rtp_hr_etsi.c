@@ -22,9 +22,9 @@
 #include <assert.h>
 #include <string.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 /* conversion function: RTP payload -> canonical format */
 static int
@@ -48,7 +48,7 @@ rtp_hr_etsi_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return HR_CANON_LEN;
 }
 
-const struct format_desc fmt_rtp_hr_etsi = {
+const struct osmo_gapk_format_desc fmt_rtp_hr_etsi = {
 	.type			= FMT_RTP_HR_ETSI,
 	.codec_type		= CODEC_HR,
 	.name			= "rtp-hr-etsi",

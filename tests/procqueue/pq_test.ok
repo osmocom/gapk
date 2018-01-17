@@ -1,0 +1,60 @@
+Processing queue allocation test:
+chunk null_context: depth=0
+  chunk struct osmo_gapk_pq 'q3': depth=1
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq 'q2': depth=1
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq 'q1': depth=1
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq: depth=1
+
+Item allocation test:
+chunk null_context: depth=0
+  chunk struct osmo_gapk_pq 'q3': depth=1
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq 'q2': depth=1
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq 'q1': depth=1
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq: depth=1
+
+Queue preparation test:
+chunk null_context: depth=0
+  chunk struct osmo_gapk_pq 'q3': depth=1
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk struct osmo_gapk_pq_item: depth=2
+      chunk .buffer: depth=3
+    chunk struct osmo_gapk_pq_item: depth=2
+      chunk .buffer: depth=3
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq 'q2': depth=1
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq 'q1': depth=1
+    chunk struct osmo_gapk_pq_item: depth=2
+    chunk .name: depth=2
+  chunk struct osmo_gapk_pq: depth=1
+
+Queue description test:
+Queue q3 description: source/file -> proc/dummy -> sink/alsa
+Queue q2 description: source/dummy -> sink/dummy
+Queue q1 description: dummy/dummy
+
+Processing queue execution test:
+Incoming data: 0 1 2 3 4 5 6 7 8 9 
+Outgoing data: 0 1 0 1 0 1 0 1 0 1 
+
+Processing queue exit callback test:
+Calling exit callback for 'source/file'
+Calling exit callback for 'proc/dummy'
+Calling exit callback for 'sink/alsa'
+
+Processing queue deallocation test:
+chunk null_context: depth=0

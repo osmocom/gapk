@@ -1,0 +1,4 @@
+LIBOSMOGAPK_1.0 {
+global: osmo_gapk_*;
+local: *;
+};

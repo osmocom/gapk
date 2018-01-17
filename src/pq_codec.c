@@ -20,9 +20,10 @@
 #include <errno.h>
 #include <stdint.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/procqueue.h>
+#include <osmocom/gapk/logging.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/procqueue.h>
 
 
 /*! Add a codecl to the processing queue
@@ -31,14 +32,14 @@
  *  \param[in] encode (1) or decode (0)
  *  \returns 0 on success; negative on error */
 int
-pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
+osmo_gapk_pq_queue_codec(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_desc *codec, int enc_dec_n)
 {
-	const struct codec_desc *codec_pcm = codec_get_from_type(CODEC_PCM);
-	const struct format_desc *fmt;
-	struct pq_item *item;
+	const struct osmo_gapk_codec_desc *codec_pcm;
+	const struct osmo_gapk_format_desc *fmt;
+	struct osmo_gapk_pq_item *item;
 
 	/* allocate a new item to the processing queue */
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item)
 		return -ENOMEM;
 
@@ -50,7 +51,8 @@ pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
 	}
 
 	if (enc_dec_n) {
-		fmt = fmt_get_from_type(codec->codec_enc_format_type);
+		codec_pcm = osmo_gapk_codec_get_from_type(CODEC_PCM);
+		fmt = osmo_gapk_fmt_get_from_type(codec->codec_enc_format_type);
 		if (!fmt)
 			return -EINVAL;
 
@@ -58,7 +60,8 @@ pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
 		item->len_out = fmt->frame_len;
 		item->proc    = codec->codec_encode;
 	} else {
-		fmt = fmt_get_from_type(codec->codec_dec_format_type);
+		codec_pcm = osmo_gapk_codec_get_from_type(CODEC_PCM);
+		fmt = osmo_gapk_fmt_get_from_type(codec->codec_dec_format_type);
 		if (!fmt)
 			return -EINVAL;
 
@@ -67,10 +70,17 @@ pq_queue_codec(struct pq *pq, const struct codec_desc *codec, int enc_dec_n)
 		item->proc    = codec->codec_decode;
 	}
 
+	item->type = OSMO_GAPK_ITEM_TYPE_PROC;
 	item->exit = codec->codec_exit;
+	item->wait = NULL;
 
-	fprintf(stderr, "[+] PQ: Adding Codec %s, %s format %s\n", codec->name,
-		enc_dec_n ? "encoding to" : "decoding from", fmt->name);
+	/* Meta information */
+	item->cat_name = "codec";
+	item->sub_name = codec->name;
+
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding codec %s, %s format %s\n",
+		pq->name, codec->name, enc_dec_n ?
+			"encoding to" : "decoding from", fmt->name);
 
 	if (!item->proc)
 		return -ENOTSUP;

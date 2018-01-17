@@ -19,12 +19,12 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <talloc.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/procqueue.h>
+#include <osmocom/gapk/logging.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/procqueue.h>
 
 
 struct pq_state_file {
@@ -56,33 +56,43 @@ pq_cb_file_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in
 static void
 pq_cb_file_exit(void *_state)
 {
-	free(_state);
+	talloc_free(_state);
 }
 
 static int
-pq_queue_file_op(struct pq *pq, FILE *fh, unsigned int blk_len, int in_out_n)
+pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in_out_n)
 {
-	struct pq_item *item;
+	struct osmo_gapk_pq_item *item;
 	struct pq_state_file *state;
 
-	state = calloc(1, sizeof(struct pq_state_file));
+	state = talloc_zero(pq, struct pq_state_file);
 	if (!state)
 		return -ENOMEM;
 
 	state->fh = fh;
 	state->blk_len = blk_len;
 
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
-		free(state);
+		talloc_free(state);
 		return -ENOMEM;
 	}
+
+	item->type = in_out_n ?
+		OSMO_GAPK_ITEM_TYPE_SOURCE : OSMO_GAPK_ITEM_TYPE_SINK;
+	item->cat_name = in_out_n ?
+		OSMO_GAPK_CAT_NAME_SOURCE : OSMO_GAPK_CAT_NAME_SINK;
+	item->sub_name = "file";
 
 	item->len_in  = in_out_n ? 0 : blk_len;
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_file_input : pq_cb_file_output;
+	item->wait    = NULL;
 	item->exit    = pq_cb_file_exit;
+
+	/* Change state's talloc context from pq to item */
+	talloc_steal(item, state);
 
 	return 0;
 }
@@ -95,9 +105,10 @@ pq_queue_file_op(struct pq *pq, FILE *fh, unsigned int blk_len, int in_out_n)
  *  \param[in] blk_len block length to be read from file
  *  \returns 0 on sucess; negative on error */
 int
-pq_queue_file_input(struct pq *pq, FILE *src, unsigned int blk_len)
+osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding file input (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding file input (blk_len=%u)\n",
+		pq->name, blk_len);
 	return pq_queue_file_op(pq, src, blk_len, 1);
 }
 
@@ -108,8 +119,9 @@ pq_queue_file_input(struct pq *pq, FILE *src, unsigned int blk_len)
  *  \param[in] blk_len block length to be written to file
  *  \returns 0 on sucess; negative on error */
 int
-pq_queue_file_output(struct pq *pq, FILE *dst, unsigned int blk_len)
+osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding file output (blk_len=%u)\n", blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding file output (blk_len=%u)\n",
+		pq->name, blk_len);
 	return pq_queue_file_op(pq, dst, blk_len, 0);
 }

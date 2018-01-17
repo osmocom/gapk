@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GAPK=./src/gapk
+GAPK=./src/osmo-gapk
 PCMFILE=$1
 BASE=`basename $PCMFILE`
 

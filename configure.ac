@@ -1,6 +1,7 @@
 AC_PREREQ([2.65])
 AC_INIT([gapk],
-	m4_esyscmd([./git-version-gen .tarball-version]), [main@lists.airprobe.org])
+	m4_esyscmd([./git-version-gen .tarball-version]),
+	[openbsc@lists.osmocom.org])
 
 AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
 LT_INIT([disable-static])
@@ -8,16 +9,18 @@ LT_INIT([disable-static])
 # kernel style compile messages
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([src/app_osmo_gapk.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_TESTDIR(tests)
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	libgsmhr/Makefile
 	include/Makefile
-	include/gapk/Makefile
 	include/gsmhr/Makefile
+	libosmogapk.pc
+	tests/Makefile
 ])
 
 # Options
@@ -44,6 +47,16 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([char foo;])],
 	AC_MSG_RESULT([no]))
 CFLAGS="$saved_CFLAGS"
 AC_SUBST(SYMBOL_VISIBILITY)
+
+dnl check os: some linker flags not available on osx
+case $host in
+*-darwin*)
+	;;
+*)
+	LTLDFLAGS_OSMOGAPK='-Wl,--version-script=$(srcdir)/libosmogapk.map'
+	;;
+esac
+AC_SUBST(LTLDFLAGS_OSMOGAPK)
 
 # Checks for programs.
 AC_PROG_CC

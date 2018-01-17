@@ -30,9 +30,9 @@
 
 #include <osmocom/codec/codec.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/utils.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/utils.h>
 
 #define TI_LEN	33
 
@@ -84,7 +84,7 @@ ti_hr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return HR_CANON_LEN;
 }
 
-const struct format_desc fmt_ti_hr = {
+const struct osmo_gapk_format_desc fmt_ti_hr = {
 	.type			= FMT_TI_HR,
 	.codec_type		= CODEC_HR,
 	.name			= "ti-hr",
@@ -132,7 +132,7 @@ ti_fr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return FR_CANON_LEN;
 }
 
-const struct format_desc fmt_ti_fr = {
+const struct osmo_gapk_format_desc fmt_ti_fr = {
 	.type			= FMT_TI_FR,
 	.codec_type		= CODEC_FR,
 	.name			= "ti-fr",
@@ -224,7 +224,7 @@ ti_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 	return EFR_CANON_LEN;
 }
 
-const struct format_desc fmt_ti_efr = {
+const struct osmo_gapk_format_desc fmt_ti_efr = {
 	.type			= FMT_TI_EFR,
 	.codec_type		= CODEC_EFR,
 	.name			= "ti-efr",

@@ -20,12 +20,12 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <talloc.h>
 
-#include <gapk/codecs.h>
-#include <gapk/formats.h>
-#include <gapk/procqueue.h>
+#include <osmocom/gapk/logging.h>
+#include <osmocom/gapk/codecs.h>
+#include <osmocom/gapk/formats.h>
+#include <osmocom/gapk/procqueue.h>
 
 #include "config.h"
 
@@ -69,22 +69,30 @@ pq_cb_alsa_output(void *_state, uint8_t *out, const uint8_t *in, unsigned int in
 	return rv == num_samples ? 0 : -1;
 }
 
+static int
+pq_cb_alsa_wait(void *_state)
+{
+	struct pq_state_alsa *state = _state;
+	return snd_pcm_avail_update(state->pcm_handle) > 0;
+}
+
 static void
 pq_cb_alsa_exit(void *_state)
 {
 	struct pq_state_alsa *state = _state;
 	snd_pcm_close(state->pcm_handle);
+	talloc_free(state);
 }
 
 static int
-pq_queue_alsa_op(struct pq *pq, const char *alsa_dev, unsigned int blk_len, int in_out_n)
+pq_queue_alsa_op(struct osmo_gapk_pq *pq, const char *alsa_dev, unsigned int blk_len, int in_out_n)
 {
-	struct pq_item *item;
+	struct osmo_gapk_pq_item *item;
 	struct pq_state_alsa *state;
 	snd_pcm_hw_params_t *hw_params;
 	int rc = -1;
 
-	state = calloc(1, sizeof(struct pq_state_alsa));
+	state = talloc_zero(pq, struct pq_state_alsa);
 	if (!state) {
 		rc = -ENOMEM;
 		goto out_print;
@@ -127,17 +135,27 @@ pq_queue_alsa_op(struct pq *pq, const char *alsa_dev, unsigned int blk_len, int 
 
 	snd_pcm_hw_params_free(hw_params);
 
-	item = pq_add_item(pq);
+	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
 		rc = -ENOMEM;
 		goto out_close;
 	}
 
+	item->type = in_out_n ?
+		OSMO_GAPK_ITEM_TYPE_SOURCE : OSMO_GAPK_ITEM_TYPE_SINK;
+	item->cat_name = in_out_n ?
+		OSMO_GAPK_CAT_NAME_SOURCE : OSMO_GAPK_CAT_NAME_SINK;
+	item->sub_name = "alsa";
+
 	item->len_in  = in_out_n ? 0 : blk_len;
 	item->len_out = in_out_n ? blk_len : 0;
 	item->state   = state;
 	item->proc    = in_out_n ? pq_cb_alsa_input : pq_cb_alsa_output;
+	item->wait    = pq_cb_alsa_wait;
 	item->exit    = pq_cb_alsa_exit;
+
+	/* Change state's talloc context from pq to item */
+	talloc_steal(item, state);
 
 	return 0;
 
@@ -145,9 +163,9 @@ out_free_par:
 	snd_pcm_hw_params_free(hw_params);
 out_close:
 	snd_pcm_close(state->pcm_handle);
-	free(state);
+	talloc_free(state);
 out_print:
-	fprintf(stderr, "[!] Couldn't init ALSA device '%s': %s\n",
+	LOGPGAPK(LOGL_ERROR, "Couldn't init ALSA device '%s': %s\n",
 		alsa_dev, snd_strerror(rc));
 	return rc;
 }
@@ -160,9 +178,10 @@ out_print:
  *  \param[in] blk_len block length to be read from device
  *  \returns 0 on sucess; negative on error */
 int
-pq_queue_alsa_input(struct pq *pq, const char *hwdev, unsigned int blk_len)
+osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding ALSA input (dev='%s', blk_len=%u)\n", hwdev, blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding ALSA input "
+		"(dev='%s', blk_len=%u)\n", pq->name, hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 1);
 }
 
@@ -173,9 +192,10 @@ pq_queue_alsa_input(struct pq *pq, const char *hwdev, unsigned int blk_len)
  *  \param[in] blk_len block length to be written to device
  *  \returns 0 on sucess; negative on error */
 int
-pq_queue_alsa_output(struct pq *pq, const char *hwdev, unsigned int blk_len)
+osmo_gapk_pq_queue_alsa_output(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
-	fprintf(stderr, "[+] PQ: Adding ALSA output (dev='%s', blk_len=%u)\n", hwdev, blk_len);
+	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding ALSA output "
+		"(dev='%s', blk_len=%u)\n", pq->name, hwdev, blk_len);
 	return pq_queue_alsa_op(pq, hwdev, blk_len, 0);
 }
 

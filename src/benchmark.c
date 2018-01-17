@@ -17,41 +17,73 @@
  * (C) 2014 Harald Welte <laforge@gnumonks.org>
  */
 
-#include <stdio.h>
+#include <talloc.h>
+#include <errno.h>
 
-#include <gapk/benchmark.h>
+#include <osmocom/gapk/benchmark.h>
+#include <osmocom/gapk/codecs.h>
 
-struct benchmark_cycles codec_cycles[_CODEC_MAX];
+/* Internal root talloc context */
+extern TALLOC_CTX *gapk_root_ctx;
 
-void benchmark_dump(void)
+struct osmo_gapk_bench_cycles *
+	osmo_gapk_bench_codec[_CODEC_MAX] = { NULL };
+
+int osmo_gapk_bench_enable(enum osmo_gapk_codec_type codec)
+{
+	struct osmo_gapk_bench_cycles *bench;
+
+	/* Allocate zero-initialized memory */
+	bench = talloc_zero(gapk_root_ctx, struct osmo_gapk_bench_cycles);
+	if (!bench)
+		return -ENOMEM;
+
+	/* Set up pointer */
+	osmo_gapk_bench_codec[codec] = bench;
+
+	return 0;
+}
+
+unsigned long long
+osmo_gapk_bench_get_cycles(enum osmo_gapk_codec_type codec, int enc)
+{
+	struct osmo_gapk_bench_cycles *bench;
+	unsigned long long cycles = 0;
+	int i;
+
+	/* Check if there are benchmark data */
+	bench = osmo_gapk_bench_codec[codec];
+	if (!bench)
+		return -EAGAIN;
+
+	if (enc) {
+		for (i = 0; i < bench->enc_used; i++)
+			cycles += bench->enc[i];
+	} else {
+		for (i = 0; i < bench->dec_used; i++)
+			cycles += bench->dec[i];
+	}
+
+	return cycles;
+}
+
+unsigned int
+osmo_gapk_bench_get_frames(enum osmo_gapk_codec_type codec, int enc)
+{
+	struct osmo_gapk_bench_cycles *bench;
+
+	/* Check if there are benchmark data */
+	bench = osmo_gapk_bench_codec[codec];
+	if (!bench)
+		return -EAGAIN;
+
+	return enc ? bench->enc_used : bench->dec_used;
+}
+
+void osmo_gapk_bench_free(void)
 {
 	int i;
 
-	for (i = 0; i < _CODEC_MAX; i++) {
-		struct benchmark_cycles *bc = &codec_cycles[i];
-		unsigned long long total;
-		int j;
-
-		if (bc->enc_used) {
-			total = 0;
-			for (j = 0; j < bc->enc_used; j++)
-				total += bc->enc[j];
-
-			fprintf(stderr,
-			        "Codec %u (ENC): %llu cycles for %u frames => "
-				"%llu cycles/frame\n", i, total, bc->enc_used,
-				total / bc->enc_used);
-		}
-
-		if (bc->dec_used) {
-			total = 0;
-			for (j = 0; j < bc->dec_used; j++)
-				total += bc->dec[j];
-
-			fprintf(stderr,
-				"Codec %u (DEC): %llu cycles for %u frames => "
-				"%llu cycles/frame\n", i, total, bc->dec_used,
-				total / bc->dec_used);
-		}
-	}
+	for (i = 0; i < _CODEC_MAX; i++)
+		talloc_free(osmo_gapk_bench_codec[i]);
 }
