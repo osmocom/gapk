@@ -93,5 +93,5 @@ osmo_gapk_LDFLAGS = \
 	$(NULL)
 
 osmo_gapk_LDADD = \
-	$(top_builddir)/src/libosmogapk.la \
+	libosmogapk.la \
 	$(NULL)
