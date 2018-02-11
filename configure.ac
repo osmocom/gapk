@@ -20,6 +20,7 @@ AC_CONFIG_FILES([
 	include/Makefile
 	include/gsmhr/Makefile
 	libosmogapk.pc
+	tests/atlocal
 	tests/Makefile
 ])
 
@@ -29,9 +30,9 @@ AC_ARG_ENABLE(gsmhr,
 		[--disable-gsmhr],
 		[Disable support for GSM HR codec using reference code]
 	)],
-	[enable_gsmhr=0], [enable_gsmhr=1])
-AM_CONDITIONAL(ENABLE_GSMHR, test "x$enable_gsmhr" = "x1")
-if test "x$enable_gsmhr" = "x1"; then
+	[enable_gsmhr=$enableval], [enable_gsmhr="yes"])
+AM_CONDITIONAL(ENABLE_GSMHR, test "x$enable_gsmhr" = "xyes")
+if test "x$enable_gsmhr" = "xyes"; then
 	AM_PATH_PYTHON([2.4])
 	AC_DEFINE(HAVE_LIBGSMHR, 1, [Define to 1 if libgsmhr is available])
 fi
@@ -83,6 +84,11 @@ if test "$found_libgsm" = yes; then
 	AC_DEFINE(HAVE_LIBGSM, 1, [Define to 1 if libgsm is available])
 fi
 AC_SUBST(LIBGSM_LIBS)
+
+# Conditional codec tests
+AC_SUBST(ENABLE_AMR_EFR_TESTS, [$found_opencore_amrnb])
+AC_SUBST(ENABLE_HR_TESTS, [$enable_gsmhr])
+AC_SUBST(ENABLE_FR_TESTS, [$found_libgsm])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h unistd.h])

@@ -1,0 +1,3 @@
+enable_amr_efr_tests='@ENABLE_AMR_EFR_TESTS@'
+enable_hr_tests='@ENABLE_HR_TESTS@'
+enable_fr_tests='@ENABLE_FR_TESTS@'

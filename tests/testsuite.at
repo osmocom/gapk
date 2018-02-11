@@ -25,6 +25,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/amr_efr])
 AT_KEYWORDS([amr_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.amr-efr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -35,6 +36,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/gsm])
 AT_KEYWORDS([gsm])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.gsm > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -45,6 +47,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/racal_hr])
 AT_KEYWORDS([racal_hr])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.racal-hr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -55,6 +58,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/racal_fr])
 AT_KEYWORDS([racal_fr])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.racal-fr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -65,6 +69,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/racal_efr])
 AT_KEYWORDS([racal_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.racal-efr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -75,6 +80,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/ti_hr])
 AT_KEYWORDS([ti_hr])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.ti-hr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -85,6 +91,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/ti_fr])
 AT_KEYWORDS([ti_fr])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.ti-fr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -95,6 +102,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/ti_efr])
 AT_KEYWORDS([ti_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.ti-efr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -105,6 +113,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/rtp_efr])
 AT_KEYWORDS([rtp_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.rtp-efr > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -115,6 +124,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/rtp_hr_etsi])
 AT_KEYWORDS([rtp_hr_etsi])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.rtp-hr-etsi > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -125,6 +135,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/enc/rtp_hr_ietf])
 AT_KEYWORDS([rtp_hr_ietf])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.rtp-hr-ietf > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -135,6 +146,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/amr_efr])
 AT_KEYWORDS([amr_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.amr-efr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -145,6 +157,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/gsm])
 AT_KEYWORDS([gsm])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.gsm.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -155,6 +168,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/racal_hr])
 AT_KEYWORDS([racal_hr])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.racal-hr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -165,6 +179,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/racal_fr])
 AT_KEYWORDS([racal_fr])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.racal-fr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -175,6 +190,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/racal_efr])
 AT_KEYWORDS([racal_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.racal-efr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -185,6 +201,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/ti_hr])
 AT_KEYWORDS([ti_hr])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.ti-hr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -195,6 +212,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/ti_fr])
 AT_KEYWORDS([ti_fr])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.ti-fr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -205,6 +223,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/ti_efr])
 AT_KEYWORDS([ti_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.ti-efr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -215,6 +234,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/rtp_efr])
 AT_KEYWORDS([rtp_efr])
+AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.rtp-efr.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -225,6 +245,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/rtp_hr_etsi])
 AT_KEYWORDS([rtp_hr_etsi])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.rtp-hr-etsi.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \
@@ -235,6 +256,7 @@ AT_CLEANUP
 
 AT_SETUP([conv/dec/rtp_hr_ietf])
 AT_KEYWORDS([rtp_hr_ietf])
+AT_CHECK([test "x$enable_hr_tests" = xyes || exit 77])
 cat $abs_srcdir/ref-files/hhgttg_part1_5.s16.rtp-hr-ietf.s16 > expout
 AT_CHECK([
 	$abs_top_builddir/src/osmo-gapk \

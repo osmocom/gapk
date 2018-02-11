@@ -72,7 +72,7 @@ EXTRA_DIST += \
 	ref-files/* \
 	$(NULL)
 
-DISTCLEANFILES = atconfig
+DISTCLEANFILES = atconfig atlocal
 TESTSUITE = $(srcdir)/testsuite
 
 check-local: atconfig $(TESTSUITE)
