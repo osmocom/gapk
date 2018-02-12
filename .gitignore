@@ -51,3 +51,6 @@ src/osmo-gapk
 # temporary/backup files
 *.*~
 .*.swp
+/compile
+.dirstamp
+
