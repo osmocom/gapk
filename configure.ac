@@ -62,6 +62,15 @@ AC_SUBST(LTLDFLAGS_OSMOGAPK)
 # Checks for programs.
 AC_PROG_CC
 
+AC_ARG_ENABLE(sanitize,
+               [AS_HELP_STRING([--enable-sanitize], [Compile with address sanitizer enabled], )],
+               [sanitize=$enableval], [sanitize="no"])
+if test x"$sanitize" = x"yes"
+then
+       CFLAGS="$CFLAGS -fsanitize=address -fsanitize=undefined"
+       CPPFLAGS="$CPPFLAGS -fsanitize=address -fsanitize=undefined"
+fi
+
 # Checks for libraries.
  # libosmocore (codec module)
 PKG_CHECK_MODULES(LIBOSMOCORE, libosmocore >= 0.3.2)
