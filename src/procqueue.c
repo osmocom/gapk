@@ -159,25 +159,27 @@ int
 osmo_gapk_pq_prepare(struct osmo_gapk_pq *pq)
 {
 	struct osmo_gapk_pq_item *item;
+	unsigned int buf_size;
 
 	/* Iterate over all items in queue */
 	llist_for_each_entry(item, &pq->items, list) {
 		/* The sink item doesn't require an output buffer */
-		if (item->list.next != &pq->items) {
-			unsigned int buf_size = item->len_out;
+		if (item->type == OSMO_GAPK_ITEM_TYPE_SINK)
+			continue;
 
-			/**
-			 * Use maximum known buffer size
-			 * for variable-length codec output
-			 */
-			if (!buf_size)
-				buf_size = VAR_BUF_SIZE;
+		buf_size = item->len_out;
 
-			/* Allocate memory for an output buffer */
-			item->buf = talloc_named_const(item, buf_size, ".buffer");
-			if (!item->buf)
-				return -ENOMEM;
-		}
+		/**
+		 * Use maximum known buffer size
+		 * for variable-length codec output
+		 */
+		if (!buf_size)
+			buf_size = VAR_BUF_SIZE;
+
+		/* Allocate memory for an output buffer */
+		item->buf = talloc_named_const(item, buf_size, ".buffer");
+		if (!item->buf)
+			return -ENOMEM;
 	}
 
 	return 0;
