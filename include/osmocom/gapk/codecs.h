@@ -73,6 +73,9 @@ struct osmo_gapk_codec_desc {
 	/* Encoding / decoding function pointers */
 	osmo_gapk_codec_conv_cb_t codec_encode;
 	osmo_gapk_codec_conv_cb_t codec_decode;
+
+	/* ECU (Error Concealment Unit) function */
+	osmo_gapk_codec_conv_cb_t ecu_proc;
 };
 
 const struct osmo_gapk_codec_desc *

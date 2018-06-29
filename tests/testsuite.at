@@ -23,6 +23,13 @@ AT_CHECK([
 	$abs_top_builddir/tests/io/pq_rtp_test], [0], [expout])
 AT_CLEANUP
 
+AT_SETUP([ecu/ecu_fr_test])
+AT_KEYWORDS([ecu_fr_test])
+cat $abs_srcdir/ecu/ecu_fr_test.ok > expout
+AT_CHECK([
+	$abs_top_builddir/tests/ecu/ecu_fr_test], [0], [expout])
+AT_CLEANUP
+
 AT_SETUP([conv/enc/amr_efr])
 AT_KEYWORDS([amr_efr])
 AT_CHECK([test "x$enable_amr_efr_tests" = xyes || exit 77])

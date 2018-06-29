@@ -14,6 +14,7 @@ check_PROGRAMS = \
 	procqueue/pq_test \
 	io/pq_file_test \
 	io/pq_rtp_test \
+	ecu/ecu_fr_test \
 	$(NULL)
 
 procqueue_pq_test_SOURCES = procqueue/pq_test.c
@@ -34,6 +35,14 @@ io_pq_file_test_LDADD = \
 
 io_pq_rtp_test_SOURCES = io/pq_rtp_test.c
 io_pq_rtp_test_LDADD = \
+	$(top_builddir)/src/libosmogapk.la \
+	$(LIBOSMOCORE_LIBS) \
+	$(LIBOSMOCODEC_LIBS) \
+	$(TALLOC_LIBS) \
+	$(NULL)
+
+ecu_ecu_fr_test_SOURCES = ecu/ecu_fr_test.c
+ecu_ecu_fr_test_LDADD = \
 	$(top_builddir)/src/libosmogapk.la \
 	$(LIBOSMOCORE_LIBS) \
 	$(LIBOSMOCODEC_LIBS) \
@@ -66,6 +75,7 @@ EXTRA_DIST = \
 
 EXTRA_DIST += \
 	procqueue/pq_test.ok \
+	ecu/ecu_fr_test.ok \
 	io/pq_file_test.ok \
 	io/pq_rtp_test.ok \
 	io/io_sample.txt \

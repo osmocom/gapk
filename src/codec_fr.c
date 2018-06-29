@@ -83,6 +83,8 @@ codec_fr_decode(void *state, uint8_t *pcm, const uint8_t *cod, unsigned int cod_
 
 #endif /* HAVE_LIBGSM */
 
+/* Forward declaration of ECU (Error Concealment Unit) function */
+int ecu_proc_fr(void *state, uint8_t *out, const uint8_t *in, unsigned int in_len);
 
 const struct osmo_gapk_codec_desc codec_fr_desc = {
 	.type = CODEC_FR,
@@ -97,4 +99,5 @@ const struct osmo_gapk_codec_desc codec_fr_desc = {
 	.codec_encode = codec_fr_encode,
 	.codec_decode = codec_fr_decode,
 #endif
+	.ecu_proc = ecu_proc_fr,
 };

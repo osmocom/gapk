@@ -43,6 +43,12 @@ libosmogapk_la_SOURCES = \
 	pq_file.c \
 	pq_alsa.c \
 	pq_rtp.c \
+	pq_ecu.c \
+	$(NULL)
+
+# ECU (Error Concealment Unit) implementation
+libosmogapk_la_SOURCES += \
+	ecu_fr.c \
 	$(NULL)
 
 # Formats implementation

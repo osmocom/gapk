@@ -103,3 +103,6 @@ int osmo_gapk_pq_queue_fmt_convert(struct osmo_gapk_pq *pq, const struct osmo_ga
 /* Codec */
 struct osmo_gapk_codec_desc;
 int osmo_gapk_pq_queue_codec(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_desc *codec, int encode);
+
+/* ECU (Error Concealment Unit) */
+int osmo_gapk_pq_queue_ecu(struct osmo_gapk_pq *pq, const struct osmo_gapk_codec_desc *codec);
