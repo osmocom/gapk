@@ -716,7 +716,7 @@ int main(int argc, char *argv[])
 	osmo_gapk_set_talloc_ctx(app_root_ctx);
 
 	/* Init Osmocom logging framework */
-	osmo_init_logging(&gapk_log_info);
+	osmo_init_logging2(app_root_ctx, &gapk_log_info);
 	/* and GAPK logging wrapper */
 	osmo_gapk_log_init(DAPP);
 
