@@ -12,6 +12,10 @@ except:
 
 
 SRC = "http://www.3gpp.org/ftp/Specs/archive/06_series/06.06/0606-421.zip"
+HDR = {
+	"User-Agent": "Mozilla/5.0 (X11; ArchLinux; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0",
+	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+}
 
 
 def get_zipfile(data):
@@ -45,7 +49,8 @@ def main(*args):
 	os.chdir(tgt)
 
 	# Get the original data
-	u = urllib2.urlopen(SRC)
+	req = urllib2.Request(SRC, headers = HDR)
+	u = urllib2.urlopen(req)
 	d = u.read()
 
 	# Get DISK.zip
