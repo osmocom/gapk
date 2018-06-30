@@ -191,7 +191,8 @@ ti_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 
 	assert(src_len == TI_LEN);
 
-	dst[30] = 0x00; /* last nibble won't written, pre-clear it */
+	/* Pre-clear the output buffer */
+	memset(dst, 0x00, EFR_CANON_LEN);
 
 	for (i=0; i<244; i++) {
 		int si = i >= 182 ? i+4 : i;
