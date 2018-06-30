@@ -27,10 +27,10 @@ AC_CONFIG_FILES([
 # Options
 AC_ARG_ENABLE(gsmhr,
 	[AS_HELP_STRING(
-		[--disable-gsmhr],
-		[Disable support for GSM HR codec using reference code]
+		[--enable-gsmhr],
+		[Enable support for GSM HR codec using GSM 06.06 reference code]
 	)],
-	[enable_gsmhr=$enableval], [enable_gsmhr="yes"])
+	[enable_gsmhr="yes"], [enable_gsmhr=$enableval])
 AM_CONDITIONAL(ENABLE_GSMHR, test "x$enable_gsmhr" = "xyes")
 if test "x$enable_gsmhr" = "xyes"; then
 	AM_PATH_PYTHON([2.4])
