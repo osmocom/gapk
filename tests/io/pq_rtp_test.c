@@ -345,5 +345,8 @@ int main(int argc, char **argv)
 	/* Memory leak detection test */
 	talloc_report_depth_cb(NULL, 0, 10, &talloc_ctx_walk_cb, NULL);
 
+	/* Make both Valgrind and LeakSanitizer happy */
+	talloc_disable_null_tracking();
+
 	return 0;
 }
