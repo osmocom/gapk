@@ -34,7 +34,7 @@ set -x
 
 cd "$base"
 autoreconf --install --force
-./configure
+./configure --enable-sanitize
 $MAKE $PARALLEL_MAKE
 LD_LIBRARY_PATH="$inst/lib" $MAKE check || cat-testlogs.sh
 LD_LIBRARY_PATH="$inst/lib" DISTCHECK_CONFIGURE_FLAGS="" $MAKE distcheck || cat-testlogs.sh
