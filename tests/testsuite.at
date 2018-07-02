@@ -25,6 +25,7 @@ AT_CLEANUP
 
 AT_SETUP([ecu/ecu_fr_test])
 AT_KEYWORDS([ecu_fr_test])
+AT_CHECK([test "x$enable_fr_tests" = xyes || exit 77])
 cat $abs_srcdir/ecu/ecu_fr_test.ok > expout
 AT_CHECK([
 	$abs_top_builddir/tests/ecu/ecu_fr_test], [0], [expout])
