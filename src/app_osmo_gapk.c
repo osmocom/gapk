@@ -64,6 +64,9 @@ struct gapk_options
 	const char *alsa_out;
 	const struct osmo_gapk_format_desc *fmt_out;
 
+	/* RTP payload type */
+	uint8_t rtp_pt_in, rtp_pt_out;
+
 	int benchmark;
 	int verbose;
 };
@@ -133,6 +136,8 @@ print_help(char *progname)
 #endif
 	fprintf(stdout, "  -f, --input-format=FMT\tInput format (see below)\n");
 	fprintf(stdout, "  -g, --output-format=FMT\tOutput format (see below)\n");
+	fprintf(stdout, "  -p  --rtp-pt-in=TYPE\t\tRTP payload type for incoming frames\n");
+	fprintf(stdout, "  -P  --rtp-pt-out=TYPE\t\tRTP payload type for outgoing frames\n");
 	fprintf(stdout, "  -b, --enable-benchmark\tEnable codec benchmarking\n");
 	fprintf(stdout, "  -v, --verbose\t\t\tEnable debug messages\n");
 	fprintf(stdout, "\n");
@@ -203,11 +208,13 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 #endif
 		{"input-format", 1, 0, 'f'},
 		{"output-format", 1, 0, 'g'},
+		{"rtp-pt-in", 1, 0, 'p'},
+		{"rtp-pt-out", 1, 0, 'P'},
 		{"enable-benchmark", 0, 0, 'b'},
 		{"verbose", 0, 0, 'v'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:I:O:f:g:bvh"
+	const char *short_options = "i:o:I:O:f:g:p:P:bvh"
 #ifdef HAVE_ALSA
 		"a:A:"
 #endif
@@ -217,6 +224,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 	/* Set some defaults */
 	memset(opt, 0x00, sizeof(*opt));
+
+	/* Default RTP payload type (GSM FR, see RFC 3551) */
+	opt->rtp_pt_in = 3;
+	opt->rtp_pt_out = 3;
 
 	/* Parse */
 	while (1) {
@@ -277,6 +288,24 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 				LOGP(DAPP, LOGL_ERROR, "Unsupported format: %s\n", optarg);
 				return -EINVAL;
 			}
+			break;
+
+		case 'p':
+			rv = atoi(optarg);
+			if (rv < 0 || rv > 0xff) {
+				LOGP(DAPP, LOGL_ERROR, "Invalid RTP payload type: %d\n", rv);
+				return -EINVAL;
+			}
+			opt->rtp_pt_in = rv;
+			break;
+
+		case 'P':
+			rv = atoi(optarg);
+			if (rv < 0 || rv > 0xff) {
+				LOGP(DAPP, LOGL_ERROR, "Invalid RTP payload type: %d\n", rv);
+				return -EINVAL;
+			}
+			opt->rtp_pt_out = rv;
 			break;
 
 		case 'b':
@@ -540,7 +569,8 @@ make_processing_chain(struct gapk_state *gs)
 	if (gs->in.file.fh)
 		osmo_gapk_pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
 	else if (gs->in.rtp.fd != -1)
-		osmo_gapk_pq_queue_rtp_input(gs->pq, gs->in.rtp.fd, fmt_in->frame_len);
+		osmo_gapk_pq_queue_rtp_input(gs->pq, gs->in.rtp.fd,
+			fmt_in->frame_len, gs->opts.rtp_pt_in);
 #ifdef HAVE_ALSA
 	else if (gs->opts.alsa_in)
 		osmo_gapk_pq_queue_alsa_input(gs->pq, gs->opts.alsa_in, fmt_in->frame_len);
@@ -618,7 +648,8 @@ make_processing_chain(struct gapk_state *gs)
 	if (gs->out.file.fh)
 		osmo_gapk_pq_queue_file_output(gs->pq, gs->out.file.fh, fmt_out->frame_len);
 	else if (gs->out.rtp.fd != -1)
-		osmo_gapk_pq_queue_rtp_output(gs->pq, gs->out.rtp.fd, fmt_out->frame_len);
+		osmo_gapk_pq_queue_rtp_output(gs->pq, gs->out.rtp.fd,
+			fmt_out->frame_len, gs->opts.rtp_pt_out);
 #ifdef HAVE_ALSA
 	else if (gs->opts.alsa_out)
 		osmo_gapk_pq_queue_alsa_output(gs->pq, gs->opts.alsa_out, fmt_out->frame_len);

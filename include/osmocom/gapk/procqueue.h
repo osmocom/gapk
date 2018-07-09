@@ -89,8 +89,10 @@ int osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned i
 int osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int block_len);
 
 /* RTP */
-int osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int rtp_fd, unsigned int block_len);
-int osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int rtp_fd, unsigned int block_len);
+int osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int rtp_fd,
+	unsigned int block_len, uint8_t pt);
+int osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int rtp_fd,
+	unsigned int block_len, uint8_t pt);
 
 /* ALSA */
 int osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len);

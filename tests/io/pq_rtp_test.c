@@ -173,7 +173,7 @@ static int init_gen_queue(struct osmo_gapk_pq *pq,
 	}
 
 	/* Init an RTP sink */
-	rc = osmo_gapk_pq_queue_rtp_output(pq, state->rtp_dst_fd, payload_len);
+	rc = osmo_gapk_pq_queue_rtp_output(pq, state->rtp_dst_fd, payload_len, 0x00);
 	if (rc) {
 		printf("Could not init an RTP sink\n");
 		return rc;
@@ -210,7 +210,7 @@ static int init_chk_queue(struct osmo_gapk_pq *pq,
 	}
 
 	/* Init an RTP source on any available port */
-	rc = osmo_gapk_pq_queue_rtp_input(pq, state->rtp_src_fd, payload_len);
+	rc = osmo_gapk_pq_queue_rtp_input(pq, state->rtp_src_fd, payload_len, 0x00);
 	if (rc) {
 		printf("Could not init an RTP sink\n");
 		return rc;

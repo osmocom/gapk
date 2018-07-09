@@ -70,8 +70,6 @@ struct rtp_x_hdr {
 
 #define RTP_VERSION	2
 
-#define RTP_PT_GSM_FULL 3
-
 struct pq_state_rtp {
 	int fd;
 	int blk_len;
@@ -193,7 +191,8 @@ pq_cb_rtp_exit(void *_state)
 }
 
 static int
-pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int in_out_n)
+pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd,
+	unsigned int blk_len, int in_out_n, uint8_t pt)
 {
 	struct osmo_gapk_pq_item *item;
 	struct pq_state_rtp *state;
@@ -210,12 +209,20 @@ pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int i
 	 * per RTP frame */
 	state->duration = 160;
 
+	/**
+	 * RTP payload type according to RFC 3551,
+	 * section "6. Payload Type Definitions".
+	 *
+	 * Only GSM FR has a static payload type value (see table 4).
+	 * For other codecs the payload type may be negotiated
+	 * between the both sides dynamically (i.e. in range 96-127).
+	 */
+	state->payload_type = pt;
+
 	if (in_out_n == 0) {
 		state->ssrc = rand();
 		state->sequence = random();
 		state->timestamp = random();
-		/* FIXME: other payload types!! */
-		state->payload_type = RTP_PT_GSM_FULL;
 	}
 
 	item = osmo_gapk_pq_add_item(pq);
@@ -248,24 +255,30 @@ pq_queue_rtp_op(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len, int i
  *  This typically only makes sense as first item in the queue
  *  \param pq Processing Queue to add this RTP input to
  *  \param[in] udp_fd UDP file descriptor for the RTP input
- *  \param[in] blk_len Block Length to read from RTP */
+ *  \param[in] blk_len Block Length to read from RTP
+ *  \param[in] pt Payload type according to RFC 3551
+ */
 int
-osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
+osmo_gapk_pq_queue_rtp_input(struct osmo_gapk_pq *pq, int udp_fd,
+	unsigned int blk_len, uint8_t pt)
 {
 	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding RTP input (blk_len=%u)\n",
 		pq->name, blk_len);
-	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1);
+	return pq_queue_rtp_op(pq, udp_fd, blk_len, 1, pt);
 }
 
 /*! Add RTP output to processing queue.
  *  This typically only makes sense as last item in the queue
  *  \param pq Processing Queue to add this RTP output to
  *  \param[in] udp_fd UDP file descriptor for the RTP output
- *  \param[in] blk_len Block Length to read from RTP */
+ *  \param[in] blk_len Block Length to read from RTP
+ *  \param[in] pt Payload type according to RFC 3551
+ */
 int
-osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int udp_fd, unsigned int blk_len)
+osmo_gapk_pq_queue_rtp_output(struct osmo_gapk_pq *pq, int udp_fd,
+	unsigned int blk_len, uint8_t pt)
 {
 	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding RTP output (blk_len=%u)\n",
 		pq->name, blk_len);
-	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0);
+	return pq_queue_rtp_op(pq, udp_fd, blk_len, 0, pt);
 }
