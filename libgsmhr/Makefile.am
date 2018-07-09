@@ -1,7 +1,10 @@
 AM_CPPFLAGS = $(all_includes) -I$(top_srcdir)/include -I$(top_builddir)
 AM_CFLAGS = -fPIC -Wall ${SYMBOL_VISIBILITY}
 
-EXTRA_DIST=fetch_sources.py
+EXTRA_DIST = \
+	fetch_sources.py \
+	patches \
+	$(NULL)
 
 LIBVERSION=0:0:0
 
@@ -22,4 +25,7 @@ libgsmhr_la_SOURCES = $(REFSRC_SRC) libgsmhr.c
 libgsmhr_la_LIBADD = -ldl
 
 clean-local:
-	-rm -rf ${REFSRC_PATH}/*.{c,h} ${REFSRC_PATH}/.downloaded
+	-rm -rf ${REFSRC_PATH}/*.lo
+
+distclean-local:
+	-rm -rf ${REFSRC_PATH}/

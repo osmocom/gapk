@@ -79,7 +79,7 @@ EXTRA_DIST += \
 	io/pq_file_test.ok \
 	io/pq_rtp_test.ok \
 	io/io_sample.txt \
-	ref-files/* \
+	ref-files \
 	$(NULL)
 
 DISTCLEANFILES = atconfig atlocal
