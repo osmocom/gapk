@@ -38,5 +38,6 @@ autoreconf --install --force
 $MAKE $PARALLEL_MAKE
 LD_LIBRARY_PATH="$inst/lib" $MAKE check || cat-testlogs.sh
 LD_LIBRARY_PATH="$inst/lib" DISTCHECK_CONFIGURE_FLAGS="" $MAKE distcheck || cat-testlogs.sh
+$MAKE maintainer-clean
 
 osmo-clean-workspace.sh
