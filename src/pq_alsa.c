@@ -176,7 +176,7 @@ out_print:
  *  \param pq Processing Queue to add the ALSA input to
  *  \param[in] hwdev ALSA hardware device to use
  *  \param[in] blk_len block length to be read from device
- *  \returns 0 on sucess; negative on error */
+ *  \returns 0 on success; negative on error */
 int
 osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {
@@ -190,7 +190,7 @@ osmo_gapk_pq_queue_alsa_input(struct osmo_gapk_pq *pq, const char *hwdev, unsign
  *  \param pq Processing Queue to add the ALSA output to
  *  \param[in] hwdev ALSA hardware device to use
  *  \param[in] blk_len block length to be written to device
- *  \returns 0 on sucess; negative on error */
+ *  \returns 0 on success; negative on error */
 int
 osmo_gapk_pq_queue_alsa_output(struct osmo_gapk_pq *pq, const char *hwdev, unsigned int blk_len)
 {

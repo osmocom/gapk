@@ -116,7 +116,7 @@ pq_cb_rtp_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_l
 	payload = buf + sizeof(struct rtp_hdr) + (rtph->csrc_count << 2);
 	payload_len = rv - sizeof(struct rtp_hdr) - (rtph->csrc_count << 2);
 	if (payload_len < 0) {
-		rtp_err("non-existant RTP payload length %d\n", payload_len);
+		rtp_err("non-existent RTP payload length %d\n", payload_len);
 		return -1;
 	}
 

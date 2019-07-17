@@ -103,7 +103,7 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
  *  \param pq Processing Queue to add the input file to
  *  \param[in] src caller-fopen()ed input file
  *  \param[in] blk_len block length to be read from file
- *  \returns 0 on sucess; negative on error */
+ *  \returns 0 on success; negative on error */
 int
 osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int blk_len)
 {
@@ -117,7 +117,7 @@ osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int b
  *  \param pq Processing Queue to add the output file to
  *  \param[in] dst caller-fopen()ed output file
  *  \param[in] blk_len block length to be written to file
- *  \returns 0 on sucess; negative on error */
+ *  \returns 0 on success; negative on error */
 int
 osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int blk_len)
 {
