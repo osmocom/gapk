@@ -12,15 +12,12 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
-#
-
 %define with_amr 1
 %define with_gsmhr 1
 %define sover 0
 
 Name:           gapk
-Version:        0.4.79
+Version:        0.0.0
 Release:        0
 Summary:        GSM Audio Pocket Knife
 License:        GPL-3.0-only
