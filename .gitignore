@@ -54,3 +54,4 @@ src/osmo-gapk
 /compile
 .dirstamp
 
+contrib/gapk.spec
