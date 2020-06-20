@@ -52,7 +52,11 @@ rtp_efr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	int i;
 
-	assert(src_len == EFR_LEN);
+	/* broken RTP frames may be short; substitute empty frame */
+	if (src_len != EFR_LEN) {
+		memset(dst, 0, EFR_CANON_LEN);
+		return EFR_CANON_LEN;
+	}
 
 	for (i=0; i<(EFR_LEN-1); i++)
 		dst[i] = (src[i] << 4) | (src[i+1] >> 4);

@@ -60,7 +60,11 @@ static int
 rtp_hr_ietf_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	/* according to RFC5993 */
-	assert(src_len == HR_LEN);
+	/* broken RTP frames may be short; substitute empty frame */
+	if (src_len != HR_LEN) {
+		memset(dst, 0, HR_LEN);
+		return HR_CANON_LEN;
+	}
 
 	/* Remove ToC byte */
 	memcpy(dst, src+1, HR_CANON_LEN);

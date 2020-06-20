@@ -42,7 +42,11 @@ static int
 rtp_hr_etsi_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
 	/* according to TS 101 318 */
-	assert(src_len == HR_CANON_LEN);
+	/* broken RTP frames may be short; substitute empty frame */
+	if (src_len != HR_CANON_LEN) {
+		memset(dst, 0, HR_CANON_LEN);
+		return HR_CANON_LEN;
+	}
 	memcpy(dst, src, src_len);
 
 	return HR_CANON_LEN;
