@@ -81,7 +81,7 @@ static int pq_file_check(FILE *src_file, unsigned int blk_len)
 	assert(pq != NULL);
 
 	/* Add a file sink */
-	rc = osmo_gapk_pq_queue_file_input(pq, src_file, blk_len);
+	rc = osmo_gapk_pq_queue_file_input(pq, src_file, blk_len, false);
 	assert(rc == 0);
 
 	/* Add a processing item */

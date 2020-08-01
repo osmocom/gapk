@@ -20,6 +20,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h> /* for FILE */
 
 #include <osmocom/core/linuxlist.h>
@@ -85,7 +86,7 @@ char *osmo_gapk_pq_describe(struct osmo_gapk_pq *pq);
 struct osmo_gapk_pq_item *osmo_gapk_pq_add_item(struct osmo_gapk_pq *pq);
 
 /* File */
-int osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int block_len);
+int osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int block_len, bool loop);
 int osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int block_len);
 
 /* RTP */

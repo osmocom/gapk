@@ -68,6 +68,7 @@ struct gapk_options
 	/* RTP payload type */
 	uint8_t rtp_pt_in, rtp_pt_out;
 
+	bool loop_input;
 	int throttle;
 	int benchmark;
 	int verbose;
@@ -144,6 +145,7 @@ print_help(char *progname)
 	fprintf(stdout, "  -P  --rtp-pt-out=TYPE\t\tRTP payload type for outgoing frames\n");
 	fprintf(stdout, "  -b, --enable-benchmark\tEnable codec benchmarking\n");
 	fprintf(stdout, "  -t, --throttle\tEnable throttling (one codec frame every 20ms)\n");
+	fprintf(stdout, "  -l, --loop-input\tEnable looping of the input file\n");
 	fprintf(stdout, "  -v, --verbose\t\t\tEnable debug messages\n");
 	fprintf(stdout, "\n");
 
@@ -217,10 +219,11 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		{"rtp-pt-out", 1, 0, 'P'},
 		{"enable-benchmark", 0, 0, 'b'},
 		{"throttle", 0, 0, 't'},
+		{"loop-input", 0, 0, 'l'},
 		{"verbose", 0, 0, 'v'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:I:O:f:g:p:P:btvh"
+	const char *short_options = "i:o:I:O:f:g:p:P:btlvh"
 #ifdef HAVE_ALSA
 		"a:A:"
 #endif
@@ -320,6 +323,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 		case 't':
 			opt->throttle = 1;
+			break;
+
+		case 'l':
+			opt->loop_input = true;
 			break;
 
 		case 'v':
@@ -577,7 +584,7 @@ make_processing_chain(struct gapk_state *gs)
 
 	/* File read */
 	if (gs->in.file.fh)
-		osmo_gapk_pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len);
+		osmo_gapk_pq_queue_file_input(gs->pq, gs->in.file.fh, fmt_in->frame_len, gs->opts.loop_input);
 	else if (gs->in.rtp.fd != -1)
 		osmo_gapk_pq_queue_rtp_input(gs->pq, gs->in.rtp.fd,
 			fmt_in->frame_len, gs->opts.rtp_pt_in);

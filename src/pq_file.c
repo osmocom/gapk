@@ -19,6 +19,7 @@
 
 #include <errno.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <talloc.h>
 
 #include <osmocom/gapk/logging.h>
@@ -30,6 +31,7 @@
 struct pq_state_file {
 	FILE *fh;
 	unsigned int blk_len;
+	bool loop_input;
 };
 
 
@@ -39,6 +41,14 @@ pq_cb_file_input(void *_state, uint8_t *out, const uint8_t *in, unsigned int in_
 	struct pq_state_file *state = _state;
 	int rv;
 	rv = fread(out, state->blk_len, 1, state->fh);
+	if (rv == 0 && state->loop_input && feof(state->fh)) {
+		/* FIXME: this only works for files without a header
+		 * (e.g. .gsm files) but not for those with header (like
+		 * .amr files). gs->opts.fmt_in->header is not
+		 * accessible here :/ */
+		fseek(state->fh, 0, SEEK_SET);
+		rv = fread(out, state->blk_len, 1, state->fh);
+	}
 	if (rv <= 0)
 		return -1;
 	return rv * state->blk_len;
@@ -60,7 +70,7 @@ pq_cb_file_exit(void *_state)
 }
 
 static int
-pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in_out_n)
+pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in_out_n, bool loop_input)
 {
 	struct osmo_gapk_pq_item *item;
 	struct pq_state_file *state;
@@ -71,6 +81,7 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
 
 	state->fh = fh;
 	state->blk_len = blk_len;
+	state->loop_input = loop_input;
 
 	item = osmo_gapk_pq_add_item(pq);
 	if (!item) {
@@ -105,11 +116,11 @@ pq_queue_file_op(struct osmo_gapk_pq *pq, FILE *fh, unsigned int blk_len, int in
  *  \param[in] blk_len block length to be read from file
  *  \returns 0 on success; negative on error */
 int
-osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int blk_len)
+osmo_gapk_pq_queue_file_input(struct osmo_gapk_pq *pq, FILE *src, unsigned int blk_len, bool loop)
 {
 	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding file input (blk_len=%u)\n",
 		pq->name, blk_len);
-	return pq_queue_file_op(pq, src, blk_len, 1);
+	return pq_queue_file_op(pq, src, blk_len, 1, loop);
 }
 
 /*! Add file output to given processing queue
@@ -123,5 +134,5 @@ osmo_gapk_pq_queue_file_output(struct osmo_gapk_pq *pq, FILE *dst, unsigned int 
 {
 	LOGPGAPK(LOGL_DEBUG, "PQ '%s': Adding file output (blk_len=%u)\n",
 		pq->name, blk_len);
-	return pq_queue_file_op(pq, dst, blk_len, 0);
+	return pq_queue_file_op(pq, dst, blk_len, 0, false);
 }
