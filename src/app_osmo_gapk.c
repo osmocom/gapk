@@ -36,6 +36,7 @@
 #include <osmocom/core/logging.h>
 #include <osmocom/core/socket.h>
 #include <osmocom/core/utils.h>
+#include <osmocom/core/select.h>
 
 #include <osmocom/gapk/common.h>
 #include <osmocom/gapk/codecs.h>
@@ -67,6 +68,7 @@ struct gapk_options
 	/* RTP payload type */
 	uint8_t rtp_pt_in, rtp_pt_out;
 
+	int throttle;
 	int benchmark;
 	int verbose;
 };
@@ -75,6 +77,8 @@ struct gapk_state
 {
 	struct gapk_options opts;
 	struct osmo_gapk_pq *pq;
+	struct osmo_fd timerfd;		/* for optional throttling */
+	unsigned int num_frames;
 	int exit;
 
 	struct {
@@ -139,6 +143,7 @@ print_help(char *progname)
 	fprintf(stdout, "  -p  --rtp-pt-in=TYPE\t\tRTP payload type for incoming frames\n");
 	fprintf(stdout, "  -P  --rtp-pt-out=TYPE\t\tRTP payload type for outgoing frames\n");
 	fprintf(stdout, "  -b, --enable-benchmark\tEnable codec benchmarking\n");
+	fprintf(stdout, "  -t, --throttle\tEnable throttling (one codec frame every 20ms)\n");
 	fprintf(stdout, "  -v, --verbose\t\t\tEnable debug messages\n");
 	fprintf(stdout, "\n");
 
@@ -211,10 +216,11 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 		{"rtp-pt-in", 1, 0, 'p'},
 		{"rtp-pt-out", 1, 0, 'P'},
 		{"enable-benchmark", 0, 0, 'b'},
+		{"throttle", 0, 0, 't'},
 		{"verbose", 0, 0, 'v'},
 		{"help", 0, 0, 'h'},
 	};
-	const char *short_options = "i:o:I:O:f:g:p:P:bvh"
+	const char *short_options = "i:o:I:O:f:g:p:P:btvh"
 #ifdef HAVE_ALSA
 		"a:A:"
 #endif
@@ -310,6 +316,10 @@ parse_options(struct gapk_state *state, int argc, char *argv[])
 
 		case 'b':
 			opt->benchmark = 1;
+			break;
+
+		case 't':
+			opt->throttle = 1;
 			break;
 
 		case 'v':
@@ -668,22 +678,65 @@ make_processing_chain(struct gapk_state *gs)
 }
 
 static int
+timerfd_cb(struct osmo_fd *ofd, unsigned int what)
+{
+	struct gapk_state *gs = ofd->data;
+	uint64_t expire_count;
+	int rc;
+
+	rc = read(ofd->fd, (void *)&expire_count, sizeof(expire_count));
+	if (rc < 0 && errno == EAGAIN)
+		return 0;
+	OSMO_ASSERT(rc == sizeof(expire_count));
+
+	while (expire_count--) {
+		gs->num_frames++;
+		rc = osmo_gapk_pq_execute(gs->pq);
+		if (rc < 0)
+			gs->exit = true;
+	}
+	return 0;
+}
+
+static int
 run(struct gapk_state *gs)
 {
 	struct osmo_gapk_pq_item *item;
-	int rv, frames;
+	int rv;
 
 	rv = osmo_gapk_pq_prepare(gs->pq);
 	if (rv)
 		return rv;
 
-	for (frames = 0; !gs->exit; frames++) {
-		rv = osmo_gapk_pq_execute(gs->pq);
-		if (rv)
-			break;
+	if (!gs->opts.throttle) {
+		for (gs->num_frames = 0; !gs->exit; gs->num_frames++) {
+			rv = osmo_gapk_pq_execute(gs->pq);
+			if (rv)
+				break;
+		}
+	} else {
+		/* setup timerfd based processing */
+		const struct timespec interval = {
+			.tv_sec = 0,
+			.tv_nsec = 20*1000*1000,
+		};
+		gs->timerfd.fd = -1;
+		rv = osmo_timerfd_setup(&gs->timerfd, timerfd_cb, gs);
+		OSMO_ASSERT(rv == 0);
+		rv = osmo_timerfd_schedule(&gs->timerfd, NULL, &interval);
+		OSMO_ASSERT(rv == 0);
+
+		/* actual processing loop */
+		while (!gs->exit)
+			osmo_select_main(0);
+
+		/* cleanup */
+		osmo_timerfd_disable(&gs->timerfd);
+		close(gs->timerfd.fd);
+		osmo_fd_unregister(&gs->timerfd);
 	}
 
-	LOGP(DAPP, LOGL_NOTICE, "Processed %d frames\n", frames);
+	LOGP(DAPP, LOGL_NOTICE, "Processed %d frames\n", gs->num_frames);
 
 	/* Wait for sink to process buffers */
 	item = llist_last_entry(&gs->pq->items, struct osmo_gapk_pq_item, list);
@@ -693,7 +746,7 @@ run(struct gapk_state *gs)
 			continue;
 	}
 
-	return frames > 0 ? 0 : rv;
+	return gs->num_frames > 0 ? 0 : rv;
 }
 
 
