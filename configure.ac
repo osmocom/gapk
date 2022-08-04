@@ -15,16 +15,6 @@ AC_CONFIG_SRCDIR([src/app_osmo_gapk.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_TESTDIR(tests)
-AC_CONFIG_FILES([
-	Makefile
-	src/Makefile
-	libgsmhr/Makefile
-	include/Makefile
-	include/gsmhr/Makefile
-	libosmogapk.pc
-	tests/atlocal
-	tests/Makefile
-])
 
 # Options
 AC_ARG_ENABLE(gsmhr,
@@ -117,4 +107,13 @@ AC_TYPE_UINT8_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memset])
 
-AC_OUTPUT([contrib/gapk.spec])
+AC_CONFIG_FILES([contrib/gapk.spec
+		 Makefile
+		 src/Makefile
+		 libgsmhr/Makefile
+		 include/Makefile
+		 include/gsmhr/Makefile
+		 libosmogapk.pc
+		 tests/atlocal
+		 tests/Makefile])
+AC_OUTPUT
