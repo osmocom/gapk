@@ -13,10 +13,9 @@ GIT Repository
 
 You can clone from the official gapk.git repository using
 
-	git clone git://git.osmocom.org/gapk.git
-	git clone https://git.osmocom.org/gapk.git
+	git clone https://gitea.osmocom.org/osmocom/gapk.git
 
-There is a cgit interface at https://git.osmocom.org/gapk/
+There is a web interface at <https://gitea.osmocom.org/osmocom/gapk>.
 
 Documentation
 -------------
