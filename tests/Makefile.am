@@ -10,6 +10,8 @@ AM_CFLAGS = \
 	$(LIBOSMOCODEC_CFLAGS) \
 	$(NULL)
 
+AM_LDFLAGS = -no-install
+
 check_PROGRAMS = \
 	procqueue/pq_test \
 	io/pq_file_test \
