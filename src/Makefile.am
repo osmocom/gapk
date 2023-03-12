@@ -20,12 +20,15 @@ AM_CFLAGS = \
 lib_LTLIBRARIES = libosmogapk.la
 EXTRA_DIST = libosmogapk.map
 
-libosmogapk_la_LDFLAGS = \
+libosmogapk_la_LIBADD = \
 	$(LIBOSMOCORE_LIBS) \
 	$(LIBOSMOCODEC_LIBS) \
 	${OPENCORE_AMRNB_LIBS} \
 	${LIBGSM_LIBS} \
 	$(LIBALSA_LIBS) \
+	$(NULL)
+
+libosmogapk_la_LDFLAGS = \
 	$(LTLDFLAGS_OSMOGAPK) \
 	-version-info $(LIBVERSION) \
 	-no-undefined \
@@ -94,10 +97,7 @@ osmo_gapk_SOURCES = \
 	app_osmo_gapk.c \
 	$(NULL)
 
-osmo_gapk_LDFLAGS = \
-	$(LIBOSMOCORE_LIBS) \
-	$(NULL)
-
 osmo_gapk_LDADD = \
 	libosmogapk.la \
+	$(LIBOSMOCORE_LIBS) \
 	$(NULL)
