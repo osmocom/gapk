@@ -4,8 +4,6 @@ ACLOCAL_AMFLAGS = -I m4
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libosmogapk.pc
 
-AM_CPPFLAGS = $(all_includes) -I$(top_srcdir)/include
-
 SUBDIRS = include
 
 if ENABLE_GSMHR
