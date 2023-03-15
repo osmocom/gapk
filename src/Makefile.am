@@ -35,7 +35,7 @@ libosmogapk_la_LDFLAGS = \
 	$(NULL)
 
 if ENABLE_GSMHR
-libosmogapk_la_LIBADD = $(top_builddir)/libgsmhr/libgsmhr.la
+libosmogapk_la_LIBADD += $(top_builddir)/libgsmhr/libgsmhr.la
 endif
 
 # Processing queue implementation
