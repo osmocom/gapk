@@ -27,6 +27,9 @@
 #include <osmocom/gapk/formats.h>
 #include <osmocom/gapk/utils.h>
 
+/* AMR SID frame is according to TS 126 101 4.2.3 */
+static const uint8_t SILENCE[] = {0x80, 0x44, 0x00, 0x00, 0x00, 0x00, 0x00};
+
 /* conversion function: RTP payload -> canonical format */
 static int
 rtp_amr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
@@ -42,6 +45,12 @@ rtp_amr_from_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 static int
 rtp_amr_to_canon(uint8_t *dst, const uint8_t *src, unsigned int src_len)
 {
+	/* Detect severely damaged frames according to RFC4867 4.3.2 */
+	if ((src[1] & 0x04) == 0) {
+		src = SILENCE;
+		src_len = sizeof(SILENCE);
+	}
+
 	/* skip Payload Header according to RFC4867 4.4.1 */
 	memcpy(dst, src+1, src_len-1);
 
