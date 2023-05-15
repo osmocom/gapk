@@ -16,6 +16,12 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_TESTDIR(tests)
 
+dnl patching ${archive_cmds} to affect generation of file "libtool" to fix linking with clang
+AS_CASE(["$LD"],[*clang*],
+  [AS_CASE(["${host_os}"],
+     [*linux*],[archive_cmds='$CC -shared $pic_flag $libobjs $deplibs $compiler_flags $wl-soname $wl$soname -o $lib'])])
+
+
 # Options
 AC_ARG_ENABLE(gsmhr,
 	[AS_HELP_STRING(
