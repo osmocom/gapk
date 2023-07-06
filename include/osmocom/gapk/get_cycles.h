@@ -103,6 +103,16 @@ static inline cycles_t get_cycles()
 #endif
 	return ret & ~TICK_PRIV_BIT;
 }
+#elif defined(__aarch64__)
+
+typedef unsigned long cycles_t;
+static inline cycles_t get_cycles(void)
+{
+	cycles_t cval;
+	asm volatile("isb" : : : "memory");
+	asm volatile("mrs %0, cntvct_el0" : "=r" (cval));
+	return cval;
+}
 #elif defined(__PPC__)
 #define CPU_FTR_601                  0x00000100
 typedef unsigned long cycles_t;
