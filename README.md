@@ -1,7 +1,7 @@
 gapk - GSM Audio Pocket Knife
 =============================
 
-The GSM Audio Picket Knife is a tool that can help you to convert
+The GSM Audio Pocket Knife is a tool that can help you to convert
 codec frames of all codecs in GSM networks between a variety of
 different formats / representations.
 
