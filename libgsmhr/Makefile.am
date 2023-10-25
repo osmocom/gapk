@@ -21,7 +21,7 @@ ${REFSRC_PATH}/.downloaded:
 	done
 	touch $@
 
-$(REFSRC_SRC) libgsmhr.c: ${REFSRC_PATH}/.downloaded
+$(REFSRC_SRC): ${REFSRC_PATH}/.downloaded
 
 lib_LTLIBRARIES = libgsmhr.la
 libgsmhr_la_SOURCES = $(REFSRC_SRC) libgsmhr.c
