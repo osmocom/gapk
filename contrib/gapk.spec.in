@@ -128,7 +128,7 @@ make %{?_smp_mflags} check || (find . -name testsuite.log -exec cat {} +)
 %postun -n libosmogapk%{sover} -p /sbin/ldconfig
 
 %files
-%doc gpl-3.0.txt
+%doc COPYING
 %{_bindir}/osmo-gapk
 
 %if 0%{with_gsmhr}
