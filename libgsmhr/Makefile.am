@@ -33,3 +33,7 @@ clean-local:
 
 distclean-local:
 	-rm -rf ${REFSRC_PATH}/
+
+# exclude files downloaded by fetch_sources.py
+dist-hook:
+	-rm -rf $(distdir)/$(REFSRC_PATH)
