@@ -1,0 +1,37 @@
+Source: gapk
+Section: net
+Priority: optional
+Maintainer: Osmocom team <openbsc@lists.osmocom.org>
+Build-Depends: debhelper (>= 10),
+               dh-autoreconf,
+               autotools-dev,
+               autoconf,
+               automake,
+               libtool,
+               pkg-config,
+               libasound2-dev,
+               libgsm1-dev,
+               libosmocore-dev (>= 0.3.2)
+Standards-Version: 4.1.4
+Vcs-Browser: https://gitea.osmocom.org/osmocom/gapk
+Vcs-Git: https://gerrit.osmocom.org/gapk
+Homepage: https://osmocom.org/projects/gapk/wiki/Gapk
+
+Package: gapk
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GSM Audio Pocket Knife converts between GSM related codecs
+
+Package: libosmogapk0
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GSM Audio Pocket Knife converts between GSM related codecs
+
+Package: libosmogapk-dev
+Section: libdevel
+Architecture: any
+Depends: libosmogapk0 (= ${binary:Version}), ${misc:Depends}
+Description: GSM Audio Pocket Knife converts between GSM related codecs

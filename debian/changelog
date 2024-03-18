@@ -1,0 +1,5 @@
+gapk (1.1) unstable; urgency=medium
+
+  * Initial debian packaging
+
+ -- Oliver Smith <osmith@sysmocom.de>  Mon, 18 Mar 2024 13:15:22 +0100
