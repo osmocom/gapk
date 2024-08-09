@@ -11,6 +11,10 @@ CFLAGS="$CFLAGS -std=gnu11"
 # kernel style compile messages
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+dnl include release helper
+RELMAKE='-include osmo-release.mk'
+AC_SUBST([RELMAKE])
+
 AC_CONFIG_SRCDIR([src/app_osmo_gapk.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])

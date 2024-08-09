@@ -20,6 +20,8 @@ EXTRA_DIST = \
 	.version \
 	$(NULL)
 
+@RELMAKE@
+
 # versioning magic
 $(top_srcdir)/.version:
 	echo $(VERSION) > $@-t && mv $@-t $@
