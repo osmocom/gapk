@@ -1,3 +1,19 @@
+gapk (1.1.2) unstable; urgency=medium
+
+  * Update debian/changelog, it was not updated in the 1.1.1 release
+  * Use release helper from libosmocore
+
+ -- Oliver Smith <osmith@sysmocom.de>  Fri, 09 Aug 2024 11:28:01 +0200
+
+gapk (1.1.1) unstable; urgency=medium
+
+  [ Oliver Smith ]
+  * contrib: remove rpm spec file
+  * debian: initial
+  * gitignore: add .version and *~
+
+ -- Vadim Yanitskiy <vyanitskiy@sysmocom.de>  Wed, 31 Jul 2024 17:02:00 +0200
+
 gapk (1.1) unstable; urgency=medium
 
   * Initial debian packaging
