@@ -33,5 +33,7 @@ Description: GSM Audio Pocket Knife converts between GSM related codecs
 Package: libosmogapk-dev
 Section: libdevel
 Architecture: any
-Depends: libosmogapk0 (= ${binary:Version}), ${misc:Depends}
+Depends: libosmogapk0 (= ${binary:Version}),
+         libosmocore-dev,
+         ${misc:Depends}
 Description: GSM Audio Pocket Knife converts between GSM related codecs
