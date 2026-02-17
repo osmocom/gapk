@@ -8,7 +8,8 @@ import sys
 import zipfile
 
 
-URL = "http://www.3gpp.org/ftp/Specs/archive/06_series/06.06/0606-421.zip"
+URL = "https://www.3gpp.org/ftp/Specs/archive/06_series/06.06/0606-421.zip"
+USER_AGENT = "fetch_sources.py"
 
 
 def get_zipfile(data: bytes) -> zipfile.ZipFile:
@@ -45,7 +46,8 @@ def main(*args):
 
 	# Get the original data
 	log.info('Requesting file: %s', URL)
-	with urllib.request.urlopen(URL) as response:
+	request = urllib.request.Request(URL, headers={"User-Agent": USER_AGENT})
+	with urllib.request.urlopen(request) as response:
 		log.debug('Response code: %d', response.code)
 		assert response.code == 200
 
